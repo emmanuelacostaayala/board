@@ -1,19 +1,23 @@
 export const subjects = [
-  "maths",
-  "language",
-  "science",
-  "history",
-  "coding",
-  "economics",
+  "perfusion-basic",
+  "cec-advanced",
+  "emergencies", 
+  "pediatrics",
+  "pharmacology",
+  "monitoring",
+  "equipment",
+  "hemodynamics",
 ];
 
 export const subjectsColors = {
-  science: "#E5D0FF",
-  maths: "#FFDA6E",
-  language: "#BDE7FF",
-  coding: "#FFC8E4",
-  history: "#FFECC8",
-  economics: "#C8FFDF",
+  "perfusion-basic": "#E3F2FD",    // Azul claro
+  "cec-advanced": "#F3E5F5",      // Púrpura claro
+  "emergencies": "#FFEBEE",       // Rojo claro
+  "pediatrics": "#E8F5E8",        // Verde claro
+  "pharmacology": "#FFF3E0",      // Naranja claro
+  "monitoring": "#E1F5FE",        // Cian claro
+  "equipment": "#F1F8E9",         // Verde lima claro
+  "hemodynamics": "#FFF8E1",      // Amarillo claro
 };
 
 export const voices = {
@@ -24,50 +28,50 @@ export const voices = {
 export const recentSessions = [
   {
     id: "1",
-    subject: "science",
-    name: "Neura the Brainy Explorer",
-    topic: "Neural Network of the Brain",
+    subject: "perfusion-basic",
+    name: "Dr. Perfú - Especialista en Fundamentos",
+    topic: "Principios Básicos de Perfusión Cardiovascular",
     duration: 45,
-    color: "#E5D0FF",
+    color: "#E3F2FD",
   },
   {
     id: "2",
-    subject: "maths",
-    name: "Countsy the Number Wizard",
-    topic: "Derivatives & Integrals",
-    duration: 30,
-    color: "#FFDA6E",
+    subject: "cec-advanced", 
+    name: "Dra. CEC - Experta en Circulación",
+    topic: "Técnicas Avanzadas de Circulación Extracorpórea",
+    duration: 60,
+    color: "#F3E5F5",
   },
   {
     id: "3",
-    subject: "language",
-    name: "Verba the Vocabulary Builder",
-    topic: "English Literature",
+    subject: "emergencies",
+    name: "Dr. Urgente - Manejo de Crisis",
+    topic: "Complicaciones y Emergencias en Perfusión",
     duration: 30,
-    color: "#BDE7FF",
+    color: "#FFEBEE",
   },
   {
     id: "4",
-    subject: "coding",
-    name: "Codey the Logic Hacker",
-    topic: "Intro to If-Else Statements",
-    duration: 45,
-    color: "#FFC8E4",
+    subject: "pediatrics",
+    name: "Dra. Pediátrica - Especialista Infantil", 
+    topic: "Perfusión en Pacientes Pediátricos",
+    duration: 50,
+    color: "#E8F5E8",
   },
   {
     id: "5",
-    subject: "history",
-    name: "Memo, the Memory Keeper",
-    topic: "World Wars: Causes & Consequences",
-    duration: 15,
-    color: "#FFECC8",
+    subject: "pharmacology",
+    name: "Dr. Farma - Experto en Medicamentos",
+    topic: "Anticoagulación y Protocolos Farmacológicos",
+    duration: 40,
+    color: "#FFF3E0",
   },
   {
     id: "6",
-    subject: "economics",
-    name: "The Market Maestro",
-    topic: "The Basics of Supply & Demand",
-    duration: 10,
-    color: "#C8FFDF",
+    subject: "monitoring",
+    name: "Dra. Monitor - Vigilancia Hemodinámica",
+    topic: "Parámetros de Monitoreo en CEC",
+    duration: 35,
+    color: "#E1F5FE",
   },
 ];

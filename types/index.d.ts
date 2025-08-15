@@ -6,15 +6,14 @@
 // };
 
 enum Subject {
-  maths = "maths",
-  language = "language",
-  science = "science",
-  history = "history",
-  coding = "coding",
-  geography = "geography",
-  economics = "economics",
-  finance = "finance",
-  business = "business",
+  perfusionBasic = "perfusion-basic",
+  cecAdvanced = "cec-advanced", 
+  emergencies = "emergencies",
+  pediatrics = "pediatrics",
+  pharmacology = "pharmacology",
+  monitoring = "monitoring",
+  equipment = "equipment",
+  hemodynamics = "hemodynamics",
 }
 
 type Companion = Models.DocumentList<Models.Document> & {

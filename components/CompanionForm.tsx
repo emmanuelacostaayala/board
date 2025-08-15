@@ -67,10 +67,10 @@ const CompanionForm = () => {
                     name="name"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Companion name</FormLabel>
+                            <FormLabel>Nombre del Acompañante</FormLabel>
                             <FormControl>
                                 <Input
-                                    placeholder="Enter the companion name"
+                                    placeholder="Ingrese el nombre del acompañante"
                                     {...field}
                                     className="input"
                                 />
@@ -84,7 +84,7 @@ const CompanionForm = () => {
                     name="subject"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Subject</FormLabel>
+                            <FormLabel>Tema</FormLabel>
                             <FormControl>
                                 <Select
                                     onValueChange={field.onChange}
@@ -92,7 +92,7 @@ const CompanionForm = () => {
                                     defaultValue={field.value}
                                 >
                                     <SelectTrigger className="input capitalize">
-                                        <SelectValue placeholder="Select the subject" />
+                                        <SelectValue placeholder="Selecciona el tema" />
                                     </SelectTrigger>
                                     <SelectContent>
                                         {subjects.map((subject) => (
@@ -116,7 +116,7 @@ const CompanionForm = () => {
                     name="topic"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>What should the companion help with?</FormLabel>
+                            <FormLabel>¿Con que necesitas ayuda para el Exámen del Board?</FormLabel>
                             <FormControl>
                                 <Textarea
                                     placeholder="Ex. Derivates & Integrals"
@@ -134,7 +134,7 @@ const CompanionForm = () => {
                     name="voice"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Voice</FormLabel>
+                            <FormLabel>Voz Preferida</FormLabel>
                             <FormControl>
                                 <Select
                                     onValueChange={field.onChange}
@@ -148,10 +148,10 @@ const CompanionForm = () => {
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="male">
-                                            Male
+                                            Hombre
                                         </SelectItem>
                                         <SelectItem value="female">
-                                            Female
+                                            Mujer
                                         </SelectItem>
                                     </SelectContent>
                                 </Select>
@@ -165,7 +165,7 @@ const CompanionForm = () => {
                     name="style"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Style</FormLabel>
+                            <FormLabel>Estilo</FormLabel>
                             <FormControl>
                                 <Select
                                     onValueChange={field.onChange}
@@ -197,7 +197,7 @@ const CompanionForm = () => {
                     name="duration"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Estimated session duration in minutes</FormLabel>
+                            <FormLabel>Duración estimada de la sesión en minutos</FormLabel>
                             <FormControl>
                                 <Input
                                     type="number"

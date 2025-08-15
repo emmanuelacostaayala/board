@@ -26,9 +26,9 @@ const CompanionsList = ({ title, companions, classNames }: CompanionsListProps) 
             <Table>
                 <TableHeader>
                     <TableRow>
-                        <TableHead className="text-lg w-2/3">Lessons</TableHead>
-                        <TableHead className="text-lg">Subject</TableHead>
-                        <TableHead className="text-lg text-right">Duration</TableHead>
+                        <TableHead className="text-lg w-2/3">Secciones</TableHead>
+                        <TableHead className="text-lg">Tema</TableHead>
+                        <TableHead className="text-lg text-right">Duración</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
