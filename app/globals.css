@@ -224,3 +224,110 @@ body {
     scrollbar-width: none;
   }
 }
+
+/* Estilos simplificados para navbar responsivo */
+
+/* Estilos para desktop */
+.nav-items {
+  @apply flex items-center gap-6;
+}
+
+.nav-item {
+  @apply relative;
+}
+
+.nav-link {
+  @apply flex items-center cursor-pointer hover:text-primary transition-colors duration-200 text-gray-700 font-medium;
+}
+
+.nav-link-active {
+  @apply text-primary font-semibold;
+}
+
+/* Dropdown para desktop */
+.dropdown-menu {
+  @apply absolute top-full left-0 bg-white shadow-lg rounded-lg border min-w-48 z-50 py-2 mt-1;
+}
+
+.dropdown-item {
+  @apply block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary transition-colors duration-200;
+}
+
+.dropdown-item-active {
+  @apply text-primary font-semibold bg-blue-50;
+}
+
+.dropdown-item:first-child {
+  @apply rounded-t-lg;
+}
+
+.dropdown-item:last-child {
+  @apply rounded-b-lg;
+}
+
+/* Estilos para móvil */
+@media (max-width: 1023px) {
+  .nav-items {
+    @apply flex-col gap-0 w-full;
+  }
+
+  .nav-item {
+    @apply w-full border-b border-gray-100 last:border-b-0;
+  }
+
+  /* Enlaces móviles */
+  .mobile-nav-link {
+    @apply block py-4 px-6 text-gray-700 hover:text-primary hover:bg-blue-50 transition-all duration-200 font-medium border-l-4 border-transparent hover:border-primary;
+  }
+
+  .mobile-nav-link-active {
+    @apply text-primary font-semibold bg-blue-50 border-primary;
+  }
+
+  /* Dropdown móvil */
+  .mobile-dropdown {
+    @apply w-full;
+  }
+
+  .mobile-dropdown-button {
+    @apply flex items-center justify-between w-full py-4 px-6 text-gray-700 hover:text-primary hover:bg-blue-50 transition-all duration-200 font-medium border-l-4 border-transparent hover:border-primary;
+  }
+
+  .mobile-dropdown-button-active {
+    @apply text-primary font-semibold bg-blue-50 border-primary;
+  }
+
+  .dropdown-arrow {
+    @apply h-5 w-5 transition-transform duration-300 text-gray-400;
+  }
+
+  /* Contenido del dropdown móvil */
+  .mobile-dropdown-content {
+    @apply overflow-hidden transition-all duration-300 ease-in-out bg-gray-50;
+  }
+
+  .mobile-dropdown-open {
+    @apply max-h-96 opacity-100;
+  }
+
+  .mobile-dropdown-closed {
+    @apply max-h-0 opacity-0;
+  }
+
+  .mobile-dropdown-item {
+    @apply flex items-center py-3 px-8 text-sm text-gray-600 hover:text-primary hover:bg-blue-50 transition-all duration-200 border-l-4 border-transparent hover:border-primary;
+  }
+
+  .mobile-dropdown-item-active {
+    @apply text-primary font-semibold bg-blue-100 border-primary;
+  }
+
+  .mobile-dropdown-icon {
+    @apply h-4 w-4 mr-3 text-gray-400;
+  }
+}
+
+/* Ajuste para el main content debido al navbar fijo */
+main {
+  @apply mx-auto px-14 flex flex-col gap-8 bg-background h-full max-w-[1400px] pt-10 max-sm:px-2 mb-5 mt-0;
+}
