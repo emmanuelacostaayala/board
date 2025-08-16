@@ -1,15 +1,39 @@
-import React from 'react';
+'use client';
+
+'use client';
+
+import React, { useEffect, useState } from 'react';
 import { Clock, DollarSign, Users, Calendar, Award, Globe, CheckCircle, AlertCircle } from 'lucide-react';
 import CompanionCard from "@/components/CompanionCard";
 import CompanionsList from "@/components/CompanionsList";
 import CTA from "@/components/CTA";
-import {recentSessions} from "@/constants";
-import {getAllCompanions, getRecentSessions} from "@/lib/actions/companion.actions";
-import {getSubjectColor} from "@/lib/utils";
+import { getAllCompanions, getRecentSessions } from "@/lib/actions/companion.actions";
+import { getSubjectColor } from "@/lib/utils";
 
-const CertificationPage = async () => {
-  const companions = await getAllCompanions({ limit: 3 });
-  const recentSessionsCompanions = await getRecentSessions(10);
+const CertificationPage = () => {
+  const [companions, setCompanions] = useState([]);
+  const [recentSessionsCompanions, setRecentSessionsCompanions] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [companionsData, recentSessionsData] = await Promise.all([
+          getAllCompanions({ limit: 3 }),
+          getRecentSessions(10)
+        ]);
+        
+        setCompanions(companionsData);
+        setRecentSessionsCompanions(recentSessionsData);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const countries = [
     { name: 'México', count: 58 },
@@ -42,7 +66,16 @@ const CertificationPage = async () => {
     { city: 'Buenos Aires, Argentina', time: '4:00 PM', flag: '🇦🇷' }
   ];
 
-
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Cargando...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
