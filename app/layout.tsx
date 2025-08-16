@@ -9,10 +9,12 @@ const bricolage = Bricolage_Grotesque({
   variable: "--font-bricolage",
   subsets: ["latin"],
 });
-
 export const metadata: Metadata = {
   title: "Board Latinoamericano de Perfusión",
   description: "Certificación Profesional en Perfusión Cardiovascular",
+  icons: {
+    icon: "/images/favicon.png",
+  },
 };
 
 export default function RootLayout({
