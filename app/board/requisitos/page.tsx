@@ -4,7 +4,7 @@ import React from 'react';
 
 const RequisitosPage = () => {
   const handleEmailClick = () => {
-    window.location.href = 'mailto:Director@boardlatinoamericanodeperfusion.com';
+    window.location.href = 'mailto:info@boardlatinoamericanodeperfusion.com';
   };
 
   return (
@@ -25,7 +25,7 @@ const RequisitosPage = () => {
                   onClick={handleEmailClick}
                   className="text-blue-600 hover:text-blue-800 underline font-semibold transition-colors"
                 >
-                  Director@boardlatinoamericanodeperfusion.com
+                  info@boardlatinoamericanodeperfusion.com
                 </button>
                 <span className="font-semibold"> con las siguientes informaciones:</span>
               </p>

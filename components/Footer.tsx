@@ -29,7 +29,7 @@ const Footer = () => {
                 <Mail className="w-5 h-5 text-blue-400 flex-shrink-0" />
                 <a href="mailto:Operaciones@asociacionalap.com" 
                    className="hover:text-white transition-colors duration-300 break-all">
-                  director@boardlatinoamericanodeperfusion.com
+                  info@boardlatinoamericanodeperfusion.com
                 </a>
               </div>
               

@@ -6,7 +6,7 @@ const RecertificationPage = () => {
   const [activeTab, setActiveTab] = useState('categoria1');
 
   const handleEmailClick = () => {
-    window.location.href = 'mailto:Director@boardlatinoamericanodeperfusion.com';
+    window.location.href = 'mailto:info@boardlatinoamericanodeperfusion.com';
   };
 
   const categoriaData = {
