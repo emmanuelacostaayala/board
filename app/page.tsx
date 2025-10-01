@@ -151,9 +151,14 @@ const CertificationPage = () => {
               
               <div className="text-center">
                 <p className="text-sm text-gray-600 mb-4">UN EXAMEN AL AÑO</p>
-                <button className="w-full bg-gradient-to-r from-green-500 to-emerald-500 text-white font-bold py-4 px-6 rounded-xl hover:from-green-600 hover:to-emerald-600 transition-all duration-300 transform hover:scale-105 shadow-lg">
-                  Inscríbete Ahora
-                </button>
+                <a
+  href="/board/aplicar"
+  className="w-full bg-gradient-to-r from-green-500 to-emerald-500 text-white font-bold py-4 px-6 rounded-xl hover:from-green-600 hover:to-emerald-600 transition-all duration-300 transform hover:scale-105 shadow-lg inline-block text-center"
+  aria-label="Inscríbete Ahora"
+>
+  Inscríbete Ahora
+</a>
+
               </div>
             </div>
           </div>

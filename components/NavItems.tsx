@@ -20,7 +20,7 @@ const navItems = [
     ],
   },
   { label: "Acompañante IA", href: "/companions" },
-  { label: "Mis avances", href: "/my-journey" },
+  { label: "Mi Perfil PCC", href: "/my-journey" },
 ];
 
 const NavItems = () => {
