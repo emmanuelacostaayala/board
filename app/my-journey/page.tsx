@@ -1,12 +1,11 @@
 // app/my-journey/page.tsx
-
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { currentUser } from "@clerk/nextjs/server";
+import { currentUser } from "@clerk/nextjs/server"; // server-only import OK aquí
 import { redirect } from "next/navigation";
 import {
   getUserCompanions,
@@ -16,6 +15,8 @@ import {
 import Image from "next/image";
 import CompanionsList from "@/components/CompanionsList";
 import PCCDashboard from "@/components/PCCDashboard";
+import PaymentButtons from "@/components/PaymentButtons";
+// PaymentsRecent removed intentionally per your request
 
 const MyJourney = async () => {
   const user = await currentUser();
@@ -46,7 +47,7 @@ const MyJourney = async () => {
             </p>
           </div>
         </div>
-        <div className="flex gap-4">
+        <div className="flex gap-4 items-center">
           <div className="border border-black rounded-lg p-3 gap-2 flex flex-col h-fit">
             <div className="flex gap-2 items-center">
               <Image
@@ -66,6 +67,22 @@ const MyJourney = async () => {
             </div>
             <div>Acompañantes creados</div>
           </div>
+
+          {/* BOTÓN SIMPLE que abre el sitio de pago en una pestaña nueva */}
+          <div className="flex items-center">
+            <a
+              href="https://pay.boardlatinoamericanodeperfusion.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-3 py-2 rounded-md bg-[#0EA5A4] hover:bg-[#089191] text-white font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#089191]"
+            >
+              {/* icono pequeño */}
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" aria-hidden>
+                <path d="M3 12h18M12 3v18" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              Hacer un Pago
+            </a>
+          </div>
         </div>
       </section>
 
@@ -74,8 +91,18 @@ const MyJourney = async () => {
         userId={user.id}
         userFirstName={user.firstName ?? ""}
         userLastName={user.lastName ?? ""}
-        createdAtISO={user.createdAt ? new Date(user.createdAt).toISOString() : null}
+        createdAtISO={
+          user.createdAt ? new Date(user.createdAt).toISOString() : null
+        }
       />
+
+      {/* Pagos */}
+      <section className="my-6">
+        <h2 className="text-xl font-semibold mb-3">Pagos</h2>
+        <PaymentButtons />
+      </section>
+
+      {/* Pagos recientes removed */}
 
       {/* Secciones que ya tenías */}
       <Accordion type="multiple">
