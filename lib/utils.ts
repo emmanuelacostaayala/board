@@ -13,21 +13,22 @@ export const getSubjectColor = (subject: string) => {
 
 export const configureAssistant = (voice: string, style: string) => {
   const voiceId = voices[voice as keyof typeof voices][
-          style as keyof (typeof voices)[keyof typeof voices]
-          ] || "sarah";
+    style as keyof (typeof voices)[keyof typeof voices]
+  ] || "p4w8j6zCUDJ0nGJ3okKs"; // Fallback LATAM
 
   const vapiAssistant: CreateAssistantDTO = {
-    name: "Companion",
+    name: "Compañero",
     firstMessage:
-        "Hello, let's start the session. Today we'll be talking about {{topic}}.",
+      "Hola, comencemos la sesión. Hoy hablaremos sobre {{topic}}.",
     transcriber: {
       provider: "deepgram",
       model: "nova-3",
-      language: "en",
+      language: "es-419", // Español latinoamericano
     },
     voice: {
       provider: "11labs",
       voiceId: voiceId,
+      model: "eleven_multilingual_v2", // Modelo multilingüe (acento natural)
       stability: 0.4,
       similarityBoost: 0.8,
       speed: 1,
@@ -40,17 +41,17 @@ export const configureAssistant = (voice: string, style: string) => {
       messages: [
         {
           role: "system",
-          content: `You are a highly knowledgeable tutor teaching a real-time voice session with a student. Your goal is to teach the student about the topic and subject.
+          content: `Eres un tutor con gran conocimiento que imparte una sesión de voz en tiempo real con un estudiante.
+                    Responde SIEMPRE en español latino neutro.
 
-                    Tutor Guidelines:
-                    Stick to the given topic - {{ topic }} and subject - {{ subject }} and teach the student about it.
-                    Keep the conversation flowing smoothly while maintaining control.
-                    From time to time make sure that the student is following you and understands you.
-                    Break down the topic into smaller parts and teach the student one part at a time.
-                    Keep your style of conversation {{ style }}.
-                    Keep your responses short, like in a real voice conversation.
-                    Do not include any special characters in your responses - this is a voice conversation.
-              `,
+                    Pautas para el tutor:
+                    Mantente en el tema indicado - {{ topic }} y la asignatura - {{ subject }} y enseña al estudiante sobre ello.
+                    Mantén la conversación fluida mientras mantienes el control.
+                    De vez en cuando, asegúrate de que el estudiante te sigue y te entiende.
+                    Divide el tema en partes más pequeñas y enseña al estudiante una parte a la vez.
+                    Mantén tu estilo de conversación {{ style }}.
+                    Mantén tus respuestas breves, como en una conversación de voz real.
+                    No incluyas caracteres especiales en tus respuestas - esta es una conversación de voz.`,
         },
       ],
     },

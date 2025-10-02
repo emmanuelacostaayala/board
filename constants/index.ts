@@ -21,8 +21,9 @@ export const subjectsColors = {
 };
 
 export const voices = {
-  male: { casual: "2BJW5coyhAzSr8STdHbE", formal: "c6SfcYrb2t09NHXiT80T" },
-  female: { casual: "ZIlrSGI4jZqobxRKprJz", formal: "sarah" },
+  // IDs de voces LATAM (ejemplo)
+  male:   { casual: "9ex3ULzEJpgppkMxiT5I", formal: "9ex3ULzEJpgppkMxiT5I" },
+  female: { casual: "p4w8j6zCUDJ0nGJ3okKs", formal: "p4w8j6zCUDJ0nGJ3okKs" },
 };
 
 export const recentSessions = [
