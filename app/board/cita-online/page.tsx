@@ -28,7 +28,7 @@ const OnlineAppointmentPage = () => {
     {
       id: 'consultation',
       title: 'Consultoría Técnica',
-      duration: '60 minutos',
+      duration: '40 minutos',
       price: 'Gratuita',
       description: 'Asesoría personalizada sobre procedimientos de perfusión y mejores prácticas',
       features: ['Revisión de casos clínicos', 'Recomendaciones técnicas', 'Seguimiento posterior'],
@@ -37,7 +37,7 @@ const OnlineAppointmentPage = () => {
     {
       id: 'certification',
       title: 'Orientación para Certificación',
-      duration: '45 minutos',
+      duration: '40 minutos',
       price: 'Gratuita',
       description: 'Guía para el proceso de certificación del Board Latinoamericano de Perfusión',
       features: ['Revisión de requisitos', 'Plan de estudio', 'Tips para el examen'],
@@ -46,8 +46,8 @@ const OnlineAppointmentPage = () => {
     {
       id: 'training',
       title: 'Sesión de Entrenamiento',
-      duration: '90 minutos',
-      price: '$50 USD',
+      duration: '40 minutos',
+      price: '$40 USD',
       description: 'Entrenamiento especializado en técnicas avanzadas de perfusión',
       features: ['Simulación de casos', 'Práctica dirigida', 'Material exclusivo'],
       calendlyUrl: 'https://calendly.com/your-account/sesion-entrenamiento'

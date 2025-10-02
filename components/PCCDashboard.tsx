@@ -69,7 +69,7 @@ export default function PCCDashboard(props: Props) {
   const [uceApproved, setUceApproved] = useState<'si' | 'no' | ''>('');
   const [uceName, setUceName] = useState('');
   const [uceCountry, setUceCountry] = useState('');
-  const [uceNumber, setUceNumber] = useState<number>(0);
+  const [uceNumber, setUceNumber] = useState<number | null>(0); // ← permite null
   const [uceEventTypes, setUceEventTypes] = useState<string[]>([]);
   const [uceInitials, setUceInitials] = useState('');
 
@@ -156,13 +156,16 @@ export default function PCCDashboard(props: Props) {
 
   async function submitUce() {
     if (!pcc) return alert('Selecciona tu PCC primero.');
-    if (!uceDate || !uceInstitution || !uceName || !uceCountry || !uceNumber || !uceApproved) {
+    // Permitir null si el usuario marcó "No lo sé"
+    const uceNumberInvalid = (uceNumber === null) ? false : !uceNumber;
+    if (!uceDate || !uceInstitution || !uceName || !uceCountry || !uceApproved || uceNumberInvalid) {
       return alert('Completa todos los campos obligatorios.');
     }
     await createUceEvent({
       userId, pccCode: pcc, eventDate: uceDate, institution: uceInstitution,
       approvedByALAP: uceApproved === 'si', eventName: uceName, country: uceCountry,
-      ucesAcquired: Number(uceNumber), eventTypes: uceEventTypes, initials: uceInitials || ''
+      ucesAcquired: (uceNumber === null ? null : Number(uceNumber)), // ← guarda NULO si “No lo sé”
+      eventTypes: uceEventTypes, initials: uceInitials || ''
     });
     setUceOpen(false);
     setUceDate(''); setUceInstitution(''); setUceName(''); setUceCountry('');
@@ -229,7 +232,7 @@ export default function PCCDashboard(props: Props) {
 
       {/* Tabla Casos Clínicos */}
       <section>
-        <h2 className="text-4xl font-extrabold mb-4">REGISTRO DE CASOS CLÍNICOS</h2>
+        <h2 className="text-4xl font-extrabold mb-4">REGISTRO DE CASOS CLÍNICOS 2025</h2>
         <div className="rounded-md border overflow-auto max-h-[420px]">
           <Table>
             <TableHeader>
@@ -265,7 +268,7 @@ export default function PCCDashboard(props: Props) {
 
       {/* Tabla UCE */}
       <section>
-        <h2 className="text-4xl font-extrabold mb-4">REGISTRO UCE (Actividad académica)</h2>
+        <h2 className="text-4xl font-extrabold mb-4">REGISTRO UCE (Actividad académica 2024 a 2027)</h2>
         <div className="rounded-md border overflow-auto max-h-[420px]">
           <Table>
             <TableHeader>
@@ -307,7 +310,7 @@ export default function PCCDashboard(props: Props) {
       <Dialog open={caseOpen} onOpenChange={setCaseOpen}>
         <DialogContent className="sm:max-w-[620px]">
           <DialogHeader>
-            <DialogTitle className="text-3xl">REGISTRO DE CASOS CLÍNICOS</DialogTitle>
+            <DialogTitle className="text-3xl">REGISTRO DE CASOS CLÍNICOS 2025</DialogTitle>
             <DialogDescription>Completa la información. Los campos de identidad se llenan automáticamente.</DialogDescription>
           </DialogHeader>
 
@@ -401,7 +404,20 @@ export default function PCCDashboard(props: Props) {
             </div>
             <div className="space-y-2">
               <Label>UCE&apos;s Adquiridos *</Label>
-              <Input type="number" min={0} value={uceNumber} onChange={e => setUceNumber(Number(e.target.value))} />
+              <Input
+                type="number"
+                min={0}
+                value={uceNumber ?? ''}
+                onChange={e => setUceNumber(Number(e.target.value))}
+                disabled={uceNumber === null}
+              />
+              <label className="flex items-center gap-2 text-sm">
+                <Checkbox
+                  checked={uceNumber === null}
+                  onCheckedChange={(ch) => setUceNumber(ch ? null : 0)}
+                />
+                No lo sé
+              </label>
             </div>
 
             <div className="space-y-2 sm:col-span-2">
