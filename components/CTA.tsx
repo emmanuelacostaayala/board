@@ -9,7 +9,7 @@ const Cta = () => {
                 Crea y personaliza tu compañero con IA 
             </h2>
             <p>Elije un nombre, tema del exámen de perfusión, voz, personalidad, etc y haz que sea divertido!</p>
-            <Image src="images/cta.svg" alt="cta" width={362} height={232} />
+            <Image src="/images/cta.png" alt="cta" width={362} height={232} />
             <button className="btn-primary">
                 <Image src="/icons/plus.svg" alt="plus" width={12} height={12}/>
                 <Link href="/companions/new">
