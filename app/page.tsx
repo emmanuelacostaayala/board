@@ -316,7 +316,7 @@ const CertificationPage = () => {
               </ul>
               <div className="mt-6">
                 <a
-                  href="/board/salas"
+                  href="/board/cita-online"
                   className="inline-flex items-center justify-center w-full bg-gradient-to-r from-indigo-600 to-blue-600 text-white font-semibold py-3 px-6 rounded-xl hover:from-indigo-700 hover:to-blue-700 transition-all"
                 >
                   Ver próximas salas de estudio
