@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
 import {
   Clock,
   DollarSign,
@@ -12,18 +13,17 @@ import {
   Megaphone,
   Bell,
   ClipboardList,
-  BookOpen,
   ShieldCheck,
 } from 'lucide-react';
-import CompanionCard from "@/components/CompanionCard";
-import CompanionsList from "@/components/CompanionsList";
-import CTA from "@/components/CTA";
-import { getAllCompanions, getRecentSessions } from "@/lib/actions/companion.actions";
-import { getSubjectColor } from "@/lib/utils";
+import CompanionCard from '@/components/CompanionCard';
+import CompanionsList from '@/components/CompanionsList';
+import CTA from '@/components/CTA';
+import { getAllCompanions, getRecentSessions } from '@/lib/actions/companion.actions';
+import { getSubjectColor } from '@/lib/utils';
 
-const CertificationPage = () => {
-  const [companions, setCompanions] = useState([]);
-  const [recentSessionsCompanions, setRecentSessionsCompanions] = useState([]);
+export default function CertificationPage() {
+  const [companions, setCompanions] = useState<any[]>([]);
+  const [recentSessionsCompanions, setRecentSessionsCompanions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -33,7 +33,6 @@ const CertificationPage = () => {
           getAllCompanions({ limit: 3 }),
           getRecentSessions(10),
         ]);
-
         setCompanions(companionsData);
         setRecentSessionsCompanions(recentSessionsData);
       } catch (error) {
@@ -42,7 +41,6 @@ const CertificationPage = () => {
         setLoading(false);
       }
     };
-
     fetchData();
   }, []);
 
@@ -90,7 +88,7 @@ const CertificationPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
-      {/* Hero Section */}
+      {/* Hero */}
       <section className="relative overflow-hidden bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white py-20">
         <div className="absolute inset-0 bg-black/20"></div>
         <div className="relative max-w-6xl mx-auto px-6 text-center">
@@ -107,130 +105,128 @@ const CertificationPage = () => {
         </div>
       </section>
 
-      {/* Exam Info Cards */}
-      <section className="max-w-7xl mx-auto px-6 -mt-12 relative z-10">
-        <div className="grid md:grid-cols-2 gap-8">
-          {/* Período II - CLOSED */}
-          <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden opacity-90">
-            <div className="bg-gradient-to-r from-gray-600 to-slate-600 p-6 text-white">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-2xl font-bold">Período II (Regular) 2025</h3>
-                <div className="flex items-center gap-2 bg-red-500/20 backdrop-blur-sm rounded-full px-3 py-1">
-                  <AlertCircle className="w-4 h-4" />
-                  <span className="text-sm font-medium">CERRADO</span>
-                </div>
-              </div>
-              <div className="text-4xl font-bold text-center bg-white/10 rounded-xl py-4">
-                04 OCT 2025
-              </div>
-            </div>
-
-            <div className="p-6 space-y-6">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="text-center p-4 bg-gray-50 rounded-xl">
-                  <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                    <Users className="w-6 h-6 text-gray-600" />
-                  </div>
-                  <div className="text-2xl font-bold text-gray-700">130-200</div>
-                  <div className="text-sm text-gray-600">Preguntas</div>
-                </div>
-
-                <div className="text-center p-4 bg-gray-50 rounded-xl">
-                  <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                    <DollarSign className="w-6 h-6 text-gray-600" />
-                  </div>
-                  <div className="text-2xl font-bold text-gray-700">$120</div>
-                  <div className="text-sm text-gray-600">USD</div>
-                </div>
-
-                <div className="text-center p-4 bg-gray-50 rounded-xl">
-                  <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                    <Award className="w-6 h-6 text-gray-600" />
-                  </div>
-                  <div className="text-2xl font-bold text-gray-700">70%</div>
-                  <div className="text-sm text-gray-600">Aprobación</div>
-                </div>
-
-                <div className="text-center p-4 bg-gray-50 rounded-xl">
-                  <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                    <Clock className="w-6 h-6 text-gray-600" />
-                  </div>
-                  <div className="text-2xl font-bold text-gray-700">3h</div>
-                  <div className="text-sm text-gray-600">Duración</div>
-                </div>
-              </div>
-
-              <div className="text-center">
-                <p className="text-sm text-gray-500 mb-4">Convocatoria finalizada</p>
-                <button
-                  className="w-full bg-gray-300 text-gray-600 font-bold py-4 px-6 rounded-xl cursor-not-allowed"
-                  disabled
-                >
-                  Período Cerrado
-                </button>
-              </div>
-            </div>
+      {/* Tipos de categorías — arriba */}
+      <section className="max-w-7xl mx-auto px-6 py-12">
+        <div className="bg-white rounded-2xl shadow-xl border p-8">
+          <div className="flex items-center gap-3 mb-6">
+            <ShieldCheck className="w-6 h-6 text-green-600" />
+            <h3 className="text-2xl font-bold text-gray-800">Tipos de categorías de PCC</h3>
           </div>
-
-          {/* Período I - Closed (histórico) */}
-          <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden opacity-75">
-            <div className="bg-gradient-to-r from-gray-500 to-slate-500 p-6 text-white">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-2xl font-bold">Período I (Inclusión) 2021-2022</h3>
-                <div className="flex items-center gap-2 bg-red-500/20 backdrop-blur-sm rounded-full px-3 py-1">
-                  <AlertCircle className="w-4 h-4" />
-                  <span className="text-sm font-medium">CERRADO</span>
-                </div>
+          <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-6">
+            <div className="rounded-xl p-6 border bg-gradient-to-b from-green-50 to-white">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="w-2 h-2 rounded-full bg-green-600" />
+                <h4 className="font-bold text-green-700">PCCa: ACTIVO</h4>
               </div>
+              <p className="text-sm text-gray-700 leading-relaxed">
+                Declara actividad clínica <span className="font-semibold">40 casos anualmente</span> (de Enero a Enero) y declara actividad académica mediante <span className="font-semibold">45 UCE</span> durante un periodo de 3 años.
+              </p>
             </div>
-
-            <div className="p-6 space-y-6">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="text-center p-4 bg-gray-50 rounded-xl">
-                  <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                    <Users className="w-6 h-6 text-gray-500" />
-                  </div>
-                  <div className="text-2xl font-bold text-gray-500">130</div>
-                  <div className="text-sm text-gray-500">Preguntas</div>
-                </div>
-
-                <div className="text-center p-4 bg-gray-50 rounded-xl">
-                  <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                    <DollarSign className="w-6 h-6 text-gray-500" />
-                  </div>
-                  <div className="text-2xl font-bold text-gray-500">$120</div>
-                  <div className="text-sm text-gray-500">USD</div>
-                </div>
-
-                <div className="text-center p-4 bg-gray-50 rounded-xl">
-                  <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                    <Award className="w-6 h-6 text-gray-500" />
-                  </div>
-                  <div className="text-2xl font-bold text-gray-500">50%</div>
-                  <div className="text-sm text-gray-500">Aprobación</div>
-                </div>
-
-                <div className="text-center p-4 bg-gray-50 rounded-xl">
-                  <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                    <Clock className="w-6 h-6 text-gray-500" />
-                  </div>
-                  <div className="text-2xl font-bold text-gray-500">2h</div>
-                  <div className="text-sm text-gray-500">Duración</div>
-                </div>
+            <div className="rounded-xl p-6 border bg-gradient-to-b from-amber-50 to-white">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="w-2 h-2 rounded-full bg-amber-600" />
+                <h4 className="font-bold text-amber-700">PCCi: INACTIVO</h4>
               </div>
-
-              <div className="text-center">
-                <p className="text-sm text-gray-500 mb-4">3 Oportunidades extra</p>
-                <button className="w-full bg-gray-300 text-gray-500 font-bold py-4 px-6 rounded-xl cursor-not-allowed" disabled>
-                  Período Cerrado
-                </button>
+              <p className="text-sm text-gray-700 leading-relaxed">
+                Declara actividad académica mediante <span className="font-semibold">45 UCE</span> durante un periodo de 3 años, <span className="font-semibold">no declara actividad clínica</span> de 40 casos anualmente.
+              </p>
+            </div>
+            <div className="rounded-xl p-6 border bg-gradient-to-b from-indigo-50 to-white">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="w-2 h-2 rounded-full bg-indigo-600" />
+                <h4 className="font-bold text-indigo-700">PCCe: EMERITUS</h4>
               </div>
+              <p className="text-sm text-gray-700 leading-relaxed">
+                Emeritus <span className="font-semibold">no declara actividad clínica</span>; puede declarar actividad académica.
+              </p>
+            </div>
+            <div className="rounded-xl p-6 border bg-gradient-to-b from-rose-50 to-white">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="w-2 h-2 rounded-full bg-rose-600" />
+                <h4 className="font-bold text-rose-700">PPCr: EN REVISIÓN</h4>
+              </div>
+              <p className="text-sm text-gray-700 leading-relaxed">
+                PCC que no ha cumplido con su categoría con un periodo de retraso de igual o mayor a 6 meses. Si al cabo de 1 año no ha declarado actividad, <span className="font-semibold">perderá la certificación</span>, la cual para recuperarse debe certificarse nuevamente a través del examen.
+              </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Time Zones Section */}
+      {/* Tarjetas: Período III + Imagen */}
+      <section className="max-w-7xl mx-auto px-6 -mt-2 relative z-10">
+        <div className="grid md:grid-cols-2 gap-8">
+          {/* Período III - ACTIVO */}
+          <div className="bg-white rounded-2xl shadow-xl border border-green-200 overflow-hidden">
+            <div className="bg-gradient-to-r from-green-500 to-emerald-500 p-6 text-white">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-2xl font-bold">Período III (Regular) 2026</h3>
+                <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-3 py-1">
+                  <CheckCircle className="w-4 h-4" />
+                  <span className="text-sm font-medium">Activo</span>
+                </div>
+              </div>
+              <div className="text-4xl font-bold text-center bg-white/10 rounded-xl py-4">03 OCT 2026</div>
+            </div>
+            <div className="p-6 space-y-6">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="text-center p-4 bg-blue-50 rounded-xl">
+                  <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                    <Users className="w-6 h-6 text-blue-600" />
+                  </div>
+                  <div className="text-2xl font-bold text-blue-600">130-200</div>
+                  <div className="text-sm text-gray-600">Preguntas</div>
+                </div>
+                <div className="text-center p-4 bg-green-50 rounded-xl">
+                  <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                    <DollarSign className="w-6 h-6 text-green-600" />
+                  </div>
+                  <div className="text-2xl font-bold text-green-600">$120</div>
+                  <div className="text-sm text-gray-600">USD</div>
+                </div>
+                <div className="text-center p-4 bg-purple-50 rounded-xl">
+                  <div className="W-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                    <Award className="w-6 h-6 text-purple-600" />
+                  </div>
+                  <div className="text-2xl font-bold text-purple-600">70%</div>
+                  <div className="text-sm text-gray-600">Aprobación</div>
+                </div>
+                <div className="text-center p-4 bg-orange-50 rounded-xl">
+                  <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                    <Clock className="w-6 h-6 text-orange-600" />
+                  </div>
+                  <div className="text-2xl font-bold text-orange-600">3h</div>
+                  <div className="text-sm text-gray-600">Duración</div>
+                </div>
+              </div>
+              <div className="text-center">
+                <p className="text-sm text-gray-600 mb-4">UN EXAMEN AL AÑO</p>
+                <a
+                  href="/board/aplicar"
+                  className="w-full bg-gradient-to-r from-green-500 to-emerald-500 text-white font-bold py-4 px-6 rounded-xl hover:from-green-600 hover:to-emerald-600 transition-all duration-300 transform hover:scale-105 shadow-lg inline-block text-center"
+                  aria-label="Inscríbete Ahora"
+                >
+                  Inscríbete Ahora
+                </a>
+              </div>
+            </div>
+          </div>
+
+          {/* Imagen del quirófano */}
+          <div className="bg-white rounded-2xl shadow-xl border overflow-hidden">
+         <Image
+  src="/descarga.png"
+  alt="Perfusionista operando y máquina de circulación extracorpórea"
+  width={1200}
+  height={800}
+  className="w-full h-auto object-contain"
+  priority
+/>
+          </div>
+        </div>
+      </section>
+
+      {/* Horarios por país */}
       <section className="max-w-6xl mx-auto px-6 py-16">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Horarios por País</h2>
@@ -238,13 +234,9 @@ const CertificationPage = () => {
             El examen es a la misma hora en todos los países. Ubica la hora correspondiente de tu país:
           </p>
         </div>
-
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           {timeZones.map((zone, index) => (
-            <div
-              key={index}
-              className="bg-white rounded-xl shadow-lg p-6 text-center hover:shadow-xl transition-shadow duration-300"
-            >
+            <div key={index} className="bg-white rounded-xl shadow-lg p-6 text-center hover:shadow-xl transition-shadow duration-300">
               <div className="text-4xl mb-3">{zone.flag}</div>
               <div className="text-2xl font-bold text-blue-600 mb-2">{zone.time}</div>
               <div className="text-gray-600 text-sm">{zone.city}</div>
@@ -253,10 +245,9 @@ const CertificationPage = () => {
         </div>
       </section>
 
-      {/* RECERTIFICACIÓN: contenido de las imágenes */}
+      {/* Recertificación (contenido imágenes) */}
       <section className="bg-gradient-to-r from-blue-50 via-indigo-50 to-purple-50 py-16 border-y">
         <div className="max-w-7xl mx-auto px-6">
-          {/* Header */}
           <div className="text-center mb-12">
             <div className="inline-flex items-center gap-2 bg-blue-100 rounded-full px-4 py-2 mb-4">
               <Megaphone className="w-5 h-5 text-blue-700" />
@@ -265,25 +256,21 @@ const CertificationPage = () => {
             <h2 className="text-3xl md:text-4xl font-bold text-gray-800">Avisos y Requisitos</h2>
           </div>
 
-          {/* Two-column info from images 1 & 2 */}
           <div className="grid md:grid-cols-2 gap-8 mb-12">
-            {/* Anuncio Importante */}
+            {/* Anuncio importante */}
             <div className="bg-white rounded-2xl shadow-xl border p-8">
               <div className="flex items-center gap-3 mb-4">
                 <Bell className="w-6 h-6 text-amber-500" />
                 <h3 className="text-2xl font-bold text-gray-800">Anuncio importante</h3>
               </div>
               <p className="text-blue-700 font-semibold mb-3">
-                Estimado PCC: Carga tus casos clínicos <span className="text-red-600">SIN COSTO ALGUNO</span>,
-                ANTES del <span className="font-bold">31-01-2024</span>.
+                Estimado PCC: Carga tus casos clínicos <span className="text-red-600">SIN COSTO ALGUNO</span>, ANTES del <span className="font-bold">31-01-2026</span>.
               </p>
               <div className="space-y-2 text-gray-700">
                 <p className="font-semibold">40 CASOS:</p>
                 <ul className="list-disc ml-6 space-y-1">
                   <li>Son <span className="font-semibold">13 casos</span> como Perfusionista principal.</li>
-                  <li>
-                    El resto de los casos pueden ser como asistente, manejo de autotransfusión, ECMO.
-                  </li>
+                  <li>El resto de los casos pueden ser como asistente, manejo de autotransfusión, ECMO.</li>
                 </ul>
               </div>
               <div className="mt-6 text-sm text-gray-500">
@@ -299,88 +286,38 @@ const CertificationPage = () => {
               </div>
             </div>
 
-            {/* Qué hacer si no completas los 40 casos */}
+            {/* ¿No completas 40? */}
             <div className="bg-white rounded-2xl shadow-xl border p-8">
               <div className="flex items-center gap-3 mb-4">
                 <ClipboardList className="w-6 h-6 text-indigo-600" />
                 <h3 className="text-2xl font-bold text-gray-800">¿No completas los 40 casos en 1 año?</h3>
               </div>
               <ul className="space-y-3 text-gray-700">
-                <li>
-                  Debes cargar los casos que tengas (<span className="font-semibold">al menos 13</span>).
-                </li>
-                <li>
-                  Puedes obtener crédito por casos asistiendo a las próximas <span className="font-semibold">salas de estudio </span>
-                  en donde se discutirán casos clínicos.
-                </li>
+                <li>Debes cargar los casos que tengas (<span className="font-semibold">al menos 13</span>).</li>
+                <li>Puedes obtener crédito por casos asistiendo a las próximas <span className="font-semibold">salas de estudio</span> en donde se discutirán casos clínicos.</li>
+                <li>Y completar el equivalente a <span className="font-semibold">40 casos</span> en <span className="font-semibold">plataformas de simulación</span> avaladas por el Board.</li>
               </ul>
               <div className="mt-6">
-                <a
-                  href="/board/cita-online"
-                  className="inline-flex items-center justify-center w-full bg-gradient-to-r from-indigo-600 to-blue-600 text-white font-semibold py-3 px-6 rounded-xl hover:from-indigo-700 hover:to-blue-700 transition-all"
-                >
-                  Ver próximas salas de estudio
-                </a>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <a
+                    href="/board/cita-online"
+                    className="inline-flex items-center justify-center w-full bg-gradient-to-r from-indigo-600 to-blue-600 text-white font-semibold py-3 px-6 rounded-xl hover:from-indigo-700 hover:to-blue-700 transition-all"
+                  >
+                    Ver próximas salas de estudio
+                  </a>
+                  <a
+                    href="https://virmedex.com/vircpb/"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center justify-center w-full bg-white border border-gray-200 text-gray-800 font-semibold py-3 px-6 rounded-xl hover:bg-gray-50 transition-all"
+                    aria-label="Virmedex"
+                  >
+                    <Image src="/virmedex.png" alt="Virmedex" width={120} height={32} className="h-6 w-auto mr-2" />
+                    Ir a Virmedex
+                  </a>
+                </div>
                 <p className="text-sm text-gray-500 text-center mt-3">
                   Contacto: <a href="mailto:info@boardlatinoamericanodeperfusion.com" className="underline text-blue-600">info@boardlatinoamericanodeperfusion.com</a>
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Tipos de categorías (imagen 3) */}
-          <div className="bg-white rounded-2xl shadow-xl border p-8">
-            <div className="flex items-center gap-3 mb-6">
-              <ShieldCheck className="w-6 h-6 text-green-600" />
-              <h3 className="text-2xl font-bold text-gray-800">Tipos de categorías de PCC</h3>
-            </div>
-
-            <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-6">
-              {/* ACTIVO */}
-              <div className="rounded-xl p-6 border bg-gradient-to-b from-green-50 to-white">
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="w-2 h-2 rounded-full bg-green-600" />
-                  <h4 className="font-bold text-green-700">PCCa: ACTIVO</h4>
-                </div>
-                <p className="text-sm text-gray-700 leading-relaxed">
-                  Declara actividad clínica <span className="font-semibold">40 casos anualmente</span> (de Enero a Enero)
-                  y declara actividad académica mediante <span className="font-semibold">45 UCE</span> durante un periodo de 3 años.
-                </p>
-              </div>
-
-              {/* INACTIVO */}
-              <div className="rounded-xl p-6 border bg-gradient-to-b from-amber-50 to-white">
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="w-2 h-2 rounded-full bg-amber-600" />
-                  <h4 className="font-bold text-amber-700">PCCi: INACTIVO</h4>
-                </div>
-                <p className="text-sm text-gray-700 leading-relaxed">
-                  Declara actividad académica mediante <span className="font-semibold">45 UCE</span> durante un periodo de 3 años,
-                  <span className="font-semibold"> no declara actividad clínica</span> de 40 casos anualmente.
-                </p>
-              </div>
-
-              {/* EMERITUS */}
-              <div className="rounded-xl p-6 border bg-gradient-to-b from-indigo-50 to-white">
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="w-2 h-2 rounded-full bg-indigo-600" />
-                  <h4 className="font-bold text-indigo-700">PCCe: EMERITUS</h4>
-                </div>
-                <p className="text-sm text-gray-700 leading-relaxed">
-                  Emeritus <span className="font-semibold">no declara actividad clínica</span>; puede declarar actividad académica.
-                </p>
-              </div>
-
-              {/* EN REVISIÓN */}
-              <div className="rounded-xl p-6 border bg-gradient-to-b from-rose-50 to-white">
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="w-2 h-2 rounded-full bg-rose-600" />
-                  <h4 className="font-bold text-rose-700">PPCr: EN REVISIÓN</h4>
-                </div>
-                <p className="text-sm text-gray-700 leading-relaxed">
-                  PCC que no ha cumplido con su categoría con un periodo de retraso de igual o mayor a 6 meses.
-                  Si al cabo de 1 año no ha declarado actividad, <span className="font-semibold">perderá la certificación</span>,
-                  la cual para recuperarse debe certificarse nuevamente a través del examen.
                 </p>
               </div>
             </div>
@@ -388,7 +325,7 @@ const CertificationPage = () => {
         </div>
       </section>
 
-      {/* PCCs Statistics */}
+      {/* Estadísticas PCC */}
       <section className="bg-gradient-to-r from-indigo-50 via-blue-50 to-purple-50 py-16">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-12">
@@ -400,13 +337,9 @@ const CertificationPage = () => {
             <div className="text-6xl font-bold text-indigo-600 mb-2">274</div>
             <p className="text-xl text-gray-600">PCCs activos en Latinoamérica</p>
           </div>
-
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
             {countries.map((country, index) => (
-              <div
-                key={index}
-                className="bg-white rounded-lg p-4 text-center shadow-sm hover:shadow-md transition-shadow duration-300"
-              >
+              <div key={index} className="bg-white rounded-lg p-4 text-center shadow-sm hover:shadow-md transition-shadow duration-300">
                 <div className="text-2xl font-bold text-indigo-600 mb-1">{country.count}</div>
                 <div className="text-sm text-gray-600">{country.name}</div>
               </div>
@@ -415,27 +348,19 @@ const CertificationPage = () => {
         </div>
       </section>
 
-      {/* Popular Companions Section */}
+      {/* Populares */}
       <main className="max-w-7xl mx-auto px-6 py-16">
-        <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-8 text-center">Acompañantes Populares</h1>
-
+        <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-8 text-center">Acompañantes Populares</h2>
         <section className="home-section mb-16">
-          {companions.map((companion) => (
+          {companions.map((companion: any) => (
             <CompanionCard key={companion.id} {...companion} color={getSubjectColor(companion.subject)} />
           ))}
         </section>
-
         <section className="home-section">
-          <CompanionsList
-            title="Secciones recientementes completadas"
-            companions={recentSessionsCompanions}
-            classNames="w-2/3 max-lg:w-full"
-          />
+          <CompanionsList title="Secciones recientementes completadas" companions={recentSessionsCompanions} classNames="w-2/3 max-lg:w-full" />
           <CTA />
         </section>
       </main>
     </div>
   );
-};
-
-export default CertificationPage;
+}

@@ -49,7 +49,7 @@ const OnlineAppointmentPage = () => {
       duration: '40 minutos',
       price: '$40 USD',
       description: 'Entrenamiento especializado en técnicas avanzadas de perfusión',
-      features: ['Simulación de casos', 'Práctica dirigida', 'Material exclusivo'],
+      features: ['Simulación de casos', 'Práctica dirigida', 'Plantea un tema de estudio'],
       calendlyUrl: 'https://calendly.com/your-account/sesion-entrenamiento'
     }
   ];
