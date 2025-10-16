@@ -251,7 +251,7 @@ export default function CertificationPage() {
           <div className="text-center mb-12">
             <div className="inline-flex items-center gap-2 bg-blue-100 rounded-full px-4 py-2 mb-4">
               <Megaphone className="w-5 h-5 text-blue-700" />
-              <span className="text-sm font-medium text-blue-700">Recertificación PCC</span>
+              <span className="text-sm font-medium text-blue-700">Recertificación 2025</span>
             </div>
             <h2 className="text-3xl md:text-4xl font-bold text-gray-800">Avisos y Requisitos</h2>
           </div>
