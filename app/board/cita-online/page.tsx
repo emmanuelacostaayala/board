@@ -1,47 +1,57 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import Script from 'next/script';
 import { Calendar, Clock, Video, Phone, User, CheckCircle, Star, ArrowRight } from 'lucide-react';
 
-const OnlineAppointmentPage = () => {
-  const [isCalendlyLoaded, setIsCalendlyLoaded] = useState(false);
+const calendlyUrl =
+  'https://calendly.com/e-henriquezmars/board-latinoamericano-de-perfusion?month=2025-10';
 
+export default function OnlineAppointmentPage() {
+  // Spinner overlay mientras aparece el iframe
+  const [inlineReady, setInlineReady] = useState(false);
+
+  // CSS del widget (recomendado por Calendly)
   useEffect(() => {
-    // Cargar el script de Calendly
-    const script = document.createElement('script');
-    script.src = 'https://assets.calendly.com/assets/external/widget.js';
-    script.async = true;
-    script.onload = () => setIsCalendlyLoaded(true);
-    document.body.appendChild(script);
-
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = 'https://assets.calendly.com/assets/external/widget.css';
+    document.head.appendChild(link);
     return () => {
-      // Cleanup
-      const existingScript = document.querySelector('script[src="https://assets.calendly.com/assets/external/widget.js"]');
-      if (existingScript) {
-        document.body.removeChild(existingScript);
-      }
+      if (document.head.contains(link)) document.head.removeChild(link);
     };
   }, []);
 
-  // Datos de los servicios disponibles
+  // Detectar cuando Calendly inyectó el iframe
+  useEffect(() => {
+    const iv = setInterval(() => {
+      const hasIframe = document.querySelector<HTMLIFrameElement>('#calendly-inline iframe');
+      if (hasIframe) {
+        setInlineReady(true);
+        clearInterval(iv);
+      }
+    }, 300);
+    return () => clearInterval(iv);
+  }, []);
+
   const services = [
     {
       id: 'consultation',
       title: 'Consultoría Técnica',
       duration: '40 minutos',
       price: 'Gratuita',
-      description: 'Asesoría personalizada sobre procedimientos de perfusión y mejores prácticas',
+      description:
+        'Asesoría personalizada sobre procedimientos de perfusión y mejores prácticas',
       features: ['Revisión de casos clínicos', 'Recomendaciones técnicas', 'Seguimiento posterior'],
-      calendlyUrl: 'https://calendly.com/your-account/consultoria-tecnica'
     },
     {
       id: 'certification',
       title: 'Orientación para Certificación',
       duration: '40 minutos',
       price: 'Gratuita',
-      description: 'Guía para el proceso de certificación del Board Latinoamericano de Perfusión',
+      description:
+        'Guía para el proceso de certificación del Board Latinoamericano de Perfusión',
       features: ['Revisión de requisitos', 'Plan de estudio', 'Tips para el examen'],
-      calendlyUrl: 'https://calendly.com/your-account/orientacion-certificacion'
     },
     {
       id: 'training',
@@ -50,8 +60,7 @@ const OnlineAppointmentPage = () => {
       price: '$40 USD',
       description: 'Entrenamiento especializado en técnicas avanzadas de perfusión',
       features: ['Simulación de casos', 'Práctica dirigida', 'Plantea un tema de estudio'],
-      calendlyUrl: 'https://calendly.com/your-account/sesion-entrenamiento'
-    }
+    },
   ];
 
   const testimonials = [
@@ -60,30 +69,36 @@ const OnlineAppointmentPage = () => {
       role: 'Perfusionista Cardiovascular',
       country: 'México',
       rating: 5,
-      comment: 'La consultoría fue excepcional. Recibí orientación muy valiosa para mejorar mis técnicas de perfusión.'
+      comment:
+        'La consultoría fue excepcional. Recibí orientación muy valiosa para mejorar mis técnicas de perfusión.',
     },
     {
       name: 'Carlos Rodríguez',
       role: 'Perfusionista Senior',
       country: 'Colombia',
       rating: 5,
-      comment: 'El proceso de agendamiento fue muy fácil y la sesión superó mis expectativas. Muy recomendado.'
+      comment:
+        'El proceso de agendamiento fue muy fácil y la sesión superó mis expectativas. Muy recomendado.',
     },
     {
       name: 'Ana Pérez',
       role: 'Candidata a Certificación',
       country: 'Argentina',
       rating: 5,
-      comment: 'La orientación para certificación me ayudó enormemente. Aprobé el Board en mi primer intento.'
-    }
+      comment:
+        'La orientación para certificación me ayudó enormemente. Aprobé el Board en mi primer intento.',
+    },
   ];
 
-  const ServiceCard = ({ service }) => {
+  const ServiceCard = ({ service }: { service: any }) => {
     const openCalendly = () => {
-      if (window.Calendly) {
-        window.Calendly.initPopupWidget({
-          url: service.calendlyUrl
+      const w = window as any;
+      if (w?.Calendly) {
+        w.Calendly.initPopupWidget({
+          url: calendlyUrl + '&hide_event_type_details=1&hide_gdpr_banner=1',
         });
+      } else {
+        document.getElementById('calendly-inline')?.scrollIntoView({ behavior: 'smooth' });
       }
     };
 
@@ -99,7 +114,11 @@ const OnlineAppointmentPage = () => {
                   <span>{service.duration}</span>
                 </div>
                 <div className="flex items-center space-x-1">
-                  <span className={`font-semibold ${service.price === 'Gratuita' ? 'text-green-600' : 'text-blue-600'}`}>
+                  <span
+                    className={`font-semibold ${
+                      service.price === 'Gratuita' ? 'text-green-600' : 'text-blue-600'
+                    }`}
+                  >
                     {service.price}
                   </span>
                 </div>
@@ -111,7 +130,7 @@ const OnlineAppointmentPage = () => {
           <div className="mb-6">
             <h4 className="font-semibold text-gray-800 mb-3">Lo que incluye:</h4>
             <ul className="space-y-2">
-              {service.features.map((feature, index) => (
+              {service.features.map((feature: string, index: number) => (
                 <li key={index} className="flex items-center space-x-2">
                   <CheckCircle className="h-4 w-4 text-green-500" />
                   <span className="text-gray-600 text-sm">{feature}</span>
@@ -135,18 +154,22 @@ const OnlineAppointmentPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
+      {/* Script oficial de Calendly: cargar ASAP después de hidratar */}
+      <Script
+        src="https://assets.calendly.com/assets/external/widget.js"
+        strategy="afterInteractive"
+      />
+
       {/* Header */}
       <div className="bg-white shadow-lg border-b-4 border-blue-600">
         <div className="max-w-7xl mx-auto px-6 py-12">
           <div className="text-center">
-            <h1 className="text-5xl md:text-6xl font-bold text-gray-800 mb-4">
-              Citas Online
-            </h1>
+            <h1 className="text-5xl md:text-6xl font-bold text-gray-800 mb-4">Citas Online</h1>
             <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-              Agenda una consulta personalizada con nuestros expertos en perfusión. 
-              Recibe orientación profesional desde la comodidad de tu hogar.
+              Agenda una consulta personalizada con nuestros expertos en perfusión. Recibe
+              orientación profesional desde la comodidad de tu hogar.
             </p>
-            
+
             {/* Badges informativos */}
             <div className="flex flex-wrap justify-center gap-4 text-sm">
               <div className="bg-blue-100 text-blue-800 px-4 py-2 rounded-full flex items-center space-x-2">
@@ -167,7 +190,7 @@ const OnlineAppointmentPage = () => {
       </div>
 
       <div className="max-w-7xl mx-auto px-6 py-12">
-        {/* Sección de servicios */}
+        {/* Servicios */}
         <section className="mb-16">
           <div className="text-center mb-12">
             <h2 className="text-4xl font-bold text-gray-800 mb-4">Nuestros Servicios</h2>
@@ -175,7 +198,7 @@ const OnlineAppointmentPage = () => {
               Elige el tipo de consulta que mejor se adapte a tus necesidades profesionales
             </p>
           </div>
-          
+
           <div className="grid lg:grid-cols-3 gap-8">
             {services.map((service) => (
               <ServiceCard key={service.id} service={service} />
@@ -183,159 +206,98 @@ const OnlineAppointmentPage = () => {
           </div>
         </section>
 
-        {/* Sección de proceso */}
+        {/* ¿Cómo funciona? */}
         <section className="mb-16">
           <div className="bg-white rounded-2xl shadow-xl p-8">
             <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">¿Cómo funciona?</h2>
-            
+
             <div className="grid md:grid-cols-4 gap-6">
-              <div className="text-center">
-                <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-white font-bold text-xl">1</span>
+              {[1, 2, 3, 4].map((step) => (
+                <div key={step} className="text-center">
+                  <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span className="text-white font-bold text-xl">{step}</span>
+                  </div>
+                  <h3 className="font-semibold text-gray-800 mb-2">
+                    {step === 1 && 'Selecciona tu servicio'}
+                    {step === 2 && 'Agenda tu cita'}
+                    {step === 3 && 'Recibe confirmación'}
+                    {step === 4 && '¡Conéctate!'}
+                  </h3>
+                  <p className="text-gray-600 text-sm">
+                    {step === 1 && 'Elige el tipo de consulta que necesitas'}
+                    {step === 2 && 'Selecciona fecha y hora disponible'}
+                    {step === 3 && 'Te enviaremos el enlace de la videollamada'}
+                    {step === 4 && 'Únete a tu sesión a la hora programada'}
+                  </p>
                 </div>
-                <h3 className="font-semibold text-gray-800 mb-2">Selecciona tu servicio</h3>
-                <p className="text-gray-600 text-sm">Elige el tipo de consulta que necesitas</p>
-              </div>
-              
-              <div className="text-center">
-                <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-white font-bold text-xl">2</span>
-                </div>
-                <h3 className="font-semibold text-gray-800 mb-2">Agenda tu cita</h3>
-                <p className="text-gray-600 text-sm">Selecciona fecha y hora disponible</p>
-              </div>
-              
-              <div className="text-center">
-                <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-white font-bold text-xl">3</span>
-                </div>
-                <h3 className="font-semibold text-gray-800 mb-2">Recibe confirmación</h3>
-                <p className="text-gray-600 text-sm">Te enviaremos el enlace de la videollamada</p>
-              </div>
-              
-              <div className="text-center">
-                <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-white font-bold text-xl">4</span>
-                </div>
-                <h3 className="font-semibold text-gray-800 mb-2">¡Conéctate!</h3>
-                <p className="text-gray-600 text-sm">Únete a tu sesión a la hora programada</p>
-              </div>
+              ))}
             </div>
           </div>
         </section>
 
-        {/* Widget de Calendly integrado */}
-        <section className="mb-16">
+        {/* Calendly Inline (sin botón) */}
+        <section className="mb-2">
           <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-            <div className="p-8 border-b">
-              <h2 className="text-3xl font-bold text-gray-800 text-center mb-4">
-                Agenda tu Cita Directamente
-              </h2>
-              <p className="text-gray-600 text-center">
-                O usa nuestro calendario integrado para ver todas las disponibilidades
-              </p>
-            </div>
-            
-            <div className="p-8">
-              {isCalendlyLoaded ? (
-                <div 
-                  className="calendly-inline-widget" 
-                  data-url="https://calendly.com/your-account/consultation"
-                  style={{ minWidth: '320px', height: '700px' }}
-                ></div>
-              ) : (
-                <div className="flex items-center justify-center h-96">
+            <div className="relative p-0">
+              {/* Spinner overlay hasta que aparezca el iframe */}
+              {!inlineReady && (
+                <div className="absolute inset-0 flex items-center justify-center z-10 bg-white/60">
                   <div className="text-center">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                    <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600 mx-auto mb-3" />
                     <p className="text-gray-600">Cargando calendario...</p>
                   </div>
                 </div>
               )}
+
+              {/* El contenedor inline SIEMPRE está presente */}
+              <div
+                id="calendly-inline"
+                className="calendly-inline-widget"
+                data-url={`${calendlyUrl}&hide_event_type_details=1&hide_gdpr_banner=1`}
+                style={{ minWidth: '320px', height: '680px' }}
+              />
             </div>
           </div>
         </section>
 
         {/* Testimonios */}
-        <section className="mb-16">
-          <div className="text-center mb-12">
+        <section className="mt-4">
+          <div className="text-center mb-8">
             <h2 className="text-4xl font-bold text-gray-800 mb-4">Lo que dicen nuestros clientes</h2>
             <p className="text-xl text-gray-600">
               Experiencias reales de perfusionistas que han usado nuestros servicios
             </p>
           </div>
-          
+
           <div className="grid md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => (
-              <div key={index} className="bg-white rounded-xl shadow-lg p-6">
+            {testimonials.map((t, i) => (
+              <div key={i} className="bg-white rounded-xl shadow-lg p-6">
                 <div className="flex items-center mb-4">
-                  {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star key={i} className="h-5 w-5 text-yellow-400 fill-current" />
+                  {Array.from({ length: t.rating }).map((_, j) => (
+                    <Star key={j} className="h-5 w-5 text-yellow-400 fill-current" />
                   ))}
                 </div>
-                <p className="text-gray-600 mb-4 italic">"{testimonial.comment}"</p>
+                <p className="text-gray-600 mb-4 italic">"{t.comment}"</p>
                 <div className="border-t pt-4">
-                  <p className="font-semibold text-gray-800">{testimonial.name}</p>
-                  <p className="text-sm text-gray-600">{testimonial.role}</p>
-                  <p className="text-sm text-blue-600">{testimonial.country}</p>
+                  <p className="font-semibold text-gray-800">{t.name}</p>
+                  <p className="text-sm text-gray-600">{t.role}</p>
+                  <p className="text-sm text-blue-600">{t.country}</p>
                 </div>
               </div>
             ))}
           </div>
         </section>
 
-        {/* FAQ */}
-        <section className="mb-16">
-          <div className="bg-white rounded-2xl shadow-xl p-8">
-            <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">Preguntas Frecuentes</h2>
-            
-            <div className="grid md:grid-cols-2 gap-8">
-              <div>
-                <h3 className="font-semibold text-gray-800 mb-2">¿Qué necesito para la videollamada?</h3>
-                <p className="text-gray-600 text-sm mb-4">
-                  Solo necesitas una conexión a internet estable, una cámara y micrófono. 
-                  Te enviaremos un enlace que funciona en cualquier navegador.
-                </p>
-              </div>
-              
-              <div>
-                <h3 className="font-semibold text-gray-800 mb-2">¿Puedo cancelar o reprogramar?</h3>
-                <p className="text-gray-600 text-sm mb-4">
-                  Sí, puedes cancelar o reprogramar hasta 24 horas antes de tu cita 
-                  sin ningún costo adicional.
-                </p>
-              </div>
-              
-              <div>
-                <h3 className="font-semibold text-gray-800 mb-2">¿En qué idiomas ofrecen consultas?</h3>
-                <p className="text-gray-600 text-sm mb-4">
-                  Ofrecemos consultas en español e inglés. 
-                  Especifica tu preferencia al agendar.
-                </p>
-              </div>
-              
-              <div>
-                <h3 className="font-semibold text-gray-800 mb-2">¿Recibiré material adicional?</h3>
-                <p className="text-gray-600 text-sm mb-4">
-                  Sí, después de cada consulta recibirás un resumen por email 
-                  con recomendaciones y recursos adicionales.
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-
         {/* CTA final */}
-        <div className="text-center bg-gradient-to-r from-blue-600 to-blue-800 rounded-2xl p-12 text-white">
+        <div className="text-center bg-gradient-to-r from-blue-600 to-blue-800 rounded-2xl p-12 text-white mt-10">
           <h3 className="text-4xl font-bold mb-4">¿Listo para mejorar tu práctica?</h3>
           <p className="text-xl mb-8 opacity-90">
             No esperes más. Agenda tu consulta personalizada hoy mismo.
           </p>
           <button
-            onClick={() => {
-              document.querySelector('.calendly-inline-widget').scrollIntoView({ 
-                behavior: 'smooth' 
-              });
-            }}
+            onClick={() =>
+              document.getElementById('calendly-inline')?.scrollIntoView({ behavior: 'smooth' })
+            }
             className="bg-white text-blue-600 font-bold py-4 px-8 rounded-lg hover:bg-gray-100 transition-colors text-lg"
           >
             Agendar mi Cita Ahora
@@ -344,6 +306,4 @@ const OnlineAppointmentPage = () => {
       </div>
     </div>
   );
-};
-
-export default OnlineAppointmentPage;
+}
