@@ -12,7 +12,7 @@ import {
   listMyUceEvents,
   listTakenPccCodes,
   releaseMyPcc,
-  
+
 } from '@/lib/actions/pcc.actions';
 import { userLooksLikePccName } from "@/lib/pcc.helpers";
 
@@ -23,6 +23,17 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 type Props = {
   userId: string;
@@ -77,6 +88,14 @@ export default function PCCDashboard(props: Props) {
   const [cases, setCases] = useState<any[]>([]);
   const [uces, setUces] = useState<any[]>([]);
 
+  // Alert Dialog State
+  const [confirmConfig, setConfirmConfig] = useState<{
+    open: boolean;
+    title: string;
+    description: string;
+    action: () => void;
+  }>({ open: false, title: '', description: '', action: () => { } });
+
   useEffect(() => {
     startTransition(async () => {
       const takenCodes = await listTakenPccCodes();
@@ -100,20 +119,36 @@ export default function PCCDashboard(props: Props) {
     if (!newCode) return;
     const looksLike = userLooksLikePccName(fullName, newCode);
     if (!looksLike) {
-      const ok = confirm('Ese usuario no se llama igual que tú. ¿Seguro que eres tú?');
-      if (!ok) return;
+      setConfirmConfig({
+        open: true,
+        title: "¿Seguro que eres tú?",
+        description: "Ese usuario no se llama igual que tú.",
+        action: () => proceedWithAssign(newCode),
+      });
+      return;
     }
+    await proceedWithAssign(newCode);
+  }
+
+  async function proceedWithAssign(code: string) {
     startTransition(async () => {
-      const res = await assignPccToUser({ userId, userFullName: fullName, pccCode: newCode });
-      if (!res.ok) return alert(res.message);
+      const res = await assignPccToUser({ userId, userFullName: fullName, pccCode: code });
+      if (!res.ok) {
+        toast.error(res.message);
+        return;
+      }
       setPcc(res.pccCode);
       const codes = await listTakenPccCodes();
       setTaken(codes);
+      toast.success(`PCC ${code} asignado correctamente.`);
     });
   }
 
   function requirePccOrWarn(openSetter: (v: boolean) => void) {
-    if (!pcc) return alert('Debes seleccionar tu PCC antes de continuar.');
+    if (!pcc) {
+      toast.error('Debes seleccionar tu PCC antes de continuar.');
+      return;
+    }
     openSetter(true);
   }
 
@@ -124,20 +159,26 @@ export default function PCCDashboard(props: Props) {
   }
 
   async function handleRelease() {
-    const ok = confirm('Vas a liberar tu PCC. ¿Continuar?');
-    if (!ok) return;
-    startTransition(async () => {
-      await releaseMyPcc(userId);
-      setPcc(null);
-      const codes = await listTakenPccCodes();
-      setTaken(codes);
+    setConfirmConfig({
+      open: true,
+      title: "¿Liberar PCC?",
+      description: "Vas a liberar tu PCC. ¿Continuar?",
+      action: () => {
+        startTransition(async () => {
+          await releaseMyPcc(userId);
+          setPcc(null);
+          const codes = await listTakenPccCodes();
+          setTaken(codes);
+          toast.success("PCC liberado correctamente.");
+        });
+      },
     });
   }
 
   async function submitCase() {
-    if (!pcc) return alert('Selecciona tu PCC primero.');
+    if (!pcc) return toast.error('Selecciona tu PCC primero.');
     if (!caseDate || !surgeonName || !institution || !surgeryType) {
-      return alert('Completa todos los campos obligatorios.');
+      return toast.error('Completa todos los campos obligatorios.');
     }
     await createClinicalCase({
       userId,
@@ -151,15 +192,15 @@ export default function PCCDashboard(props: Props) {
     setCaseDate(''); setSurgeonName(''); setInstitution(''); setSurgeryType(undefined);
     const c = await listMyClinicalCases(userId);
     setCases(c);
-    alert('Caso clínico registrado.');
+    toast.success('Caso clínico registrado.');
   }
 
   async function submitUce() {
-    if (!pcc) return alert('Selecciona tu PCC primero.');
+    if (!pcc) return toast.error('Selecciona tu PCC primero.');
     // Permitir null si el usuario marcó "No lo sé"
     const uceNumberInvalid = (uceNumber === null) ? false : !uceNumber;
     if (!uceDate || !uceInstitution || !uceName || !uceCountry || !uceApproved || uceNumberInvalid) {
-      return alert('Completa todos los campos obligatorios.');
+      return toast.error('Completa todos los campos obligatorios.');
     }
     await createUceEvent({
       userId, pccCode: pcc, eventDate: uceDate, institution: uceInstitution,
@@ -172,7 +213,7 @@ export default function PCCDashboard(props: Props) {
     setUceNumber(0); setUceEventTypes([]); setUceInitials(''); setUceApproved('');
     const u = await listMyUceEvents(userId);
     setUces(u);
-    alert('UCE registrada.');
+    toast.success('UCE registrada.');
   }
 
   return (
@@ -459,6 +500,27 @@ export default function PCCDashboard(props: Props) {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Generic Alert Dialog */}
+      <AlertDialog open={confirmConfig.open} onOpenChange={(open: boolean) => setConfirmConfig(prev => ({ ...prev, open }))}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{confirmConfig.title}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {confirmConfig.description}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={() => {
+              confirmConfig.action();
+              setConfirmConfig(prev => ({ ...prev, open: false }));
+            }}>
+              Continuar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
