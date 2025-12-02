@@ -20,9 +20,10 @@ import PaymentButtons from "@/components/PaymentButtons";
 // PaymentsRecent removed intentionally per your request
 
 const MyJourney = async () => {
+  const user = await currentUser();
+  if (!user) redirect("/sign-in");
+
   try {
-    const user = await currentUser();
-    if (!user) redirect("/sign-in");
 
     // fetch user-related data (usando user.id tal y como tienes ahora)
     const companions = await getUserCompanions(user.id);
