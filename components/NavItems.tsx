@@ -23,7 +23,7 @@ const navItems = [
   { label: "Mi Perfil PCC", href: "/my-journey" },
 ];
 
-const NavItems = () => {
+const NavItems = ({ onNavigate }: { onNavigate?: () => void }) => {
   const pathname = usePathname();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -68,13 +68,15 @@ const NavItems = () => {
     }
   };
 
-  const toggleDropdown = () => {
+  const toggleDropdown = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Evitar que el click se propague si eso fuera el problema
     // toggle manual para móvil
     setIsDropdownOpen((prev) => !prev);
   };
 
   const closeDropdown = () => {
     setIsDropdownOpen(false);
+    if (onNavigate) onNavigate(); // Cerrar menú al navegar
   };
 
   return (
@@ -171,7 +173,7 @@ const NavItems = () => {
                       viewBox="0 0 24 24"
                       stroke="currentColor"
                     >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7 7" />
                     </svg>
                   </button>
 
@@ -205,6 +207,7 @@ const NavItems = () => {
           ) : (
             <Link
               href={href}
+              onClick={onNavigate} // Cerrar al navegar en items normales
               className={cn(
                 isMobile ? "mobile-nav-link" : "nav-link",
                 pathname === href && (isMobile ? "mobile-nav-link-active" : "nav-link-active")

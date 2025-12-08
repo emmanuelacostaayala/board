@@ -54,7 +54,7 @@ const MyJourney = async () => {
       statusIcons["Revision"];
 
     return (
-      <main className="min-lg:w-3/4 space-y-10">
+      <main className="w-full lg:w-3/4 mx-auto space-y-10">
         {/* Header con info del usuario */}
         <section className="flex justify-between gap-4 max-sm:flex-col items-center">
           <div className="flex gap-4 items-center">

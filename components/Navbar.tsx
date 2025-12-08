@@ -144,8 +144,8 @@ const Navbar = () => {
                 </div>
 
                 <div className="flex flex-col h-full pt-6 pb-6 overflow-y-auto">
-                    <div onClick={closeMobileMenu}>
-                        <NavItems />
+                    <div>
+                        <NavItems onNavigate={closeMobileMenu} />
                     </div>
 
                     <SignedIn>
