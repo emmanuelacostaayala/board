@@ -363,7 +363,7 @@ export default function PCCDashboard(props: Props) {
                 <TableHead className="min-w-[140px]">Fecha de Generación</TableHead>
                 <TableHead>#PCC</TableHead>
                 <TableHead>Nombre del Cirujano</TableHead>
-                <TableHead>Rol</TableHead>
+                <TableHead>Rol del Perfusionista</TableHead>
                 <TableHead>Nombre de Institución</TableHead>
                 <TableHead>Tipo de Cirugía</TableHead>
                 <TableHead className="w-[80px]">Acciones</TableHead>
