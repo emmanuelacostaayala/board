@@ -93,6 +93,7 @@ export async function createClinicalCase(args: {
   surgeonName: string;
   institution: string;
   surgeryType: string;
+  caseRole?: string;
 }) {
   const { error } = await supabaseAdmin.from("clinical_case").insert({
     user_id: args.userId,
@@ -101,6 +102,7 @@ export async function createClinicalCase(args: {
     surgeon_name: args.surgeonName,
     institution: args.institution,
     surgery_type: args.surgeryType,
+    case_role: args.caseRole, // Nuevo campo
   });
   if (error) {
     console.error(error);
@@ -119,6 +121,45 @@ export async function listMyClinicalCases(userId: string) {
     return [];
   }
   return data || [];
+}
+
+export async function deleteClinicalCase(caseId: string, userId: string) {
+  const { error } = await supabaseAdmin
+    .from("clinical_case")
+    .delete()
+    .match({ id: caseId, user_id: userId });
+
+  if (error) {
+    console.error("Error deleting case:", error);
+    throw new Error("No se pudo eliminar el caso clínico.");
+  }
+}
+
+export async function updateClinicalCase(args: {
+  caseId: string;
+  userId: string;
+  // Campos editables
+  caseDate?: string;
+  surgeonName?: string;
+  institution?: string;
+  surgeryType?: string;
+  caseRole?: string;
+}) {
+  const { error } = await supabaseAdmin
+    .from("clinical_case")
+    .update({
+      case_date: args.caseDate,
+      surgeon_name: args.surgeonName,
+      institution: args.institution,
+      surgery_type: args.surgeryType,
+      case_role: args.caseRole, // Nuevo campo
+    })
+    .match({ id: args.caseId, user_id: args.userId });
+
+  if (error) {
+    console.error("Error updating case:", error);
+    throw new Error("No se pudo actualizar el caso clínico.");
+  }
 }
 
 /* UCE */

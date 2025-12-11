@@ -7,6 +7,8 @@ import {
   assignPccToUser,
   createClinicalCase,
   createUceEvent,
+  deleteClinicalCase,
+  updateClinicalCase,
   getMyPcc,
   listMyClinicalCases,
   listMyUceEvents,
@@ -14,6 +16,7 @@ import {
   releaseMyPcc,
 
 } from '@/lib/actions/pcc.actions';
+import { formatDateUTC } from '@/lib/utils';
 import { userLooksLikePccName } from "@/lib/pcc.helpers";
 
 import { Button } from '@/components/ui/button';
@@ -34,6 +37,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { TriangleAlert } from 'lucide-react';
 
 type Props = {
   userId: string;
@@ -57,6 +62,9 @@ function fourDigitsFromPcc(pccCode: string) {
   return m[1].padStart(4, '0');
 }
 
+import { Pencil, Trash2, MoreHorizontal } from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+
 export default function PCCDashboard(props: Props) {
   const { userId, userFirstName, userLastName, createdAtISO } = props;
   const fullName = `${userFirstName ?? ''} ${userLastName ?? ''}`.trim();
@@ -66,6 +74,7 @@ export default function PCCDashboard(props: Props) {
   const [loading, startTransition] = useTransition();
 
   const [caseOpen, setCaseOpen] = useState(false);
+  const [editingCase, setEditingCase] = useState<any | null>(null); // Nuevo estado
   const [uceOpen, setUceOpen] = useState(false);
 
   // Form caso clínico
@@ -73,6 +82,7 @@ export default function PCCDashboard(props: Props) {
   const [surgeonName, setSurgeonName] = useState('');
   const [institution, setInstitution] = useState('');
   const [surgeryType, setSurgeryType] = useState<string | undefined>(undefined);
+  const [caseRole, setCaseRole] = useState<string | undefined>(undefined);
 
   // Form UCE
   const [uceDate, setUceDate] = useState('');
@@ -146,7 +156,12 @@ export default function PCCDashboard(props: Props) {
 
   function requirePccOrWarn(openSetter: (v: boolean) => void) {
     if (!pcc) {
-      toast.error('Debes seleccionar tu PCC antes de continuar.');
+      setConfirmConfig({
+        open: true,
+        title: "PCC Requerido",
+        description: "Para registrar casos o UCE, primero debes seleccionar tu código PCC en el filtro superior.",
+        action: () => { }, // No action needed, just close
+      });
       return;
     }
     openSetter(true);
@@ -177,9 +192,37 @@ export default function PCCDashboard(props: Props) {
 
   async function submitCase() {
     if (!pcc) return toast.error('Selecciona tu PCC primero.');
-    if (!caseDate || !surgeonName || !institution || !surgeryType) {
+    if (!caseDate || !surgeonName || !institution || !surgeryType || !caseRole) {
       return toast.error('Completa todos los campos obligatorios.');
     }
+
+    // UPDATE
+    if (editingCase) {
+      startTransition(async () => {
+        try {
+          await updateClinicalCase({
+            caseId: editingCase.id,
+            userId,
+            caseDate,
+            surgeonName,
+            institution,
+            surgeryType,
+            caseRole
+          });
+          toast.success('Caso actualizado correctamente.');
+          setCaseOpen(false);
+          setEditingCase(null);
+          // Refresh
+          const c = await listMyClinicalCases(userId);
+          setCases(c);
+        } catch (e: any) {
+          toast.error(e.message || 'Error al actualizar');
+        }
+      });
+      return;
+    }
+
+    // CREATE
     await createClinicalCase({
       userId,
       pccCode: pcc,
@@ -187,9 +230,11 @@ export default function PCCDashboard(props: Props) {
       surgeonName,
       institution,
       surgeryType,
+      caseRole,
     });
     setCaseOpen(false);
-    setCaseDate(''); setSurgeonName(''); setInstitution(''); setSurgeryType(undefined);
+    setEditingCase(null); // Clean up
+    setCaseDate(''); setSurgeonName(''); setInstitution(''); setSurgeryType(undefined); setCaseRole(undefined);
     const c = await listMyClinicalCases(userId);
     setCases(c);
     toast.success('Caso clínico registrado.');
@@ -219,7 +264,18 @@ export default function PCCDashboard(props: Props) {
   return (
     <div className="mt-8 space-y-8">
       {/* Barra superior */}
+      {/* Barra superior */}
       <div className="flex flex-wrap items-center gap-4">
+        {!pcc && (
+          <Alert variant="destructive" className="w-full border-orange-500 text-orange-600 dark:border-orange-500 dark:text-orange-400 [&>svg]:text-orange-600">
+            <TriangleAlert className="h-4 w-4" />
+            <AlertTitle>Atención</AlertTitle>
+            <AlertDescription>
+              Debes seleccionar tu código PCC antes de poder registrar o visualizar tus casos.
+            </AlertDescription>
+          </Alert>
+        )}
+
         <Button asChild disabled={!pcc}>
           <a href={certificateHref()} target="_blank" rel="noopener noreferrer">
             Certificado PCC
@@ -251,7 +307,15 @@ export default function PCCDashboard(props: Props) {
         </div>
 
         <div className="ml-auto flex gap-2">
-          <Button onClick={() => requirePccOrWarn(setCaseOpen)}>
+          <Button onClick={() => {
+            setEditingCase(null); // Asegurar modo CREAR
+            setCaseDate('');
+            setSurgeonName('');
+            setInstitution('');
+            setSurgeryType(undefined);
+            setCaseRole(undefined);
+            requirePccOrWarn(setCaseOpen);
+          }}>
             Registra tu caso clínico
           </Button>
           <Button variant="destructive" onClick={() => requirePccOrWarn(setUceOpen)}>
@@ -282,17 +346,60 @@ export default function PCCDashboard(props: Props) {
                 <TableHead>#PCC</TableHead>
                 <TableHead>Nombre del Cirujano</TableHead>
                 <TableHead>Nombre de Institución</TableHead>
+                <TableHead>Nombre de Institución</TableHead>
                 <TableHead>Tipo de Cirugía</TableHead>
+                <TableHead className="w-[80px]">Acciones</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {cases.map((c) => (
                 <TableRow key={c.id}>
-                  <TableCell>{new Date(c.case_date ?? c.caseDate).toLocaleDateString('es-ES')}</TableCell>
+                  <TableCell>{formatDateUTC(c.case_date ?? c.caseDate)}</TableCell>
                   <TableCell>{Number(fourDigitsFromPcc(c.pcc_code ?? c.pccCode))}</TableCell>
                   <TableCell>{c.surgeon_name ?? c.surgeonName}</TableCell>
                   <TableCell>{c.institution}</TableCell>
                   <TableCell>{c.surgery_type ?? c.surgeryType}</TableCell>
+                  <TableCell>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="h-8 w-8">
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => {
+                          setEditingCase(c);
+                          // Cargar datos en el form
+                          setCaseDate(c.case_date ?? c.caseDate);
+                          setSurgeonName(c.surgeon_name ?? c.surgeonName);
+                          setSurgeonName(c.surgeon_name ?? c.surgeonName);
+                          setInstitution(c.institution);
+                          setSurgeryType(c.surgery_type ?? c.surgeryType);
+                          setCaseRole(c.case_role ?? c.caseRole);
+                          setCaseOpen(true);
+                        }}>
+                          <Pencil className="mr-2 h-4 w-4" /> Editar
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="text-destructive focus:text-destructive" onClick={() => {
+                          setConfirmConfig({
+                            open: true,
+                            title: "¿Eliminar caso?",
+                            description: "Esta acción no se puede deshacer.",
+                            action: () => {
+                              startTransition(async () => {
+                                await deleteClinicalCase(c.id, userId);
+                                toast.success("Caso eliminado.");
+                                const u = await listMyClinicalCases(userId);
+                                setCases(u);
+                              });
+                            }
+                          });
+                        }}>
+                          <Trash2 className="mr-2 h-4 w-4" /> Eliminar
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
                 </TableRow>
               ))}
               {cases.length === 0 && (
@@ -328,7 +435,7 @@ export default function PCCDashboard(props: Props) {
                 <TableRow key={u.id}>
                   <TableCell>{u.event_name ?? u.eventName}</TableCell>
                   <TableCell>{u.institution}</TableCell>
-                  <TableCell>{new Date(u.event_date ?? u.eventDate).toLocaleDateString('es-ES')}</TableCell>
+                  <TableCell>{formatDateUTC(u.event_date ?? u.eventDate)}</TableCell>
                   <TableCell>{u.country}</TableCell>
                   <TableCell>{Number(fourDigitsFromPcc(u.pcc_code ?? u.pccCode))}</TableCell>
                   <TableCell>{(u.approved_by_alap ?? u.approvedByALAP) ? 'Sí' : 'No'}</TableCell>
@@ -351,7 +458,9 @@ export default function PCCDashboard(props: Props) {
       <Dialog open={caseOpen} onOpenChange={setCaseOpen}>
         <DialogContent className="sm:max-w-[620px]">
           <DialogHeader>
-            <DialogTitle className="text-3xl">REGISTRO DE CASOS CLÍNICOS 2025</DialogTitle>
+            <DialogTitle className="text-3xl">
+              {editingCase ? 'Editar Caso Clínico' : 'REGISTRO DE CASOS CLÍNICOS 2025'}
+            </DialogTitle>
             <DialogDescription>Completa la información. Los campos de identidad se llenan automáticamente.</DialogDescription>
           </DialogHeader>
 
@@ -363,6 +472,19 @@ export default function PCCDashboard(props: Props) {
             <div className="space-y-2">
               <Label>PCC #</Label>
               <Input value={pcc ? Number(fourDigitsFromPcc(pcc)) : ''} readOnly />
+            </div>
+
+
+
+            <div className="space-y-2 sm:col-span-2">
+              <Label>Rol del Perfusionista *</Label>
+              <Select value={caseRole} onValueChange={setCaseRole}>
+                <SelectTrigger><SelectValue placeholder="Selecciona tu rol" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Principal">Perfusionista Principal</SelectItem>
+                  <SelectItem value="Asistente">Perfusionista Asistente</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="space-y-2">
@@ -392,7 +514,7 @@ export default function PCCDashboard(props: Props) {
 
           <DialogFooter className="gap-2">
             <Button variant="outline" onClick={() => setCaseOpen(false)}>Cancelar</Button>
-            <Button onClick={submitCase}>Registrar caso</Button>
+            <Button onClick={submitCase}>{editingCase ? 'Guardar Cambios' : 'Registrar caso'}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -521,6 +643,6 @@ export default function PCCDashboard(props: Props) {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </div>
+    </div >
   );
 }

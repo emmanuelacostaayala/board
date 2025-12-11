@@ -7,6 +7,17 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export function formatDateUTC(dateString: string | undefined | null) {
+  if (!dateString) return '';
+  // Force the date to be treated as UTC midnight to avoid local timezone shifts
+  const date = new Date(dateString);
+  return new Date(date.valueOf() + date.getTimezoneOffset() * 60000).toLocaleDateString('es-ES', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric'
+  });
+}
+
 export const getSubjectColor = (subject: string) => {
   return subjectsColors[subject as keyof typeof subjectsColors];
 };
