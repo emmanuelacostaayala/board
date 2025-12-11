@@ -363,6 +363,7 @@ export default function PCCDashboard(props: Props) {
                 <TableHead className="min-w-[140px]">Fecha de Generación</TableHead>
                 <TableHead>#PCC</TableHead>
                 <TableHead>Nombre del Cirujano</TableHead>
+                <TableHead>Rol</TableHead>
                 <TableHead>Nombre de Institución</TableHead>
                 <TableHead>Tipo de Cirugía</TableHead>
                 <TableHead className="w-[80px]">Acciones</TableHead>
@@ -374,6 +375,7 @@ export default function PCCDashboard(props: Props) {
                   <TableCell>{formatDateUTC(c.case_date ?? c.caseDate)}</TableCell>
                   <TableCell>{Number(fourDigitsFromPcc(c.pcc_code ?? c.pccCode))}</TableCell>
                   <TableCell>{c.surgeon_name ?? c.surgeonName}</TableCell>
+                  <TableCell>{c.case_role ?? c.caseRole}</TableCell>
                   <TableCell>{c.institution}</TableCell>
                   <TableCell>{c.surgery_type ?? c.surgeryType}</TableCell>
                   <TableCell>
