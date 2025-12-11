@@ -171,7 +171,7 @@ export async function createUceEvent(args: {
   approvedByALAP: boolean;
   eventName: string;
   country: string;
-  ucesAcquired: number;
+  ucesAcquired: number | null;
   eventTypes: string[]; // guardamos CSV
   initials?: string;
 }) {

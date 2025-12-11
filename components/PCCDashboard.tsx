@@ -85,6 +85,7 @@ export default function PCCDashboard(props: Props) {
   const [caseRole, setCaseRole] = useState<string | undefined>(undefined);
 
   // Form UCE
+
   const [uceDate, setUceDate] = useState('');
   const [uceInstitution, setUceInstitution] = useState('');
   const [uceApproved, setUceApproved] = useState<'si' | 'no' | ''>('');
@@ -93,6 +94,8 @@ export default function PCCDashboard(props: Props) {
   const [uceNumber, setUceNumber] = useState<number | null>(0); // ← permite null
   const [uceEventTypes, setUceEventTypes] = useState<string[]>([]);
   const [uceInitials, setUceInitials] = useState('');
+
+  const [attemptedSubmit, setAttemptedSubmit] = useState(false);
 
   // Tablas
   const [cases, setCases] = useState<any[]>([]);
@@ -191,9 +194,23 @@ export default function PCCDashboard(props: Props) {
   }
 
   async function submitCase() {
+    setAttemptedSubmit(true);
     if (!pcc) return toast.error('Selecciona tu PCC primero.');
-    if (!caseDate || !surgeonName || !institution || !surgeryType || !caseRole) {
-      return toast.error('Completa todos los campos obligatorios.');
+    const missing: string[] = [];
+    if (!caseDate) missing.push("Fecha de caso");
+    if (!surgeonName) missing.push("Nombre del Cirujano");
+    if (!institution) missing.push("Nombre de Institución");
+    if (!surgeryType) missing.push("Tipo de cirugía");
+    if (!caseRole) missing.push("Rol del Perfusionista");
+
+    if (missing.length > 0) {
+      setConfirmConfig({
+        open: true,
+        title: "Campos Faltantes",
+        description: `Por favor completa los siguientes campos obligatorios: ${missing.join(", ")}.`,
+        action: () => { }, // Close only
+      });
+      return;
     }
 
     // UPDATE
@@ -229,7 +246,7 @@ export default function PCCDashboard(props: Props) {
       caseDate,
       surgeonName,
       institution,
-      surgeryType,
+      surgeryType: surgeryType!,
       caseRole,
     });
     setCaseOpen(false);
@@ -314,6 +331,7 @@ export default function PCCDashboard(props: Props) {
             setInstitution('');
             setSurgeryType(undefined);
             setCaseRole(undefined);
+            setAttemptedSubmit(false); // Reset validation
             requirePccOrWarn(setCaseOpen);
           }}>
             Registra tu caso clínico
@@ -346,7 +364,6 @@ export default function PCCDashboard(props: Props) {
                 <TableHead>#PCC</TableHead>
                 <TableHead>Nombre del Cirujano</TableHead>
                 <TableHead>Nombre de Institución</TableHead>
-                <TableHead>Nombre de Institución</TableHead>
                 <TableHead>Tipo de Cirugía</TableHead>
                 <TableHead className="w-[80px]">Acciones</TableHead>
               </TableRow>
@@ -372,10 +389,11 @@ export default function PCCDashboard(props: Props) {
                           // Cargar datos en el form
                           setCaseDate(c.case_date ?? c.caseDate);
                           setSurgeonName(c.surgeon_name ?? c.surgeonName);
-                          setSurgeonName(c.surgeon_name ?? c.surgeonName);
                           setInstitution(c.institution);
                           setSurgeryType(c.surgery_type ?? c.surgeryType);
+                          setSurgeryType(c.surgery_type ?? c.surgeryType);
                           setCaseRole(c.case_role ?? c.caseRole);
+                          setAttemptedSubmit(false); // Reset validation
                           setCaseOpen(true);
                         }}>
                           <Pencil className="mr-2 h-4 w-4" /> Editar
@@ -479,7 +497,7 @@ export default function PCCDashboard(props: Props) {
             <div className="space-y-2 sm:col-span-2">
               <Label>Rol del Perfusionista *</Label>
               <Select value={caseRole} onValueChange={setCaseRole}>
-                <SelectTrigger><SelectValue placeholder="Selecciona tu rol" /></SelectTrigger>
+                <SelectTrigger className={attemptedSubmit && !caseRole ? "border-red-500" : ""}><SelectValue placeholder="Selecciona tu rol" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="Principal">Perfusionista Principal</SelectItem>
                   <SelectItem value="Asistente">Perfusionista Asistente</SelectItem>
@@ -489,22 +507,22 @@ export default function PCCDashboard(props: Props) {
 
             <div className="space-y-2">
               <Label>Fecha de caso *</Label>
-              <Input type="date" value={caseDate} onChange={e => setCaseDate(e.target.value)} />
+              <Input type="date" value={caseDate} onChange={e => setCaseDate(e.target.value)} className={attemptedSubmit && !caseDate ? "border-red-500" : ""} />
             </div>
             <div className="space-y-2">
               <Label>Nombre del Cirujano *</Label>
-              <Input value={surgeonName} onChange={e => setSurgeonName(e.target.value)} placeholder="Ej. Dr. Juan Pérez" />
+              <Input value={surgeonName} onChange={e => setSurgeonName(e.target.value)} placeholder="Ej. Dr. Juan Pérez" className={attemptedSubmit && !surgeonName ? "border-red-500" : ""} />
             </div>
 
             <div className="space-y-2 sm:col-span-2">
               <Label>Nombre de Institución *</Label>
-              <Input value={institution} onChange={e => setInstitution(e.target.value)} placeholder="Nombre de la clínica / hospital" />
+              <Input value={institution} onChange={e => setInstitution(e.target.value)} placeholder="Nombre de la clínica / hospital" className={attemptedSubmit && !institution ? "border-red-500" : ""} />
             </div>
 
             <div className="space-y-2 sm:col-span-2">
               <Label>Tipo de cirugía *</Label>
               <Select value={surgeryType} onValueChange={setSurgeryType}>
-                <SelectTrigger><SelectValue placeholder="Selecciona el tipo de cirugía" /></SelectTrigger>
+                <SelectTrigger className={attemptedSubmit && !surgeryType ? "border-red-500" : ""}><SelectValue placeholder="Selecciona el tipo de cirugía" /></SelectTrigger>
                 <SelectContent>
                   {SURGERY_TYPES.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
                 </SelectContent>
