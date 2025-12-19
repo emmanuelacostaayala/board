@@ -206,3 +206,48 @@ export async function listMyUceEvents(userId: string) {
   }
   return data || [];
 }
+
+export async function deleteUceEvent(uceId: string, userId: string) {
+  const { error } = await supabaseAdmin
+    .from("uce_event")
+    .delete()
+    .match({ id: uceId, user_id: userId });
+
+  if (error) {
+    console.error("Error deleting UCE:", error);
+    throw new Error("No se pudo eliminar el evento UCE.");
+  }
+}
+
+export async function updateUceEvent(args: {
+  uceId: string;
+  userId: string;
+  eventDate: string;
+  institution: string;
+  approvedByALAP: boolean;
+  eventName: string;
+  country: string;
+  ucesAcquired: number | null;
+  eventTypes: string[];
+  initials?: string;
+}) {
+  const { error } = await supabaseAdmin
+    .from("uce_event")
+    .update({
+      event_date: args.eventDate,
+      institution: args.institution,
+      approved_by_alap: args.approvedByALAP,
+      event_name: args.eventName,
+      country: args.country,
+      uces_acquired: args.ucesAcquired,
+      event_types: args.eventTypes.join(","),
+      initials: args.initials ?? "",
+    })
+    .match({ id: args.uceId, user_id: args.userId });
+
+  if (error) {
+    console.error("Error updating UCE event:", error);
+    return { ok: false, message: error.message || "Error al actualizar UCE" };
+  }
+  return { ok: true };
+}

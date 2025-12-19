@@ -9,6 +9,8 @@ import {
   createUceEvent,
   deleteClinicalCase,
   updateClinicalCase,
+  deleteUceEvent,
+  updateUceEvent,
   getMyPcc,
   listMyClinicalCases,
   listMyUceEvents,
@@ -76,6 +78,7 @@ export default function PCCDashboard(props: Props) {
   const [caseOpen, setCaseOpen] = useState(false);
   const [editingCase, setEditingCase] = useState<any | null>(null); // Nuevo estado
   const [uceOpen, setUceOpen] = useState(false);
+  const [editingUce, setEditingUce] = useState<any | null>(null); // For UCE editing
 
   // Form caso clínico
   const [caseDate, setCaseDate] = useState('');
@@ -271,13 +274,30 @@ export default function PCCDashboard(props: Props) {
     if (!uceDate || !uceInstitution || !uceName || !uceCountry || !uceApproved) {
       return toast.error('Completa todos los campos obligatorios.');
     }
-    const res = await createUceEvent({
-      userId, pccCode: pcc, eventDate: uceDate, institution: uceInstitution,
-      approvedByALAP: uceApproved === 'si', eventName: uceName, country: uceCountry,
-      // FIX: Si es null ("No lo sé"), enviamos 0 al backend para satisfacer NOT NULL
-      ucesAcquired: (uceNumber === null ? 0 : Number(uceNumber)),
-      eventTypes: uceEventTypes, initials: uceInitials || ''
-    });
+    // Decide create or update
+    let res;
+    if (editingUce) {
+      res = await updateUceEvent({
+        uceId: editingUce.id,
+        userId,
+        eventDate: uceDate,
+        institution: uceInstitution,
+        approvedByALAP: uceApproved === 'si',
+        eventName: uceName,
+        country: uceCountry,
+        ucesAcquired: (uceNumber === null ? 0 : Number(uceNumber)),
+        eventTypes: uceEventTypes,
+        initials: uceInitials || ''
+      });
+    } else {
+      res = await createUceEvent({
+        userId, pccCode: pcc, eventDate: uceDate, institution: uceInstitution,
+        approvedByALAP: uceApproved === 'si', eventName: uceName, country: uceCountry,
+        // FIX: Si es null ("No lo sé"), enviamos 0 al backend para satisfacer NOT NULL
+        ucesAcquired: (uceNumber === null ? 0 : Number(uceNumber)),
+        eventTypes: uceEventTypes, initials: uceInitials || ''
+      });
+    }
 
     if (!res.ok) {
       console.error("UCE Submission Error:", res.message);
@@ -286,11 +306,12 @@ export default function PCCDashboard(props: Props) {
     }
 
     setUceOpen(false);
+    setEditingUce(null);
     setUceDate(''); setUceInstitution(''); setUceName(''); setUceCountry('');
     setUceNumber(0); setUceEventTypes([]); setUceInitials(''); setUceApproved('');
     const u = await listMyUceEvents(userId);
     setUces(u);
-    toast.success('UCE registrada.');
+    toast.success(editingUce ? 'UCE actualizada correctamente.' : 'UCE registrada.');
   }
 
   return (
@@ -352,6 +373,7 @@ export default function PCCDashboard(props: Props) {
             Registra tu caso clínico
           </Button>
           <Button variant="destructive" onClick={() => {
+            setEditingUce(null); // Ensure "Create" mode
             setUceDate('');
             setUceInstitution('');
             setUceName('');
@@ -474,6 +496,7 @@ export default function PCCDashboard(props: Props) {
                 <TableHead>PCC#</TableHead>
                 <TableHead>Avalado por ALAP</TableHead>
                 <TableHead>UCE Adquiridos</TableHead>
+                <TableHead className="w-[80px]">Acciones</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -486,6 +509,53 @@ export default function PCCDashboard(props: Props) {
                   <TableCell>{Number(fourDigitsFromPcc(u.pcc_code ?? u.pccCode))}</TableCell>
                   <TableCell>{(u.approved_by_alap ?? u.approvedByALAP) ? 'Sí' : 'No'}</TableCell>
                   <TableCell>{u.uces_acquired ?? u.ucesAcquired}</TableCell>
+                  <TableCell>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="h-8 w-8">
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => {
+                          setEditingUce(u);
+                          // Populate form
+                          setUceDate(u.event_date ?? u.eventDate);
+                          setUceInstitution(u.institution);
+                          setUceName(u.event_name ?? u.eventName);
+                          setUceCountry(u.country);
+                          setUceApproved((u.approved_by_alap ?? u.approvedByALAP) ? 'si' : 'no');
+                          setUceNumber(u.uces_acquired ?? u.ucesAcquired);
+                          // Handle eventTypes CSV
+                          const typesStr = u.event_types ?? u.eventTypes ?? '';
+                          setUceEventTypes(typesStr ? typesStr.split(',') : []);
+                          setUceInitials(u.initials || '');
+
+                          setAttemptedSubmit(false);
+                          setUceOpen(true);
+                        }}>
+                          <Pencil className="mr-2 h-4 w-4" /> Editar
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="text-destructive focus:text-destructive" onClick={() => {
+                          setConfirmConfig({
+                            open: true,
+                            title: "¿Eliminar UCE?",
+                            description: "Esta acción no se puede deshacer.",
+                            action: () => {
+                              startTransition(async () => {
+                                await deleteUceEvent(u.id, userId);
+                                toast.success("UCE eliminada.");
+                                const updated = await listMyUceEvents(userId);
+                                setUces(updated);
+                              });
+                            }
+                          });
+                        }}>
+                          <Trash2 className="mr-2 h-4 w-4" /> Eliminar
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
                 </TableRow>
               ))}
               {uces.length === 0 && (
@@ -569,7 +639,7 @@ export default function PCCDashboard(props: Props) {
       <Dialog open={uceOpen} onOpenChange={setUceOpen}>
         <DialogContent className="sm:max-w-[740px]">
           <DialogHeader>
-            <DialogTitle className="text-3xl">Registro de UCE&apos;s</DialogTitle>
+            <DialogTitle className="text-3xl">{editingUce ? 'Editar UCE' : "Registro de UCE's"}</DialogTitle>
             <DialogDescription>Completa la información del evento académico.</DialogDescription>
           </DialogHeader>
 
@@ -665,7 +735,7 @@ export default function PCCDashboard(props: Props) {
 
           <DialogFooter className="gap-2">
             <Button variant="outline" onClick={() => setUceOpen(false)}>Cancelar</Button>
-            <Button onClick={submitUce}>Registrar UCE</Button>
+            <Button onClick={submitUce}>{editingUce ? 'Guardar Cambios' : 'Registrar UCE'}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
