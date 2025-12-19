@@ -35,6 +35,7 @@ export default function RootLayout({
         <ClerkProvider appearance={{ variables: { colorPrimary: '#fe5933' } }}>
           <Navbar />
           {children}
+          <Toaster />
           <Footer /> {/* 👈 Añade el footer */}
         </ClerkProvider>
       </body>

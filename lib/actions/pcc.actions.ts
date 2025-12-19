@@ -188,9 +188,10 @@ export async function createUceEvent(args: {
     initials: args.initials ?? "",
   });
   if (error) {
-    console.error(error);
-    throw new Error("No se pudo registrar la UCE.");
+    console.error("Error creating UCE event:", error);
+    return { ok: false, message: error.message || "Error al registrar UCE" };
   }
+  return { ok: true };
 }
 
 export async function listMyUceEvents(userId: string) {

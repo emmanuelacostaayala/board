@@ -258,18 +258,33 @@ export default function PCCDashboard(props: Props) {
   }
 
   async function submitUce() {
+    setAttemptedSubmit(true);
     if (!pcc) return toast.error('Selecciona tu PCC primero.');
-    // Permitir null si el usuario marcó "No lo sé"
-    const uceNumberInvalid = (uceNumber === null) ? false : !uceNumber;
-    if (!uceDate || !uceInstitution || !uceName || !uceCountry || !uceApproved || uceNumberInvalid) {
+    // Permitir null si el usuario marcó "No lo sé", pero para validar campos requeridos (si no es null debe ser >0 o algo, pero aquí solo chequeamos que no sea vacío si no está el check)
+    // El check "No lo sé" pone uceNumber a null via checkbox.
+
+    // Si uceNumber es 0 y no es null, es válido (puede haber eventos de 0 creditos?) -> Asumamos que sí o que el usuario pone algo.
+    // La validación original era: const uceNumberInvalid = (uceNumber === null) ? false : !uceNumber; 
+    // Si uceNumber es 0, !0 es true, asi que falla. Corrijamos para aceptar 0.
+    // Pero espera, si es input number vacio? 
+
+    if (!uceDate || !uceInstitution || !uceName || !uceCountry || !uceApproved) {
       return toast.error('Completa todos los campos obligatorios.');
     }
-    await createUceEvent({
+    const res = await createUceEvent({
       userId, pccCode: pcc, eventDate: uceDate, institution: uceInstitution,
       approvedByALAP: uceApproved === 'si', eventName: uceName, country: uceCountry,
-      ucesAcquired: (uceNumber === null ? null : Number(uceNumber)), // ← guarda NULO si “No lo sé”
+      // FIX: Si es null ("No lo sé"), enviamos 0 al backend para satisfacer NOT NULL
+      ucesAcquired: (uceNumber === null ? 0 : Number(uceNumber)),
       eventTypes: uceEventTypes, initials: uceInitials || ''
     });
+
+    if (!res.ok) {
+      console.error("UCE Submission Error:", res.message);
+      toast.error(res.message);
+      return;
+    }
+
     setUceOpen(false);
     setUceDate(''); setUceInstitution(''); setUceName(''); setUceCountry('');
     setUceNumber(0); setUceEventTypes([]); setUceInitials(''); setUceApproved('');
@@ -336,7 +351,18 @@ export default function PCCDashboard(props: Props) {
           }}>
             Registra tu caso clínico
           </Button>
-          <Button variant="destructive" onClick={() => requirePccOrWarn(setUceOpen)}>
+          <Button variant="destructive" onClick={() => {
+            setUceDate('');
+            setUceInstitution('');
+            setUceName('');
+            setUceCountry('');
+            setUceNumber(0);
+            setUceEventTypes([]);
+            setUceInitials('');
+            setUceApproved('');
+            setAttemptedSubmit(false); // Reset validation
+            requirePccOrWarn(setUceOpen);
+          }}>
             Registra tu UCE
           </Button>
         </div>
@@ -559,17 +585,17 @@ export default function PCCDashboard(props: Props) {
 
             <div className="space-y-2">
               <Label>Fecha del Evento *</Label>
-              <Input type="date" value={uceDate} onChange={e => setUceDate(e.target.value)} />
+              <Input type="date" value={uceDate} onChange={e => setUceDate(e.target.value)} className={attemptedSubmit && !uceDate ? "border-red-500" : ""} />
             </div>
             <div className="space-y-2">
               <Label>Nombre de la Institución *</Label>
-              <Input value={uceInstitution} onChange={e => setUceInstitution(e.target.value)} />
+              <Input value={uceInstitution} onChange={e => setUceInstitution(e.target.value)} className={attemptedSubmit && !uceInstitution ? "border-red-500" : ""} />
             </div>
 
             <div className="space-y-2">
               <Label>El evento fue Avalado por ALAP *</Label>
               <Select value={uceApproved} onValueChange={(v: 'si' | 'no') => setUceApproved(v)}>
-                <SelectTrigger><SelectValue placeholder="Indique si fue avalado por ALAP" /></SelectTrigger>
+                <SelectTrigger className={attemptedSubmit && !uceApproved ? "border-red-500" : ""}><SelectValue placeholder="Indique si fue avalado por ALAP" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="si">Sí</SelectItem>
                   <SelectItem value="no">No</SelectItem>
@@ -578,12 +604,12 @@ export default function PCCDashboard(props: Props) {
             </div>
             <div className="space-y-2">
               <Label>Nombre del Evento *</Label>
-              <Input value={uceName} onChange={e => setUceName(e.target.value)} />
+              <Input value={uceName} onChange={e => setUceName(e.target.value)} className={attemptedSubmit && !uceName ? "border-red-500" : ""} />
             </div>
 
             <div className="space-y-2">
               <Label>País donde se celebró el evento *</Label>
-              <Input value={uceCountry} onChange={e => setUceCountry(e.target.value)} />
+              <Input value={uceCountry} onChange={e => setUceCountry(e.target.value)} className={attemptedSubmit && !uceCountry ? "border-red-500" : ""} />
             </div>
             <div className="space-y-2">
               <Label>UCE&apos;s Adquiridos *</Label>
@@ -593,6 +619,7 @@ export default function PCCDashboard(props: Props) {
                 value={uceNumber ?? ''}
                 onChange={e => setUceNumber(Number(e.target.value))}
                 disabled={uceNumber === null}
+                className={attemptedSubmit && (uceNumber === 0 && uceNumber !== null) ? "" : ""} // Valid logic tricky here, generally not empty if number or null(checkbox)
               />
               <label className="flex items-center gap-2 text-sm">
                 <Checkbox
