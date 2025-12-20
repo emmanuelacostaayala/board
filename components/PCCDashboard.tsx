@@ -79,6 +79,7 @@ export default function PCCDashboard(props: Props) {
   const [editingCase, setEditingCase] = useState<any | null>(null); // Nuevo estado
   const [uceOpen, setUceOpen] = useState(false);
   const [editingUce, setEditingUce] = useState<any | null>(null); // For UCE editing
+  const [pdfOpen, setPdfOpen] = useState(false);
 
   // Form caso clínico
   const [caseDate, setCaseDate] = useState('');
@@ -329,15 +330,13 @@ export default function PCCDashboard(props: Props) {
           </Alert>
         )}
 
-        <Button asChild disabled={!pcc}>
-          <a href={certificateHref()} target="_blank" rel="noopener noreferrer">
-            Certificado PCC
-          </a>
+        <Button disabled={!pcc} onClick={() => setPdfOpen(true)}>
+          Certificado PCC
         </Button>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <span className="text-sm text-muted-foreground">Filter by PCC</span>
-          <Select disabled={!!pcc || loading} onValueChange={handleAssign}>
+          <Select disabled={!!pcc || loading} value={pcc ?? ''} onValueChange={handleAssign}>
             <SelectTrigger className="w-[280px]">
               <SelectValue placeholder={pcc ?? 'Select PCC'} />
             </SelectTrigger>
@@ -737,6 +736,18 @@ export default function PCCDashboard(props: Props) {
             <Button variant="outline" onClick={() => setUceOpen(false)}>Cancelar</Button>
             <Button onClick={submitUce}>{editingUce ? 'Guardar Cambios' : 'Registrar UCE'}</Button>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* PDF Viewer Dialog */}
+      <Dialog open={pdfOpen} onOpenChange={setPdfOpen}>
+        <DialogContent className="max-w-5xl w-full h-[90vh] p-0 flex flex-col gap-0 border-none bg-black/90 sm:rounded-lg">
+          <DialogHeader className="px-4 py-3 bg-white border-b shrink-0 flex flex-row items-center justify-between">
+            <DialogTitle>Certificado PCC</DialogTitle>
+          </DialogHeader>
+          <div className="flex-1 w-full min-h-0 bg-neutral-100 relative">
+            <iframe src={certificateHref()} className="absolute inset-0 w-full h-full" />
+          </div>
         </DialogContent>
       </Dialog>
 
