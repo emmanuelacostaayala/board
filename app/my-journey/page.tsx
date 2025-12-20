@@ -15,6 +15,7 @@ import {
 import { getMyPcc } from "@/lib/actions/pcc.actions"; // <- añadido
 import Image from "next/image";
 import CompanionsList from "@/components/CompanionsList";
+import PaymentAlertButton from "@/components/PaymentAlertButton";
 import PCCDashboard from "@/components/PCCDashboard";
 import PaymentButtons from "@/components/PaymentButtons";
 // PaymentsRecent removed intentionally per your request
@@ -101,10 +102,7 @@ const MyJourney = async () => {
 
             {/* BOTÓN SIMPLE que abre el sitio de pago en una pestaña nueva */}
             <div className="flex items-center">
-              <a
-                href="https://pay.boardlatinoamericanodeperfusion.com/"
-                target="_blank"
-                rel="noopener noreferrer"
+              <PaymentAlertButton
                 className="inline-flex items-center gap-2 px-3 py-2 rounded-md bg-[#0EA5A4] hover:bg-[#089191] text-white font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#089191]"
               >
                 <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" aria-hidden>
@@ -117,7 +115,7 @@ const MyJourney = async () => {
                   />
                 </svg>
                 Hacer un Pago
-              </a>
+              </PaymentAlertButton>
             </div>
           </div>
         </section>
