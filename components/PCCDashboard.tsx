@@ -111,6 +111,7 @@ export default function PCCDashboard(props: Props) {
     title: string;
     description: string;
     action: () => void;
+    isError?: boolean;
   }>({ open: false, title: '', description: '', action: () => { } });
 
   useEffect(() => {
@@ -138,9 +139,10 @@ export default function PCCDashboard(props: Props) {
     if (!looksLike) {
       setConfirmConfig({
         open: true,
-        title: "¿Seguro que eres tú?",
-        description: "Ese usuario no se llama igual que tú.",
-        action: () => proceedWithAssign(newCode),
+        title: "No te puedes asignar este usuario",
+        description: "Si crees que este usuario te pertenece por favor contacta a info@boardlatinoamericanodeperfusion.com",
+        action: () => { },
+        isError: true
       });
       return;
     }
@@ -761,13 +763,19 @@ export default function PCCDashboard(props: Props) {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction onClick={() => {
-              confirmConfig.action();
-              setConfirmConfig(prev => ({ ...prev, open: false }));
-            }}>
-              Continuar
-            </AlertDialogAction>
+            {confirmConfig.isError ? (
+              <AlertDialogCancel>Cerrar</AlertDialogCancel>
+            ) : (
+              <>
+                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                <AlertDialogAction onClick={() => {
+                  confirmConfig.action();
+                  setConfirmConfig(prev => ({ ...prev, open: false }));
+                }}>
+                  Continuar
+                </AlertDialogAction>
+              </>
+            )}
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

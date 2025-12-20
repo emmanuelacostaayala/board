@@ -214,14 +214,14 @@ export default function CertificationPage() {
 
           {/* Imagen del quirófano */}
           <div className="bg-white rounded-2xl shadow-xl border overflow-hidden">
-         <Image
-  src="/descarga.png"
-  alt="Perfusionista operando y máquina de circulación extracorpórea"
-  width={1200}
-  height={800}
-  className="w-full h-auto object-contain"
-  priority
-/>
+            <Image
+              src="/descarga.png"
+              alt="Perfusionista operando y máquina de circulación extracorpórea"
+              width={1200}
+              height={800}
+              className="w-full h-auto object-contain"
+              priority
+            />
           </div>
         </div>
       </section>
@@ -306,7 +306,7 @@ export default function CertificationPage() {
                     Ver próximas salas de estudio
                   </a>
                   <a
-                    href="https://virmedex.com/vircpb/"
+                    href="https://virmedex.com/vircpb/certificacion-board-latinoamericano-perfusion/"
                     target="_blank"
                     rel="noreferrer"
                     className="inline-flex items-center justify-center w-full bg-white border border-gray-200 text-gray-800 font-semibold py-3 px-6 rounded-xl hover:bg-gray-50 transition-all"
