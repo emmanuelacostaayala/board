@@ -10,7 +10,8 @@ type Props = {
 
 export default function PaymentAlertButton({ className, children }: Props) {
     const handleClick = () => {
-        toast.warning("Por favor póngase en contacto con info@boardlatinoamericanodeperfusion.com para autorizarle el link de pago y validar su status.", {
+        toast.warning("Boton de Pago Desactivado", {
+            description: "Este boton de pago solo estara activo para cargar los casos posterior al 31 de Enero, para los casos correspondientes al 2025",
             duration: 8000,
         });
     };
