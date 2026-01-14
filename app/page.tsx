@@ -160,13 +160,13 @@ export default function CertificationPage() {
           <div className="bg-white rounded-2xl shadow-xl border border-green-200 overflow-hidden">
             <div className="bg-gradient-to-r from-green-500 to-emerald-500 p-6 text-white">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-2xl font-bold">Período III (Regular) 2026</h3>
+                <h3 className="text-2xl font-bold">Simposio ALAP - El Salvador</h3>
                 <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-3 py-1">
                   <CheckCircle className="w-4 h-4" />
-                  <span className="text-sm font-medium">Activo</span>
+                  <span className="text-sm font-medium">Presencial</span>
                 </div>
               </div>
-              <div className="text-4xl font-bold text-center bg-white/10 rounded-xl py-4">03 OCT 2026</div>
+              <div className="text-4xl font-bold text-center bg-white/10 rounded-xl py-4">23 MAY 2026</div>
             </div>
             <div className="p-6 space-y-6">
               <div className="grid grid-cols-2 gap-4">
