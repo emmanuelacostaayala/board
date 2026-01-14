@@ -409,6 +409,7 @@ export default function PCCDashboard(props: Props) {
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead className="w-[50px]">#</TableHead>
                 <TableHead className="min-w-[140px]">Fecha de Generación</TableHead>
                 <TableHead>#PCC</TableHead>
                 <TableHead>Nombre del Cirujano</TableHead>
@@ -419,8 +420,9 @@ export default function PCCDashboard(props: Props) {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {cases.map((c) => (
+              {cases.map((c, index) => (
                 <TableRow key={c.id}>
+                  <TableCell className="font-medium">{index + 1}</TableCell>
                   <TableCell>{formatDateUTC(c.case_date ?? c.caseDate)}</TableCell>
                   <TableCell>{Number(fourDigitsFromPcc(c.pcc_code ?? c.pccCode))}</TableCell>
                   <TableCell>{c.surgeon_name ?? c.surgeonName}</TableCell>
@@ -473,7 +475,7 @@ export default function PCCDashboard(props: Props) {
               ))}
               {cases.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center text-muted-foreground">
+                  <TableCell colSpan={6} className="text-center text-muted-foreground">
                     Aún no has registrado casos.
                   </TableCell>
                 </TableRow>
@@ -490,6 +492,7 @@ export default function PCCDashboard(props: Props) {
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead className="w-[50px]">#</TableHead>
                 <TableHead>Nombre del Evento</TableHead>
                 <TableHead>Nombre de la Institución</TableHead>
                 <TableHead>Fecha del Evento</TableHead>
@@ -501,8 +504,9 @@ export default function PCCDashboard(props: Props) {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {uces.map((u) => (
+              {uces.map((u, index) => (
                 <TableRow key={u.id}>
+                  <TableCell className="font-medium">{index + 1}</TableCell>
                   <TableCell>{u.event_name ?? u.eventName}</TableCell>
                   <TableCell>{u.institution}</TableCell>
                   <TableCell>{formatDateUTC(u.event_date ?? u.eventDate)}</TableCell>
@@ -561,7 +565,7 @@ export default function PCCDashboard(props: Props) {
               ))}
               {uces.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center text-muted-foreground">
+                  <TableCell colSpan={8} className="text-center text-muted-foreground">
                     Aún no has registrado UCE.
                   </TableCell>
                 </TableRow>
