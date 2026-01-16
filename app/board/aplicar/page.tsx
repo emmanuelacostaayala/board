@@ -1,6 +1,13 @@
 'use client';
 
 import React, { useState } from 'react';
+import {
+  CheckCircle,
+  Users,
+  DollarSign,
+  Award,
+  Clock,
+} from 'lucide-react';
 
 const AplicarPage = () => {
   const [formData, setFormData] = useState({
@@ -61,7 +68,7 @@ const AplicarPage = () => {
     try {
       // Crear FormData para enviar archivos
       const formDataToSend = new FormData();
-      
+
       // Agregar datos del formulario
       Object.keys(formData).forEach(key => {
         formDataToSend.append(key, formData[key]);
@@ -119,6 +126,52 @@ const AplicarPage = () => {
         <p className="text-center text-gray-600 mb-8">
           Una vez envíes el formulario, te llegará un correo con el link de pago en los próximos días.
         </p>
+
+        {/* Info del Examen */}
+        <div className="mb-10 bg-white rounded-2xl shadow-xl border border-green-200 overflow-hidden">
+          <div className="bg-gradient-to-r from-green-500 to-emerald-500 p-6 text-white">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-2xl font-bold">Simposio ALAP - El Salvador</h3>
+              <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-3 py-1">
+                <CheckCircle className="w-4 h-4" />
+                <span className="text-sm font-medium">Presencial</span>
+              </div>
+            </div>
+            <div className="text-4xl font-bold text-center bg-white/10 rounded-xl py-4">23 MAY 2026</div>
+          </div>
+          <div className="p-6">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="text-center p-4 bg-blue-50 rounded-xl">
+                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                  <Users className="w-6 h-6 text-blue-600" />
+                </div>
+                <div className="text-2xl font-bold text-blue-600">130-200</div>
+                <div className="text-sm text-gray-600">Preguntas</div>
+              </div>
+              <div className="text-center p-4 bg-green-50 rounded-xl">
+                <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                  <DollarSign className="w-6 h-6 text-green-600" />
+                </div>
+                <div className="text-2xl font-bold text-green-600">$120</div>
+                <div className="text-sm text-gray-600">USD</div>
+              </div>
+              <div className="text-center p-4 bg-purple-50 rounded-xl">
+                <div className="W-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                  <Award className="w-6 h-6 text-purple-600" />
+                </div>
+                <div className="text-2xl font-bold text-purple-600">70%</div>
+                <div className="text-sm text-gray-600">Aprobación</div>
+              </div>
+              <div className="text-center p-4 bg-orange-50 rounded-xl">
+                <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                  <Clock className="w-6 h-6 text-orange-600" />
+                </div>
+                <div className="text-2xl font-bold text-orange-600">3h</div>
+                <div className="text-sm text-gray-600">Duración</div>
+              </div>
+            </div>
+          </div>
+        </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Información Personal */}
@@ -271,11 +324,10 @@ const AplicarPage = () => {
 
           {/* Mensaje de estado */}
           {submitMessage && (
-            <div className={`p-4 rounded-lg ${
-              submitMessage.includes('exitosamente') 
-                ? 'bg-green-50 text-green-800 border border-green-200' 
+            <div className={`p-4 rounded-lg ${submitMessage.includes('exitosamente')
+                ? 'bg-green-50 text-green-800 border border-green-200'
                 : 'bg-red-50 text-red-800 border border-red-200'
-            }`}>
+              }`}>
               {submitMessage}
             </div>
           )}
@@ -285,11 +337,10 @@ const AplicarPage = () => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className={`px-8 py-4 font-semibold text-white rounded-lg transition-all transform hover:scale-105 ${
-                isSubmitting
+              className={`px-8 py-4 font-semibold text-white rounded-lg transition-all transform hover:scale-105 ${isSubmitting
                   ? 'bg-gray-400 cursor-not-allowed'
                   : 'bg-blue-600 hover:bg-blue-700 shadow-lg hover:shadow-xl'
-              }`}
+                }`}
             >
               {isSubmitting ? 'Enviando...' : 'Enviar Aplicación'}
             </button>
