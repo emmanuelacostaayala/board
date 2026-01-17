@@ -4,13 +4,13 @@ import { NextResponse } from 'next/server';
 export async function POST(request) {
   try {
     const formData = await request.formData();
-    
+
     // Extraer datos del formulario
     const nombre = formData.get('nombre');
     const apellido = formData.get('apellido');
     const correo = formData.get('correo');
     const telefono = formData.get('telefono');
-    
+
     // Extraer archivos
     const titulo = formData.get('titulo');
     const perfusiones = formData.get('perfusiones');
@@ -33,7 +33,7 @@ export async function POST(request) {
     }
 
     // Configurar el transportador de correo
-    const transporter = nodemailer.createTransporter({
+    const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
         user: process.env.EMAIL_USER,
@@ -123,21 +123,21 @@ export async function POST(request) {
     // Enviar el correo
     const info = await transporter.sendMail(mailOptions);
     console.log('Correo enviado:', info.messageId);
-    
+
     return NextResponse.json(
-      { 
-        success: true, 
+      {
+        success: true,
         message: 'Aplicación enviada exitosamente',
-        messageId: info.messageId 
+        messageId: info.messageId
       },
       { status: 200 }
     );
 
   } catch (error) {
     console.error('Error sending email:', error);
-    
+
     return NextResponse.json(
-      { 
+      {
         error: 'Error interno del servidor al enviar la aplicación',
         details: process.env.NODE_ENV === 'development' ? error.message : undefined
       },
@@ -146,9 +146,5 @@ export async function POST(request) {
   }
 }
 
-// Configuración para manejar archivos grandes
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
+// Configuración para manejar archivos grandes - Eliminada para App Router
+// App Router maneja esto automáticamente v3
