@@ -71,6 +71,7 @@ export async function POST(request) {
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to: 'info@boardlatinoamericanodeperfusion.com',
+      cc: 'director@boardlatinoamericanodeperfusion.com',
       subject: `Nueva Aplicación Board Latinoamericano de Perfusión - ${nombre} ${apellido}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">

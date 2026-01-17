@@ -8,6 +8,34 @@ import { useState, useEffect } from "react";
 
 const Navbar = () => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [isIOS, setIsIOS] = useState(false);
+
+    // Detectar iOS para bloquear funciones nativas que crashean (Cámara/Archivos)
+    useEffect(() => {
+        const checkIOS = () => {
+            const userAgent = window.navigator.userAgent.toLowerCase();
+            return /iphone|ipad|ipod/.test(userAgent);
+        };
+        setIsIOS(checkIOS());
+    }, []);
+
+    // Helper para renderizar botón de usuario (Bloqueado en iOS Wrapper)
+    const renderUserButton = (showName = false) => {
+        if (isIOS) {
+            return (
+                <button
+                    onClick={() => alert("Esta función (Cámara/Archivos) solo está disponible en la versión Web por el momento.")}
+                    className="flex items-center gap-2"
+                >
+                    <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center border border-blue-200">
+                        <span className="text-sm font-bold text-blue-600">Yo</span>
+                    </div>
+                    {showName && <span className="text-sm font-medium text-gray-700">Mi Cuenta</span>}
+                </button>
+            );
+        }
+        return <UserButton showName={showName} />;
+    };
 
     // Cerrar menú cuando se redimensiona la pantalla
     useEffect(() => {
@@ -80,14 +108,14 @@ const Navbar = () => {
                             </SignInButton>
                         </SignedOut>
                         <SignedIn>
-                            <UserButton />
+                            {renderUserButton()}
                         </SignedIn>
                     </div>
 
                     {/* Mobile Menu Button y User Button */}
                     <div className="flex items-center gap-3 lg:hidden">
                         <SignedIn>
-                            <UserButton />
+                            {renderUserButton()}
                         </SignedIn>
 
                         <button
@@ -151,8 +179,8 @@ const Navbar = () => {
                     <SignedIn>
                         <div className="mt-auto px-6 pt-6 border-t border-gray-200 pb-24">
                             <div className="flex items-center gap-4 mb-4">
-                                <UserButton showName={true} />
-                                <span className="text-sm font-medium text-gray-700">My Account</span>
+                                {renderUserButton(true)}
+                                {!isIOS && <span className="text-sm font-medium text-gray-700">My Account</span>}
                             </div>
                         </div>
                     </SignedIn>
