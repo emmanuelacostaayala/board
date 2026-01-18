@@ -29,7 +29,7 @@ export const isMobileApp = () => {
 
   // Detect Android WebView (typical string includes 'wv')
   // Detect Expo/React Native (typical string includes 'Expo' or window object)
-  const isAndroidWebView = /wv/i.test(userAgent) || /Android.*Version\/[0-9].[0-9]/.test(userAgent);
+  const isAndroidWebView = /wv/i.test(userAgent) || (/Android/i.test(userAgent) && /Version\/[\d]+\.[\d]+/.test(userAgent));
   const isExpo = (window as any).ReactNativeWebView || /Expo/i.test(userAgent);
 
   return isAndroidWebView || isExpo;
