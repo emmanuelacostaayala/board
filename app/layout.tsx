@@ -12,8 +12,38 @@ const bricolage = Bricolage_Grotesque({
   subsets: ["latin"],
 });
 export const metadata: Metadata = {
-  title: "Board Latinoamericano de Perfusión",
-  description: "Certificación Profesional en Perfusión Cardiovascular",
+  metadataBase: new URL("https://boardlatinoamericanodeperfusion.com"),
+  title: {
+    default: "Board Latinoamericano de Perfusión",
+    template: "%s | Board Latinoamericano de Perfusión"
+  },
+  description: "Certificación Profesional en Perfusión Cardiovascular. Únete a los profesionales certificados en toda Latinoamérica.",
+  keywords: ["Perfusion", "Board Latinoamericano", "Certificación", "Cardiovascular", "Salud", "Medicina", "Latinoamérica"],
+  authors: [{ name: "Board Latinoamericano de Perfusión" }],
+  creator: "Board Latinoamericano de Perfusión",
+  robots: {
+    index: true,
+    follow: true,
+  },
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    type: "website",
+    locale: "es_LA",
+    url: "https://boardlatinoamericanodeperfusion.com",
+    siteName: "Board Latinoamericano de Perfusión",
+    title: "Board Latinoamericano de Perfusión",
+    description: "Certificación Profesional en Perfusión Cardiovascular",
+    images: [
+      {
+        url: "/images/favicon.png", // Using existing asset, ideally should be a larger OG image
+        width: 800,
+        height: 600,
+        alt: "Logo Board Latinoamericano de Perfusión",
+      }
+    ]
+  },
   icons: {
     icon: "/images/favicon.png",
   },
