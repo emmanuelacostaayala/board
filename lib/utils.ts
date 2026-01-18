@@ -18,7 +18,8 @@ export function formatDateUTC(dateString: string | undefined | null) {
   });
 }
 
-return subjectsColors[subject as keyof typeof subjectsColors];
+export const getSubjectColor = (subject: string) => {
+  return subjectsColors[subject as keyof typeof subjectsColors];
 };
 
 export const isMobileApp = () => {
