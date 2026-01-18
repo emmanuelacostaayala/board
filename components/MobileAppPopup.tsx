@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { X, Smartphone } from 'lucide-react';
+import { isMobileApp } from '@/lib/utils';
 
 const ANDROID_URL = 'https://play.google.com/store/apps/details?id=com.boardlatamdeperfusion';
 const IOS_URL = 'https://testflight.apple.com/join/7EXSeyVF';
@@ -11,6 +12,9 @@ export default function MobileAppPopup() {
     const [platform, setPlatform] = useState<'android' | 'ios' | null>(null);
 
     useEffect(() => {
+        // If we are inside the wrapper app, do not show any popup
+        if (isMobileApp()) return;
+
         const userAgent = navigator.userAgent || navigator.vendor || (window as any).opera;
 
         // Simple detection logic
@@ -73,8 +77,8 @@ export default function MobileAppPopup() {
                         onClick={handleClose}
                     >
                         <div className={`p-4 rounded-xl flex items-center justify-center gap-3 text-white transition-transform hover:scale-105 ${platform === 'android'
-                                ? 'bg-gradient-to-r from-green-600 to-green-500 shadow-green-200'
-                                : 'bg-gradient-to-r from-blue-600 to-blue-500 shadow-blue-200'
+                            ? 'bg-gradient-to-r from-green-600 to-green-500 shadow-green-200'
+                            : 'bg-gradient-to-r from-blue-600 to-blue-500 shadow-blue-200'
                             } shadow-lg`}>
                             {/* Simple icons based on Lucide for now, can be replaced with official SVGs if needed */}
                             <span className="font-semibold text-lg">

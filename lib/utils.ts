@@ -18,8 +18,20 @@ export function formatDateUTC(dateString: string | undefined | null) {
   });
 }
 
-export const getSubjectColor = (subject: string) => {
-  return subjectsColors[subject as keyof typeof subjectsColors];
+return subjectsColors[subject as keyof typeof subjectsColors];
+};
+
+export const isMobileApp = () => {
+  if (typeof window === 'undefined') return false;
+
+  const userAgent = navigator.userAgent || navigator.vendor || (window as any).opera;
+
+  // Detect Android WebView (typical string includes 'wv')
+  // Detect Expo/React Native (typical string includes 'Expo' or window object)
+  const isAndroidWebView = /wv/i.test(userAgent) || /Android.*Version\/[0-9].[0-9]/.test(userAgent);
+  const isExpo = (window as any).ReactNativeWebView || /Expo/i.test(userAgent);
+
+  return isAndroidWebView || isExpo;
 };
 
 export const configureAssistant = (voice: string, style: string) => {
