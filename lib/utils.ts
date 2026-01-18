@@ -27,12 +27,15 @@ export const isMobileApp = () => {
 
   const ua = navigator.userAgent || navigator.vendor || (window as any).opera;
 
-  // Simple logic requested by user:
-  // "If it is a phone, nothing comes out. Only show when it is desktop."
-  // So we identify ANY mobile device as "MobileApp" so the components hide themselves.
-  const isMobile = /Android|iPad|iPhone|iPod/i.test(ua) && !(window as any).MSStream;
+  // Logic updated:
+  // 1. iOS Wrapper (BoardPerfusionApp-iOS): Hide popup (return true)
+  // 2. Android: Hide popup (return true) - as requested "don't show anything on Android"
+  // 3. iOS Browser (Safari/Chrome): Show popup (return false)
 
-  return isMobile;
+  const isWrapper = ua.includes('BoardPerfusionApp-iOS');
+  const isAndroid = /Android/i.test(ua);
+
+  return isWrapper || isAndroid;
 };
 
 
