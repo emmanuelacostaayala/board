@@ -27,32 +27,12 @@ export const isMobileApp = () => {
 
   const ua = navigator.userAgent || navigator.vendor || (window as any).opera;
 
-  // 1. Explicit Wrapper checks
-  if ((window as any).ReactNativeWebView || /Expo/i.test(ua)) return true;
+  // Simple logic requested by user:
+  // "If it is a phone, nothing comes out. Only show when it is desktop."
+  // So we identify ANY mobile device as "MobileApp" so the components hide themselves.
+  const isMobile = /Android|iPad|iPhone|iPod/i.test(ua) && !(window as any).MSStream;
 
-  const isAndroid = /Android/i.test(ua);
-  const isIOS = /iPad|iPhone|iPod/.test(ua) && !(window as any).MSStream;
-
-  // If not mobile, it's not a mobile app
-  if (!isAndroid && !isIOS) return false;
-
-  // 2. Inverse Logic (Whitelist)
-  // User requested: "Identify if it is from Chrome or Safari, and only then show it."
-  // So if it is NOT Chrome (Android) or Safari (iOS), we treat it as an App (return true).
-
-  if (isAndroid) {
-    // Standard Chrome on Android: Contains "Chrome", does NOT contain "Version/" (WebView) or "wv".
-    const isStandardChrome = /Chrome/i.test(ua) && !/Version\//i.test(ua) && !/wv/i.test(ua);
-    return !isStandardChrome;
-  }
-
-  if (isIOS) {
-    // Standard Safari: Contains "Safari".
-    const isSafari = /Safari/i.test(ua);
-    return !isSafari;
-  }
-
-  return false;
+  return isMobile;
 };
 
 
