@@ -2,6 +2,7 @@
 
 import React, { useState, createContext, useContext } from 'react';
 import { ShoppingCart, Download, BookOpen, Star, Plus, Minus, X, CreditCard } from 'lucide-react';
+import { isMobileApp } from '@/lib/utils';
 
 // Context para el carrito
 const CartContext = createContext();
@@ -27,8 +28,8 @@ const CartProvider = ({ children }) => {
       removeFromCart(id);
       return;
     }
-    setCartItems(prev => 
-      prev.map(item => 
+    setCartItems(prev =>
+      prev.map(item =>
         item.id === id ? { ...item, quantity } : item
       )
     );
@@ -178,7 +179,7 @@ const CartSidebar = () => {
         <div className="flex h-full flex-col">
           <div className="flex items-center justify-between border-b p-4">
             <h3 className="text-lg font-semibold">Carrito de Compras</h3>
-            <button 
+            <button
               onClick={() => setIsCartOpen(false)}
               className="p-2 hover:bg-gray-100 rounded-full"
             >
@@ -275,7 +276,7 @@ const FreeGuideCard = ({ guide }) => {
             </div>
           </div>
         </div>
-        
+
         <button
           onClick={handleDownload}
           className="w-full bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg font-semibold transition-colors flex items-center justify-center space-x-2"
@@ -312,7 +313,7 @@ const PremiumGuideCard = ({ guide }) => {
             <p className="text-gray-600 text-sm mb-4">{guide.description}</p>
           </div>
         </div>
-        
+
         <div className="flex items-center justify-between">
           <div className="text-2xl font-bold text-blue-600">${guide.price.toFixed(2)}</div>
           <button
@@ -343,7 +344,7 @@ const StudyGuidesPage = () => {
               </h1>
               <p className="text-xl text-gray-600">Recursos educativos para perfusionistas</p>
             </div>
-            
+
             {/* Botón del carrito */}
             <button
               onClick={() => setIsCartOpen(true)}
@@ -367,7 +368,7 @@ const StudyGuidesPage = () => {
             <div className="w-3 h-3 bg-green-500 rounded-full mr-3"></div>
             <h2 className="text-4xl font-bold text-gray-800">Guías Gratuitas</h2>
           </div>
-          
+
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {freeGuides.map((guide) => (
               <FreeGuideCard key={guide.id} guide={guide} />
@@ -381,7 +382,7 @@ const StudyGuidesPage = () => {
             <div className="w-3 h-3 bg-blue-500 rounded-full mr-3"></div>
             <h2 className="text-4xl font-bold text-gray-800">Guías Premium Plus</h2>
           </div>
-          
+
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {premiumGuides.map((guide) => (
               <PremiumGuideCard key={guide.id} guide={guide} />
@@ -408,6 +409,24 @@ const StudyGuidesPage = () => {
 
 // Componente principal con el provider
 const StudyGuidesWithCart = () => {
+  // Check if running in mobile app (iOS wrapper or Android)
+  const isApp = typeof window !== 'undefined' && isMobileApp();
+
+  if (isApp) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 flex items-center justify-center p-6">
+        <div className="bg-white p-8 rounded-xl shadow-lg max-w-md text-center">
+          <BookOpen className="h-16 w-16 text-blue-500 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">Contenido Disponible en Web</h2>
+          <p className="text-gray-600">
+            Las guías de estudio y recursos premium están disponibles a través de nuestra plataforma web.
+            Por favor, visita <strong>boardlatinoamericanodeperfusion.com</strong> desde tu navegador para acceder a este contenido.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <CartProvider>
       <StudyGuidesPage />

@@ -8,7 +8,13 @@ type Props = {
     children: React.ReactNode;
 };
 
+import { isMobileApp } from "@/lib/utils";
+
 export default function PaymentAlertButton({ className, children }: Props) {
+    if (typeof window !== "undefined" && isMobileApp()) {
+        return null;
+    }
+
     const handleClick = () => {
         toast.warning("Boton de Pago Desactivado", {
             description: "Este boton de pago solo estara activo para cargar los casos posterior al 31 de Enero, para los casos correspondientes al 2025",

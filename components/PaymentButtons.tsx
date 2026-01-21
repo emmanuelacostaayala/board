@@ -9,9 +9,15 @@ type Props = {
   payUrl?: string;
 };
 
+import { isMobileApp } from "@/lib/utils";
+
 export default function PaymentButtons({
   payUrl = "https://pay.boardlatinoamericanodeperfusion.com/",
 }: Props) {
+  if (typeof window !== "undefined" && isMobileApp()) {
+    return null;
+  }
+
   const handlePaymentClick = (e: React.MouseEvent) => {
     e.preventDefault();
     toast.warning("Por favor póngase en contacto con info@boardlatinoamericanodeperfusion.com para autorizarle el link de pago y validar su status.", {
