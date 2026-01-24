@@ -41,7 +41,7 @@ export default function MobileAppPopup() {
 
     if (!showPopup || !platform) return null;
 
-    const appUrl = platform === 'android' ? ANDROID_URL : IOS_URL;
+    const appUrl = platform === 'android' ? ANDROID_URL : 'https://apps.apple.com/us/app/board-latam-de-perfusi%C3%B3n-blp/id6757409939';
     const storeName = platform === 'android' ? 'Google Play' : 'App Store';
 
     return (

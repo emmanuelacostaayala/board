@@ -33,7 +33,7 @@ export default function AppDownloadButtons() {
             </a>
 
             <a
-                href="https://testflight.apple.com/join/7EXSeyVF"
+                href="https://apps.apple.com/us/app/board-latam-de-perfusi%C3%B3n-blp/id6757409939"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center bg-black text-white px-5 py-2.5 rounded-lg hover:bg-gray-900 transition-all border border-gray-800"
