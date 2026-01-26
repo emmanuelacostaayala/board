@@ -10,6 +10,7 @@ export async function POST(request) {
     const apellido = formData.get('apellido');
     const correo = formData.get('correo');
     const telefono = formData.get('telefono');
+    const modoExamen = formData.get('modoExamen');
 
     // Extraer archivos
     const titulo = formData.get('titulo');
@@ -18,7 +19,7 @@ export async function POST(request) {
     const trabajo = formData.get('trabajo');
 
     // Validar que todos los campos están presentes
-    if (!nombre || !apellido || !correo || !telefono) {
+    if (!nombre || !apellido || !correo || !telefono || !modoExamen) {
       return NextResponse.json(
         { error: 'Faltan campos obligatorios' },
         { status: 400 }
@@ -93,6 +94,12 @@ export async function POST(request) {
               <tr>
                 <td style="padding: 8px 0; font-weight: bold; color: #4b5563;">Teléfono:</td>
                 <td style="padding: 8px 0; color: #374151;">${telefono}</td>
+              </tr>
+               <tr>
+                <td style="padding: 8px 0; font-weight: bold; color: #4b5563;">Modalidad Examen:</td>
+                <td style="padding: 8px 0; color: #2563eb; font-weight: bold; text-transform: uppercase;">
+                  ${modoExamen === 'presencial' ? '🏢 Presencial (El Salvador)' : '🌐 Online (Virtual)'}
+                </td>
               </tr>
             </table>
           </div>

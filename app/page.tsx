@@ -159,71 +159,100 @@ export default function CertificationPage() {
 
       {/* Tarjetas: Período III + Imagen */}
       <section className="max-w-7xl mx-auto px-6 -mt-2 relative z-10">
-        <div className="grid md:grid-cols-2 gap-8">
-          {/* Período III - ACTIVO */}
-          <div className="bg-white rounded-2xl shadow-xl border border-green-200 overflow-hidden">
-            <div className="bg-gradient-to-r from-green-500 to-emerald-500 p-6 text-white">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-2xl font-bold">Simposio ALAP - El Salvador</h3>
-                <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-3 py-1">
-                  <CheckCircle className="w-4 h-4" />
-                  <span className="text-sm font-medium">Presencial</span>
+        <div className="flex flex-col gap-8">
+          {/* Opciones de Examen */}
+          <div className="grid md:grid-cols-2 gap-8">
+            {/* Presencial */}
+            <div className="bg-white rounded-2xl shadow-xl border border-green-200 overflow-hidden">
+              <div className="bg-gradient-to-r from-green-500 to-emerald-500 p-6 text-white h-full relative">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-xl font-bold">Simposio ALAP - El Salvador</h3>
+                  <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-3 py-1">
+                    <CheckCircle className="w-4 h-4" />
+                    <span className="text-sm font-medium">Presencial</span>
+                  </div>
+                </div>
+                <div className="text-3xl font-bold text-center bg-white/10 rounded-xl py-4 mb-4">23 MAY 2026</div>
+                <div className="grid grid-cols-2 gap-3 mb-6">
+                  <div className="text-center p-3 bg-white/10 rounded-lg">
+                    <div className="text-xl font-bold">130-200</div>
+                    <div className="text-xs opacity-90">Preguntas</div>
+                  </div>
+                  <div className="text-center p-3 bg-white/10 rounded-lg">
+                    <div className="text-xl font-bold">$120</div>
+                    <div className="text-xs opacity-90">USD</div>
+                  </div>
+                  <div className="text-center p-3 bg-white/10 rounded-lg">
+                    <div className="text-xl font-bold">70%</div>
+                    <div className="text-xs opacity-90">Aprobación</div>
+                  </div>
+                  <div className="text-center p-3 bg-white/10 rounded-lg">
+                    <div className="text-xl font-bold">3h</div>
+                    <div className="text-xs opacity-90">Duración</div>
+                  </div>
+                </div>
+                <div className="text-center">
+                  <a
+                    href="/board/aplicar"
+                    className="inline-block w-full bg-white text-green-600 font-bold py-3 px-6 rounded-xl hover:bg-green-50 transition-all duration-300 transform hover:scale-105 shadow-lg"
+                  >
+                    Inscríbete Presencial
+                  </a>
                 </div>
               </div>
-              <div className="text-4xl font-bold text-center bg-white/10 rounded-xl py-4">23 MAY 2026</div>
             </div>
-            <div className="p-6 space-y-6">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="text-center p-4 bg-blue-50 rounded-xl">
-                  <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                    <Users className="w-6 h-6 text-blue-600" />
+
+            {/* Online */}
+            <div className="bg-white rounded-2xl shadow-xl border border-blue-200 overflow-hidden">
+              <div className="bg-gradient-to-r from-blue-500 to-indigo-500 p-6 text-white h-full relative">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-xl font-bold">Examen Online</h3>
+                  <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-3 py-1">
+                    <Globe className="w-4 h-4" />
+                    <span className="text-sm font-medium">Online</span>
                   </div>
-                  <div className="text-2xl font-bold text-blue-600">130-200</div>
-                  <div className="text-sm text-gray-600">Preguntas</div>
                 </div>
-                <div className="text-center p-4 bg-green-50 rounded-xl">
-                  <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                    <DollarSign className="w-6 h-6 text-green-600" />
+                <div className="text-3xl font-bold text-center bg-white/10 rounded-xl py-4 mb-4">31 OCT 2026</div>
+                <p className="text-center text-blue-100 text-sm mb-4">3:00 PM Hora Caracas</p>
+
+                <div className="grid grid-cols-2 gap-3 mb-6">
+                  <div className="text-center p-3 bg-white/10 rounded-lg">
+                    <div className="text-xl font-bold">130-200</div>
+                    <div className="text-xs opacity-90">Preguntas</div>
                   </div>
-                  <div className="text-2xl font-bold text-green-600">$120</div>
-                  <div className="text-sm text-gray-600">USD</div>
-                </div>
-                <div className="text-center p-4 bg-purple-50 rounded-xl">
-                  <div className="W-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                    <Award className="w-6 h-6 text-purple-600" />
+                  <div className="text-center p-3 bg-white/10 rounded-lg">
+                    <div className="text-xl font-bold">$120</div>
+                    <div className="text-xs opacity-90">USD</div>
                   </div>
-                  <div className="text-2xl font-bold text-purple-600">70%</div>
-                  <div className="text-sm text-gray-600">Aprobación</div>
-                </div>
-                <div className="text-center p-4 bg-orange-50 rounded-xl">
-                  <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                    <Clock className="w-6 h-6 text-orange-600" />
+                  <div className="text-center p-3 bg-white/10 rounded-lg">
+                    <div className="text-xl font-bold">70%</div>
+                    <div className="text-xs opacity-90">Aprobación</div>
                   </div>
-                  <div className="text-2xl font-bold text-orange-600">3h</div>
-                  <div className="text-sm text-gray-600">Duración</div>
+                  <div className="text-center p-3 bg-white/10 rounded-lg">
+                    <div className="text-xl font-bold">3h</div>
+                    <div className="text-xs opacity-90">Duración</div>
+                  </div>
                 </div>
-              </div>
-              <div className="text-center">
-                <p className="text-sm text-gray-600 mb-4">UN EXAMEN AL AÑO</p>
-                <a
-                  href="/board/aplicar"
-                  className="w-full bg-gradient-to-r from-green-500 to-emerald-500 text-white font-bold py-4 px-6 rounded-xl hover:from-green-600 hover:to-emerald-600 transition-all duration-300 transform hover:scale-105 shadow-lg inline-block text-center"
-                  aria-label="Inscríbete Ahora"
-                >
-                  Inscríbete Ahora
-                </a>
+                <div className="text-center">
+                  <a
+                    href="/board/aplicar"
+                    className="inline-block w-full bg-white text-blue-600 font-bold py-3 px-6 rounded-xl hover:bg-blue-50 transition-all duration-300 transform hover:scale-105 shadow-lg"
+                  >
+                    Inscríbete Online
+                  </a>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Imagen del quirófano */}
+          {/* Imagen del quirófano - Ahora abajo de las tarjetas */}
           <div className="bg-white rounded-2xl shadow-xl border overflow-hidden">
             <Image
               src="/descarga.png"
               alt="Perfusionista operando y máquina de circulación extracorpórea"
               width={1200}
               height={800}
-              className="w-full h-auto object-contain"
+              className="w-full h-auto object-contain max-h-[500px]"
               priority
             />
           </div>
