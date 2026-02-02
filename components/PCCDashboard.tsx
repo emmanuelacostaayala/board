@@ -162,7 +162,7 @@ export default function PCCDashboard(props: Props) {
           setCases(c);
           setHasSubmitted(true);
           // Clean URL
-          router.replace('/board/my-journey');
+          router.replace('/my-journey');
         } else {
           toast.error(res.message);
         }

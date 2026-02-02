@@ -24,8 +24,8 @@ export async function createLateFeeSession(userId: string, pccCode: string) {
                 },
             ],
             mode: "payment",
-            success_url: `${origin}/board/casos?payment_success=true&session_id={CHECKOUT_SESSION_ID}`,
-            cancel_url: `${origin}/board/casos?payment_canceled=true`,
+            success_url: `${origin}/my-journey?payment_success=true&session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `${origin}/my-journey?payment_canceled=true`,
             metadata: {
                 userId,
                 pccCode,
@@ -73,8 +73,8 @@ export async function createDonationSession(userId: string) {
                 },
             ],
             mode: "payment",
-            success_url: `${origin}/board/my-journey?donation_success=true`,
-            cancel_url: `${origin}/board/my-journey?donation_canceled=true`,
+            success_url: `${origin}/my-journey?donation_success=true`,
+            cancel_url: `${origin}/my-journey?donation_canceled=true`,
             metadata: {
                 userId,
                 action: "donation",
