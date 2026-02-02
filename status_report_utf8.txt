@@ -1,0 +1,114 @@
+
+=== 🚀 REPORTE DE ESTADO DE PCCs ===
+
+
+✅ YA SOMETIERON (2)
+(Usuarios que tienen registros con submission_period marcado)
+- María Lugo (PCC-0090): 45 casos sometidos (Active pending: 7)
+- Albemir Ecuer (PCC-0048): 44 casos sometidos (Active pending: 1)
+
+⚠️ LISTOS PARA SOMETER (>= 40 Casos Activos) (87)
+(Deben presionar el botón "Someter Casos")
+- Leslly Martínez (PCC-0011): 240 casos
+- Karen Pertuz (PCC-0005): 179 casos
+- Minnelly Díaz (PCC-0089): 117 casos
+- Mariana Piñango (PCC-0041): 116 casos
+- Eliana Cerón (PCC-0057): 114 casos
+- Araceli Monteón González (PCC-0167): 111 casos
+- Nirit Murillo Saltarín (PCC-0153): 103 casos
+- Isác Cárdenas Martínez (PCC-0250): 99 casos
+- Vielka Rodríguez Guerra (PCC-0197): 90 casos
+- Alejandro Rizzi (PCC-0015): 90 casos
+- Eleazar González (PCC-0088): 83 casos
+- Leydy Quevedo Diaz (PCC-0248): 82 casos
+- Carmen Pedemonte Mendoza (PCC-0163): 82 casos
+- Brenda Barreras Soto (PCC-0112): 79 casos
+- Sandra Peña Salazar (PCC-0206): 77 casos
+- Tasminia Miranda Córdoba (PCC-0171): 69 casos
+- Marcelo Riveros (PCC-0105): 65 casos
+- Karla Feliz (PCC-0242): 64 casos
+- Maite Batista (PCC-0094): 61 casos
+- Silvia Ruíz Contreras (PCC-0169): 60 casos
+- Monica Uriostigue Zavala (PCC-0188): 59 casos
+- Práxedes Féliz (PCC-0081): 56 casos
+- María Contreras Cepeda (PCC-0123): 55 casos
+- Shunier Fajardo (PCC-0079): 54 casos
+- Karen Fontalvo (PCC-0177): 52 casos
+- Carmín Alemán (PCC-0020): 52 casos
+- Ana Quinteros Murillo (PCC-0179): 52 casos
+- Olga López (PCC-0108): 52 casos
+- Yelut Chamorro (PCC-0012): 51 casos
+- Cecilia Álvarez (PCC-0062): 51 casos
+- Yeraldi Merino Machuca (PCC-0233): 51 casos
+- Cecilia Rosso (PCC-0134): 50 casos
+- María Villalba (PCC-0109): 48 casos
+- Elizabeth Salazar Salazar (PCC-0097): 48 casos
+- Juan Costilla (PCC-0204): 47 casos
+- Mónica Guzmán (PCC-0107): 47 casos
+- Martin Cometti (PCC-0220): 47 casos
+- María De León (PCC-0045): 47 casos
+- Milagros Castillo (PCC-0078): 46 casos
+- Alexandra Castaño Valencia (PCC-0145): 45 casos
+- María Solís (PCC-0051): 45 casos
+- Hugo Cardoso (PCC-0031): 44 casos
+- Carlos Cardoso (PCC-0161): 44 casos
+- Paula Tihista (PCC-0067): 44 casos
+- José Reyes (PCC-0044): 44 casos
+- María Rivero (PCC-0082): 44 casos
+- Mileidys Álvarez (PCC-0085): 43 casos
+- Ricardo Rojas Farfán (PCC-0186): 43 casos
+- Karen Beckford (PCC-0006): 43 casos
+- Jennifer Barbosa (PCC-0239): 43 casos
+- Doris Aquice (PCC-0217): 43 casos
+- Patricio Velarde (PCC-0083): 42 casos
+- Gamaliel Rodríguez (PCC-0077): 42 casos
+- Teresa Carrillo (PCC-0084): 42 casos
+- Sandy Domínguez (PCC-0065): 42 casos
+- Héctor Prokopchuk (PCC-0251): 41 casos
+- Gustavo Carrillo Zamarripa (PCC-0194): 41 casos
+- Analía Varela (PCC-0042): 41 casos
+- María Parra (PCC-0132): 41 casos
+- Lorena Pereyra (PCC-0150): 41 casos
+- Rommel Arellano (PCC-0091): 41 casos
+- Angel Uribe (PCC-0230): 41 casos
+- Beatriz Uribe Plata (PCC-0236): 41 casos
+- Adriana Pineda (PCC-0074): 40 casos
+- Yeimy Leon Prieto (PCC-0014): 40 casos
+- Gimena Pérez García (PCC-0157): 40 casos
+- Verónica De Luca (PCC-0023): 40 casos
+- Tahnny Escobar (PCC-0092): 40 casos
+- Ludmila Cerruti (PCC-0214): 40 casos
+- Rossana Yametti (PCC-0003): 40 casos
+- Nidia Alvernia (PCC-0080): 40 casos
+- Vanesa Portillo Yánez (PCC-0213): 40 casos
+- Cristina de la Torre Esmoris (PCC-0111): 40 casos
+- Nestor Rios (PCC-0030): 40 casos
+- Estela González (PCC-0117): 40 casos
+- Yajaira Ramírez (PCC-0049): 40 casos
+- Harlen Coa (PCC-0103): 40 casos
+- Adelaida Ruíz Díaz (PCC-0095): 40 casos
+- Verónica Rosales Hernández (PCC-0162): 40 casos
+- Maria Lima Bautista (PCC-0165): 40 casos
+- Ivonne Ariza (PCC-0036): 40 casos
+- Rosa Román (PCC-0066): 40 casos
+- Erika Urtecho  García (PCC-0071): 40 casos
+- Jorge Andrade (PCC-0024): 40 casos
+- Estela Huancaviri (PCC-0202): 40 casos
+- Leila Ternera Reyes (PCC-0114): 40 casos
+- Liliana Massoni Martínez (PCC-0211): 40 casos
+
+⏳ EN PROGRESO (< 40 Casos) (14)
+- Ana Romo (PCC-0059): 39 casos
+- Verónica Cázares (PCC-0037): 39 casos
+- José Centurión (PCC-0053): 30 casos
+- Adriana Santibañez Gonzalez (PCC-0232): 26 casos
+- Lilimarlen Vásquez Coello (PCC-0253): 25 casos
+- Brígida Aguerrevere (PCC-0002): 20 casos
+- Analía Centurión (PCC-0018): 18 casos
+- Sandra Hurtado Jordan (PCC-0221): 16 casos
+- Fradwikigns Vargas (PCC-0039): 16 casos
+- Paulina Baquero (PCC-0093): 11 casos
+- Clara Arias Barrera (PCC-0224): 9 casos
+- Magna Calderón Valderrama (PCC-0222): 8 casos
+- Diego López (PCC-0174): 6 casos
+- Maritza Cañas (PCC-0063): 2 casos

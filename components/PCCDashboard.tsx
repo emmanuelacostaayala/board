@@ -20,6 +20,8 @@ import {
 } from '@/lib/actions/pcc.actions';
 import { submitClinicalCases } from '@/lib/actions/submitCases'; // NEW
 import { formatDateUTC } from '@/lib/utils';
+import { createLateFeeSession, verifyStripePayment } from '@/lib/actions/stripe.actions';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { userLooksLikePccName } from "@/lib/pcc.helpers";
 
 import { Button } from '@/components/ui/button';
@@ -71,6 +73,10 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 export default function PCCDashboard(props: Props) {
   const { userId, userFirstName, userLastName, createdAtISO } = props;
   const fullName = `${userFirstName ?? ''} ${userLastName ?? ''}`.trim();
+
+  // Hooks
+  const searchParams = useSearchParams();
+  const router = useRouter();
 
   const [taken, setTaken] = useState<Set<string>>(new Set());
   const [pcc, setPcc] = useState<string | null>(null);
@@ -132,6 +138,37 @@ export default function PCCDashboard(props: Props) {
       setHasSubmitted(submitted);
     });
   }, [userId]);
+
+  // Check for successful payment return
+  useEffect(() => {
+    const success = searchParams.get('payment_success');
+    const sessionId = searchParams.get('session_id');
+
+    if (success && sessionId && !hasSubmitted) {
+      startTransition(async () => {
+        // Verify payment
+        const valid = await verifyStripePayment(sessionId);
+        if (!valid.ok) {
+          toast.error("Error verificando el pago: " + valid.message);
+          return;
+        }
+
+        // If valid, submit!
+        toast.info("Pago verificado. Sometiendo casos...");
+        const res = await submitClinicalCases(userId);
+        if (res.ok) {
+          toast.success("¡Casos sometidos exitosamente tras el pago de penalización!");
+          const c = await listMyClinicalCases(userId);
+          setCases(c);
+          setHasSubmitted(true);
+          // Clean URL
+          router.replace('/board/my-journey');
+        } else {
+          toast.error(res.message);
+        }
+      });
+    }
+  }, [searchParams, hasSubmitted, userId, router]);
 
   const availableList = useMemo<PccRecord[]>(
     () => PCC_LIST,
@@ -383,24 +420,50 @@ export default function PCCDashboard(props: Props) {
             className="bg-green-600 hover:bg-green-700 text-white"
             disabled={cases.length < 40}
             onClick={() => {
-              setConfirmConfig({
-                open: true,
-                title: "Someter Casos Clínicos",
-                description: `Estás a punto de someter ${cases.length} casos. Esta acción enviará un reporte a la directiva, ocultará estos casos de tu vista actual y cambiará tu periodo de registro al 2026. ¿Estás seguro?`,
-                action: () => {
-                  startTransition(async () => {
-                    const res = await submitClinicalCases(userId);
-                    if (res.ok) {
-                      toast.success(res.message);
-                      const c = await listMyClinicalCases(userId);
-                      setCases(c);
-                      setHasSubmitted(true);
-                    } else {
-                      toast.error(res.message);
-                    }
-                  })
-                }
-              })
+              // Check Date
+              const now = new Date();
+              // Deadline: Jan 31, 2026 23:59:59
+              // Note: user said "despues del 31 de Enero". So Feb 1 onwards is late.
+              const deadline = new Date("2026-02-01T00:00:00");
+              const isLate = now >= deadline;
+
+              if (isLate) {
+                setConfirmConfig({
+                  open: true,
+                  title: "Presentación Tardía - Penalización Requerida",
+                  description: "La fecha límite para la presentación de casos fue el 31 de Enero. Para someter tus casos ahora, debes cancelar una penalización de $10.00 USD. ¿Deseas proceder al pago?",
+                  action: () => {
+                    startTransition(async () => {
+                      const res = await createLateFeeSession(userId, pcc ?? 'N/A');
+                      if (res.ok && res.url) {
+                        window.location.href = res.url;
+                      } else {
+                        toast.error(res.message || "Error iniciando pago");
+                      }
+                    })
+                  }
+                });
+              } else {
+                // Normal Flow (Free)
+                setConfirmConfig({
+                  open: true,
+                  title: "Someter Casos Clínicos",
+                  description: `Estás a punto de someter ${cases.length} casos. Esta acción enviará un reporte a la directiva, ocultará estos casos de tu vista actual y cambiará tu periodo de registro al 2026. ¿Estás seguro?`,
+                  action: () => {
+                    startTransition(async () => {
+                      const res = await submitClinicalCases(userId);
+                      if (res.ok) {
+                        toast.success(res.message);
+                        const c = await listMyClinicalCases(userId);
+                        setCases(c);
+                        setHasSubmitted(true);
+                      } else {
+                        toast.error(res.message);
+                      }
+                    })
+                  }
+                })
+              }
             }}
           >
             Someter Casos ({cases.length}/40)
