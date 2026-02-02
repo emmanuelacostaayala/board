@@ -115,12 +115,27 @@ export async function listMyClinicalCases(userId: string) {
     .from("clinical_case")
     .select("*")
     .eq("user_id", userId)
+    .is("submission_period", null) // SHOW ONLY ACTIVES
     .order("created_at", { ascending: false });
   if (error) {
     console.error(error);
     return [];
   }
   return data || [];
+}
+
+export async function hasSubmittedCases(userId: string) {
+  const { count, error } = await supabaseAdmin
+    .from("clinical_case")
+    .select("*", { count: 'exact', head: true })
+    .eq("user_id", userId)
+    .not("submission_period", "is", null);
+
+  if (error) {
+    console.error(error);
+    return false;
+  }
+  return (count || 0) > 0;
 }
 
 export async function deleteClinicalCase(caseId: string, userId: string) {

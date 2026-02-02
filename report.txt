@@ -1,60 +1,71 @@
-Fetching data...
+Fetching data complete.
+Total Clinical Cases Fetched: 3232
+Total UCE Events Fetched: 189
 
 === PCC REPORT ===
 
-Total PCC Assignments: 69
-PCCs with uploaded Cases or UCEs: 49
+Total PCC Assignments: 70
+PCCs with uploaded Cases or UCEs: 61
 
-List of active PCCs:
-- Mileidys Álvarez (PCC-0085): 0 Cases, 15 UCEs
-- María Villalba (PCC-0109): 48 Cases, 0 UCEs
+List of active PCCs (Sorted by Activity):
+- Leslly Martínez (PCC-0011): 240 Cases, 1 UCEs
+- Karen Pertuz (PCC-0005): 179 Cases, 1 UCEs
+- Minnelly Díaz (PCC-0089): 117 Cases, 0 UCEs
+- Mariana Piñango (PCC-0041): 116 Cases, 0 UCEs
+- Nirit Murillo Saltarín (PCC-0153): 103 Cases, 23 UCEs
+- Isác Cárdenas Martínez (PCC-0250): 99 Cases, 2 UCEs
+- Vielka Rodríguez Guerra (PCC-0197): 90 Cases, 1 UCEs
 - Eleazar González (PCC-0088): 83 Cases, 0 UCEs
+- Leydy Quevedo Diaz (PCC-0248): 82 Cases, 1 UCEs
+- Brenda Barreras Soto (PCC-0112): 79 Cases, 1 UCEs
+- Sandra Peña Salazar (PCC-0206): 77 Cases, 4 UCEs
+- Tasminia Miranda Córdoba (PCC-0171): 69 Cases, 0 UCEs
+- Alejandro Rizzi (PCC-0015): 61 Cases, 1 UCEs
+- Silvia Ruíz Contreras (PCC-0169): 60 Cases, 1 UCEs
+- María Contreras Cepeda (PCC-0123): 55 Cases, 9 UCEs
+- Shunier Fajardo (PCC-0079): 54 Cases, 0 UCEs
+- Ana Quinteros Murillo (PCC-0179): 52 Cases, 1 UCEs
+- Karen Fontalvo (PCC-0177): 52 Cases, 0 UCEs
+- Carmín Alemán (PCC-0020): 52 Cases, 0 UCEs
+- Yelut Chamorro (PCC-0012): 51 Cases, 16 UCEs
+- Cecilia Álvarez (PCC-0062): 51 Cases, 9 UCEs
+- Práxedes Féliz (PCC-0081): 51 Cases, 0 UCEs
+- María Villalba (PCC-0109): 48 Cases, 0 UCEs
+- Mónica Guzmán (PCC-0107): 47 Cases, 1 UCEs
+- Martin Cometti (PCC-0220): 47 Cases, 0 UCEs
+- Milagros Castillo (PCC-0078): 46 Cases, 17 UCEs
+- María De León (PCC-0045): 46 Cases, 9 UCEs
+- Alexandra Castaño Valencia (PCC-0145): 45 Cases, 1 UCEs
+- Paula Tihista (PCC-0067): 44 Cases, 12 UCEs
+- Hugo Cardoso (PCC-0031): 44 Cases, 3 UCEs
+- Carlos Cardoso (PCC-0161): 44 Cases, 0 UCEs
+- Mileidys Álvarez (PCC-0085): 43 Cases, 15 UCEs
+- Karen Beckford (PCC-0006): 43 Cases, 0 UCEs
+- Jennifer Barbosa (PCC-0239): 43 Cases, 0 UCEs
+- Patricio Velarde (PCC-0083): 42 Cases, 3 UCEs
+- Gamaliel Rodríguez (PCC-0077): 42 Cases, 3 UCEs
+- María Parra (PCC-0132): 41 Cases, 4 UCEs
+- Gustavo Carrillo Zamarripa (PCC-0194): 41 Cases, 2 UCEs
+- Tahnny Escobar (PCC-0092): 40 Cases, 6 UCEs
+- Rossana Yametti (PCC-0003): 40 Cases, 3 UCEs
+- Adriana Pineda (PCC-0074): 40 Cases, 1 UCEs
+- Yeimy Leon Prieto (PCC-0014): 40 Cases, 1 UCEs
+- Gimena Pérez García (PCC-0157): 40 Cases, 0 UCEs
+- Verónica De Luca (PCC-0023): 40 Cases, 0 UCEs
+- Ludmila Cerruti (PCC-0214): 40 Cases, 0 UCEs
+- Nidia Alvernia (PCC-0080): 40 Cases, 0 UCEs
+- Vanesa Portillo Yánez (PCC-0213): 40 Cases, 0 UCEs
+- Nestor Rios (PCC-0030): 40 Cases, 0 UCEs
+- Estela González (PCC-0117): 40 Cases, 0 UCEs
+- Yajaira Ramírez (PCC-0049): 40 Cases, 0 UCEs
+- Ana Romo (PCC-0059): 39 Cases, 2 UCEs
+- Verónica Cázares (PCC-0037): 39 Cases, 0 UCEs
+- Eliana Cerón (PCC-0057): 27 Cases, 0 UCEs
+- Analía Centurión (PCC-0018): 18 Cases, 3 UCEs
+- Sandra Hurtado Jordan (PCC-0221): 16 Cases, 0 UCEs
+- Brígida Aguerrevere (PCC-0002): 11 Cases, 3 UCEs
 - Paulina Baquero (PCC-0093): 11 Cases, 0 UCEs
 - Clara Arias Barrera (PCC-0224): 9 Cases, 28 UCEs
-- Isác Cárdenas Martínez (PCC-0250): 62 Cases, 2 UCEs
-- Shunier Fajardo (PCC-0079): 46 Cases, 0 UCEs
-- Hugo Cardoso (PCC-0031): 44 Cases, 3 UCEs
-- Leydy Quevedo Diaz (PCC-0248): 82 Cases, 1 UCEs
-- Carlos Cardoso (PCC-0161): 44 Cases, 0 UCEs
-- Milagros Castillo (PCC-0078): 0 Cases, 17 UCEs
+- Unknown (Not in Assignment List) (PCC-0001): 2 Cases, 0 UCEs
+- Unknown (Not in Assignment List) (PCC-0008): 1 Cases, 0 UCEs
 - José Centurión (PCC-0053): 0 Cases, 1 UCEs
-- Práxedes Féliz (PCC-0081): 51 Cases, 0 UCEs
-- Karen Beckford (PCC-0006): 43 Cases, 0 UCEs
-- Nirit Murillo Saltarín (PCC-0153): 103 Cases, 23 UCEs
-- Karen Fontalvo (PCC-0177): 52 Cases, 0 UCEs
-- Mariana Piñango (PCC-0041): 93 Cases, 0 UCEs
-- Gustavo Carrillo Zamarripa (PCC-0194): 18 Cases, 2 UCEs
-- Yelut Chamorro (PCC-0012): 21 Cases, 16 UCEs
-- Paula Tihista (PCC-0067): 0 Cases, 12 UCEs
-- Alexandra Castaño Valencia (PCC-0145): 0 Cases, 1 UCEs
-- Patricio Velarde (PCC-0083): 0 Cases, 3 UCEs
-- Yeimy Leon Prieto (PCC-0014): 0 Cases, 1 UCEs
-- Sandra Peña Salazar (PCC-0206): 0 Cases, 4 UCEs
-- Ana Romo (PCC-0059): 0 Cases, 2 UCEs
-- Gimena Pérez García (PCC-0157): 14 Cases, 0 UCEs
-- María Parra (PCC-0132): 9 Cases, 4 UCEs
-- Brígida Aguerrevere (PCC-0002): 1 Cases, 3 UCEs
-- Verónica De Luca (PCC-0023): 19 Cases, 0 UCEs
-- Mónica Guzmán (PCC-0107): 0 Cases, 1 UCEs
-- Gamaliel Rodríguez (PCC-0077): 0 Cases, 3 UCEs
-- Tahnny Escobar (PCC-0092): 0 Cases, 6 UCEs
-- María Contreras Cepeda (PCC-0123): 0 Cases, 9 UCEs
-- Rossana Yametti (PCC-0003): 0 Cases, 3 UCEs
-- Karen Pertuz (PCC-0005): 0 Cases, 1 UCEs
-- Leslly Martínez (PCC-0011): 75 Cases, 1 UCEs
-- María De León (PCC-0045): 0 Cases, 9 UCEs
-- Vanesa Portillo Yánez (PCC-0213): 6 Cases, 0 UCEs
-- Cecilia Álvarez (PCC-0062): 0 Cases, 9 UCEs
-- Verónica Cázares (PCC-0037): 14 Cases, 0 UCEs
-- Ana Quinteros Murillo (PCC-0179): 3 Cases, 1 UCEs
-- Nestor Rios (PCC-0030): 8 Cases, 0 UCEs
-- Silvia Ruíz Contreras (PCC-0169): 7 Cases, 1 UCEs
-- Vielka Rodríguez Guerra (PCC-0197): 1 Cases, 1 UCEs
-- Yajaira Ramírez (PCC-0049): 2 Cases, 0 UCEs
-- Sandra Hurtado Jordan (PCC-0221): 6 Cases, 0 UCEs
-- Brenda Barreras Soto (PCC-0112): 7 Cases, 0 UCEs
-- Analía Centurión (PCC-0018): 18 Cases, 3 UCEs
-- Alejandro Rizzi (PCC-0015): 0 Cases, 1 UCEs
-
-All Assigned PCCs (Count only):
-69

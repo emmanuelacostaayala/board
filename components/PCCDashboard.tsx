@@ -16,8 +16,9 @@ import {
   listMyUceEvents,
   listTakenPccCodes,
   releaseMyPcc,
-
+  hasSubmittedCases, // NEW
 } from '@/lib/actions/pcc.actions';
+import { submitClinicalCases } from '@/lib/actions/submitCases'; // NEW
 import { formatDateUTC } from '@/lib/utils';
 import { userLooksLikePccName } from "@/lib/pcc.helpers";
 
@@ -104,6 +105,7 @@ export default function PCCDashboard(props: Props) {
   // Tablas
   const [cases, setCases] = useState<any[]>([]);
   const [uces, setUces] = useState<any[]>([]);
+  const [hasSubmitted, setHasSubmitted] = useState(false); // NEW
 
   // Alert Dialog State
   const [confirmConfig, setConfirmConfig] = useState<{
@@ -125,6 +127,9 @@ export default function PCCDashboard(props: Props) {
       setCases(c);
       const u = await listMyUceEvents(userId);
       setUces(u);
+
+      const submitted = await hasSubmittedCases(userId); // NEW
+      setHasSubmitted(submitted);
     });
   }, [userId]);
 
@@ -373,6 +378,33 @@ export default function PCCDashboard(props: Props) {
           }}>
             Registra tu caso clínico
           </Button>
+
+          <Button
+            className="bg-green-600 hover:bg-green-700 text-white"
+            disabled={cases.length < 40}
+            onClick={() => {
+              setConfirmConfig({
+                open: true,
+                title: "Someter Casos Clínicos",
+                description: `Estás a punto de someter ${cases.length} casos. Esta acción enviará un reporte a la directiva, ocultará estos casos de tu vista actual y cambiará tu periodo de registro al 2026. ¿Estás seguro?`,
+                action: () => {
+                  startTransition(async () => {
+                    const res = await submitClinicalCases(userId);
+                    if (res.ok) {
+                      toast.success(res.message);
+                      const c = await listMyClinicalCases(userId);
+                      setCases(c);
+                      setHasSubmitted(true);
+                    } else {
+                      toast.error(res.message);
+                    }
+                  })
+                }
+              })
+            }}
+          >
+            Someter Casos ({cases.length}/40)
+          </Button>
           <Button variant="destructive" onClick={() => {
             setEditingUce(null); // Ensure "Create" mode
             setUceDate('');
@@ -404,7 +436,7 @@ export default function PCCDashboard(props: Props) {
 
       {/* Tabla Casos Clínicos */}
       <section>
-        <h2 className="text-4xl font-extrabold mb-4">REGISTRO DE CASOS CLÍNICOS 2025</h2>
+        <h2 className="text-4xl font-extrabold mb-4">REGISTRO DE CASOS CLÍNICOS {hasSubmitted ? '2026' : '2025'}</h2>
         <div className="rounded-md border overflow-auto max-h-[420px]">
           <Table>
             <TableHeader>
