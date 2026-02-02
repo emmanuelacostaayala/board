@@ -52,3 +52,39 @@ export async function verifyStripePayment(sessionId: string) {
         return { ok: false, message: e.message };
     }
 }
+
+export async function createDonationSession(userId: string) {
+    const origin = (await headers()).get("origin") || "http://localhost:3000";
+
+    try {
+        const session = await stripe.checkout.sessions.create({
+            payment_method_types: ["card"],
+            line_items: [
+                {
+                    price_data: {
+                        currency: "usd",
+                        product_data: {
+                            name: "Donación al Board Latinoamericano de Perfusión",
+                            description: "Gracias por su apoyo.",
+                        },
+                        unit_amount: 1000, // $10.00 USD
+                    },
+                    quantity: 1,
+                },
+            ],
+            mode: "payment",
+            success_url: `${origin}/board/my-journey?donation_success=true`,
+            cancel_url: `${origin}/board/my-journey?donation_canceled=true`,
+            metadata: {
+                userId,
+                action: "donation",
+            },
+        });
+
+        if (!session.url) throw new Error("No session URL");
+        return { ok: true, url: session.url };
+    } catch (err: any) {
+        console.error("Stripe Donation Error:", err);
+        return { ok: false, message: err.message };
+    }
+}

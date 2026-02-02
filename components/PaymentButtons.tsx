@@ -1,38 +1,53 @@
 // components/PaymentButtons.tsx
 "use client";
 
-import React from "react";
+import React, { useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { isMobileApp } from "@/lib/utils";
+import { createDonationSession } from "@/lib/actions/stripe.actions";
+import { useAuth } from "@clerk/nextjs";
 
 type Props = {
-  payUrl?: string;
+  payUrl?: string; // Kept for capability but unused for now
 };
-
-import { isMobileApp } from "@/lib/utils";
 
 export default function PaymentButtons({
   payUrl = "https://pay.boardlatinoamericanodeperfusion.com/",
 }: Props) {
+  const [isPending, startTransition] = useTransition();
+  const { userId } = useAuth();
+
   if (typeof window !== "undefined" && isMobileApp()) {
     return null;
   }
 
-  const handlePaymentClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    toast.warning("Por favor póngase en contacto con info@boardlatinoamericanodeperfusion.com para autorizarle el link de pago y validar su status.", {
-      duration: 8000,
+  const handleDonation = () => {
+    if (!userId) {
+      toast.error("Debes iniciar sesión para donar.");
+      return;
+    }
+
+    startTransition(async () => {
+      const res = await createDonationSession(userId);
+      if (res.ok && res.url) {
+        window.location.href = res.url;
+      } else {
+        toast.error(res.message || "Error initiando donación.");
+      }
     });
   };
 
   return (
-    <div className="flex flex-wrap gap-3 items-center">
-      <Button className="px-4 py-2" onClick={handlePaymentClick}>
-        Pagar ahora
-      </Button>
-
-      <Button variant="secondary" className="px-3 py-2" onClick={handlePaymentClick}>
-        Donar $10
+    <div className="flex flex-col gap-2 items-start">
+      <p className="text-muted-foreground text-sm font-medium">¿Quieres hacer una donación?</p>
+      <Button
+        variant="secondary"
+        className="px-4 py-2 bg-green-100 hover:bg-green-200 text-green-800 border border-green-200"
+        onClick={handleDonation}
+        disabled={isPending}
+      >
+        {isPending ? "Procesando..." : "Donar $10 USD"}
       </Button>
     </div>
   );

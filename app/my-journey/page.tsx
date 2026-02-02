@@ -101,22 +101,7 @@ const MyJourney = async () => {
             </div>
 
             {/* BOTÓN SIMPLE que abre el sitio de pago en una pestaña nueva */}
-            <div className="flex items-center">
-              <PaymentAlertButton
-                className="inline-flex items-center gap-2 px-3 py-2 rounded-md bg-[#0EA5A4] hover:bg-[#089191] text-white font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#089191]"
-              >
-                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" aria-hidden>
-                  <path
-                    d="M3 12h18M12 3v18"
-                    stroke="currentColor"
-                    strokeWidth="1.6"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-                Hacer un Pago
-              </PaymentAlertButton>
-            </div>
+
           </div>
         </section>
 
