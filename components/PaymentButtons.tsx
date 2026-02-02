@@ -10,10 +10,12 @@ import { useAuth } from "@clerk/nextjs";
 
 type Props = {
   payUrl?: string; // Kept for capability but unused for now
+  userEmail?: string;
 };
 
 export default function PaymentButtons({
   payUrl = "https://pay.boardlatinoamericanodeperfusion.com/",
+  userEmail,
 }: Props) {
   const [isPending, startTransition] = useTransition();
   const { userId } = useAuth();
@@ -29,7 +31,7 @@ export default function PaymentButtons({
     }
 
     startTransition(async () => {
-      const res = await createDonationSession(userId);
+      const res = await createDonationSession(userId, userEmail);
       if (res.ok && res.url) {
         window.location.href = res.url;
       } else {

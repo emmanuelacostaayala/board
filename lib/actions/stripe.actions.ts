@@ -4,11 +4,12 @@ import { stripe } from "@/lib/stripe";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
-export async function createLateFeeSession(userId: string, pccCode: string) {
+export async function createLateFeeSession(userId: string, pccCode: string, userEmail?: string) {
     const origin = (await headers()).get("origin") || "http://localhost:3000";
 
     try {
         const session = await stripe.checkout.sessions.create({
+            customer_email: userEmail,
             payment_method_types: ["card"],
             line_items: [
                 {
@@ -53,11 +54,12 @@ export async function verifyStripePayment(sessionId: string) {
     }
 }
 
-export async function createDonationSession(userId: string) {
+export async function createDonationSession(userId: string, userEmail?: string) {
     const origin = (await headers()).get("origin") || "http://localhost:3000";
 
     try {
         const session = await stripe.checkout.sessions.create({
+            customer_email: userEmail,
             payment_method_types: ["card"],
             line_items: [
                 {

@@ -49,6 +49,7 @@ type Props = {
   userId: string;
   userFirstName: string;
   userLastName: string;
+  userEmail?: string;
   createdAtISO?: string | null;
 };
 
@@ -71,7 +72,7 @@ import { Pencil, Trash2, MoreHorizontal } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
 export default function PCCDashboard(props: Props) {
-  const { userId, userFirstName, userLastName, createdAtISO } = props;
+  const { userId, userFirstName, userLastName, userEmail, createdAtISO } = props;
   const fullName = `${userFirstName ?? ''} ${userLastName ?? ''}`.trim();
 
   // Hooks
@@ -83,37 +84,32 @@ export default function PCCDashboard(props: Props) {
   const [loading, startTransition] = useTransition();
 
   const [caseOpen, setCaseOpen] = useState(false);
-  const [editingCase, setEditingCase] = useState<any | null>(null); // Nuevo estado
+  const [editingCase, setEditingCase] = useState<any | null>(null);
   const [uceOpen, setUceOpen] = useState(false);
-  const [editingUce, setEditingUce] = useState<any | null>(null); // For UCE editing
+  const [editingUce, setEditingUce] = useState<any | null>(null);
   const [pdfOpen, setPdfOpen] = useState(false);
 
-  // Form caso clínico
+  // Form variables
   const [caseDate, setCaseDate] = useState('');
   const [surgeonName, setSurgeonName] = useState('');
   const [institution, setInstitution] = useState('');
   const [surgeryType, setSurgeryType] = useState<string | undefined>(undefined);
   const [caseRole, setCaseRole] = useState<string | undefined>(undefined);
 
-  // Form UCE
-
   const [uceDate, setUceDate] = useState('');
   const [uceInstitution, setUceInstitution] = useState('');
   const [uceApproved, setUceApproved] = useState<'si' | 'no' | ''>('');
   const [uceName, setUceName] = useState('');
   const [uceCountry, setUceCountry] = useState('');
-  const [uceNumber, setUceNumber] = useState<number | null>(0); // ← permite null
+  const [uceNumber, setUceNumber] = useState<number | null>(0);
   const [uceEventTypes, setUceEventTypes] = useState<string[]>([]);
   const [uceInitials, setUceInitials] = useState('');
-
   const [attemptedSubmit, setAttemptedSubmit] = useState(false);
 
-  // Tablas
   const [cases, setCases] = useState<any[]>([]);
   const [uces, setUces] = useState<any[]>([]);
-  const [hasSubmitted, setHasSubmitted] = useState(false); // NEW
+  const [hasSubmitted, setHasSubmitted] = useState(false);
 
-  // Alert Dialog State
   const [confirmConfig, setConfirmConfig] = useState<{
     open: boolean;
     title: string;
@@ -134,7 +130,7 @@ export default function PCCDashboard(props: Props) {
       const u = await listMyUceEvents(userId);
       setUces(u);
 
-      const submitted = await hasSubmittedCases(userId); // NEW
+      const submitted = await hasSubmittedCases(userId);
       setHasSubmitted(submitted);
     });
   }, [userId]);
@@ -143,6 +139,12 @@ export default function PCCDashboard(props: Props) {
   useEffect(() => {
     const success = searchParams.get('payment_success');
     const sessionId = searchParams.get('session_id');
+    const donationSuccess = searchParams.get('donation_success');
+
+    if (donationSuccess) {
+      toast.success("¡Gracias por su generosa donación!", { duration: 5000 });
+      router.replace('/my-journey');
+    }
 
     if (success && sessionId && !hasSubmitted) {
       startTransition(async () => {
@@ -434,7 +436,7 @@ export default function PCCDashboard(props: Props) {
                   description: "La fecha límite para la presentación de casos fue el 31 de Enero. Para someter tus casos ahora, debes cancelar una penalización de $10.00 USD. ¿Deseas proceder al pago?",
                   action: () => {
                     startTransition(async () => {
-                      const res = await createLateFeeSession(userId, pcc ?? 'N/A');
+                      const res = await createLateFeeSession(userId, pcc ?? 'N/A', userEmail);
                       if (res.ok && res.url) {
                         window.location.href = res.url;
                       } else {

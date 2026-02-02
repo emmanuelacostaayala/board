@@ -110,6 +110,7 @@ const MyJourney = async () => {
           userId={user.id}
           userFirstName={user.firstName ?? ""}
           userLastName={user.lastName ?? ""}
+          userEmail={user.emailAddresses[0]?.emailAddress ?? ""} // Nuevo prop
           createdAtISO={
             user.createdAt ? new Date(user.createdAt).toISOString() : null
           }
@@ -118,7 +119,7 @@ const MyJourney = async () => {
         {/* Pagos */}
         <section className="my-6">
           <h2 className="text-xl font-semibold mb-3">Pagos</h2>
-          <PaymentButtons />
+          <PaymentButtons userEmail={user.emailAddresses[0]?.emailAddress ?? ""} />
         </section>
 
         {/* Secciones que ya tenías */}
