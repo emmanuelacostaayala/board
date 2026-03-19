@@ -33,13 +33,20 @@ const MyJourney = async () => {
 
     // FETCH PCC assignment (single source of truth for PCC status)
     const myPcc = await getMyPcc(user.id);
+    const { hasSubmittedCases } = await import("@/lib/actions/pcc.actions");
+    const hasSubmitted = await hasSubmittedCases(user.id);
 
     // Display PCC status:
-    // 1) si la fila pcc_assignment tiene 'status' -> usarlo
-    // 2) else si existe pcc_code -> "Activo"
+    // 1) Si ha sometido sus casos (y por lo tanto pagó), es Activo.
+    // 2) si la fila pcc_assignment tiene 'status' -> usarlo
     // 3) else -> "Revision"
-    const displayPccStatus: string =
-      (myPcc?.status as string) ?? (myPcc?.pcc_code ? "Activo" : "Revision");
+    let displayPccStatus = "Revision";
+    if (hasSubmitted) {
+      displayPccStatus = "Activo";
+    } else {
+      displayPccStatus = (myPcc?.status as string) ?? (myPcc?.pcc_code ? "Revision" : "Revision");
+    }
+
 
     const statusIcons: Record<string, { icon: string; label: string }> = {
       Revision: { icon: "⏳", label: "En Revisión" },

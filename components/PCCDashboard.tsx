@@ -222,8 +222,7 @@ export default function PCCDashboard(props: Props) {
 
   function certificateHref() {
     if (!pcc) return '#';
-    const four = fourDigitsFromPcc(pcc);
-    return `/PCC-${four}.pdf`; // PDFs en /public
+    return `/api/certificate?pcc=${pcc}`;
   }
 
   async function handleRelease() {

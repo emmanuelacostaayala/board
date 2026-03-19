@@ -4,6 +4,7 @@ export type PccRecord = {
   lastName: string;  // Apellido(s)
   firstName: string; // Nombre(s)
   status: string;    // "Revision" | "Verificada" | "Activo" | "Inactivo" ...
+  issueDate?: string; // Fecha en la que se hicieron PCC
 };
 
 export const PCC_LIST: PccRecord[] = [
