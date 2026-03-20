@@ -5,6 +5,17 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true
   },
+  // Fix: Sentry + Next.js 16 + Turbopack — excluir los paquetes de OpenTelemetry
+  // que causan conflictos de versiones con import-in-the-middle y node:inspector
+  serverExternalPackages: [
+    '@opentelemetry/api',
+    '@opentelemetry/core',
+    '@opentelemetry/sdk-trace-base',
+    '@opentelemetry/instrumentation',
+    '@opentelemetry/resources',
+    '@opentelemetry/semantic-conventions',
+    'import-in-the-middle',
+  ],
   turbopack: {
     // En Next.js 16 + Sentry, necesitamos configurar esto explícitamente para silenciar el error,
     // ya que Sentry inyecta config de Webpack.
