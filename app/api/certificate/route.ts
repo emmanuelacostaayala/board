@@ -54,28 +54,41 @@ Director, desde el ${issueDateStr} hasta el 31 de diciembre de 2026.`;
     const font = await pdfDoc.embedFont(StandardFonts.TimesRomanBoldItalic);
     const textFont = await pdfDoc.embedFont(StandardFonts.TimesRoman);
 
-    // Escribir el Nombre (Ajustar color y tamaño)
-    firstPage.drawText(`${fullName} PCC`, {
-      x: 200, // <-- AJUSTAR COORDENADA X
-      y: 350, // <-- AJUSTAR COORDENADA Y
+    // Escribir el Nombre del estudiante
+    const nameWidth = font.widthOfTextAtSize(fullName, 32);
+    firstPage.drawText(fullName, {
+      x: (firstPage.getWidth() - nameWidth) / 2, // Centrado
+      y: 430, // <-- AJUSTAR COORDENADA Y PARA EL NOMBRE
       size: 32,
       font: font,
       color: rgb(0.1, 0.1, 0.1),
     });
 
-    // Escribir el texto de las fechas
-    firstPage.drawText(`es miembro fundador de esta Organización, ocupando el cargo de\nDirector, desde el ${issueDateStr} hasta el 31 de diciembre de 2026.`, {
-      x: 100, // <-- AJUSTAR COORDENADA X
-      y: 280, // <-- AJUSTAR COORDENADA Y
+    // Escribir el Certificado PCC-XXXX
+    const pccText = `Certificado ${pccCode}`;
+    const pccWidth = font.widthOfTextAtSize(pccText, 16);
+    firstPage.drawText(pccText, {
+      x: (firstPage.getWidth() - pccWidth) / 2, // Centrado
+      y: 370, // <-- AJUSTAR COORDENADA Y PARA EL CERTIFICADO
+      size: 16,
+      font: font,
+      color: rgb(0.1, 0.1, 0.1),
+    });
+
+    // Escribir el texto de las fechas de recertificación
+    const dateText = `El día ${issueDateStr} certificado que deberá renovarse cada 3 años con la Recertificación.`;
+    const dateWidth = textFont.widthOfTextAtSize(dateText, 14);
+    firstPage.drawText(dateText, {
+      x: (firstPage.getWidth() - dateWidth) / 2, // Centrado
+      y: 220, // <-- AJUSTAR COORDENADA Y PARA LA FECHA
       size: 14,
       font: textFont,
       color: rgb(0.1, 0.1, 0.1),
-      lineHeight: 20,
     });
 
     const pdfBytes = await pdfDoc.save();
 
-    return new NextResponse(pdfBytes, {
+    return new NextResponse(Buffer.from(pdfBytes), {
       headers: {
         'Content-Type': 'application/pdf',
         'Content-Disposition': `inline; filename="${pccCode}-Certificado.pdf"`,
