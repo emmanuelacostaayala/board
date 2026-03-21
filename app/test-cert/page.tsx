@@ -2,9 +2,9 @@
 // ⚠️ PÁGINA TEMPORAL DE PRUEBA — BORRAR DESPUÉS
 export default function TestCertPage() {
   const exampleCodes = [
-    { code: "PCC-0001", name: "Alileny Pérez" },
-    { code: "PCC-0002", name: "Brígida Aguerrevere" },
-    { code: "PCC-0010", name: "José Andrés Solano" },
+    { code: "PCC-0250", name: "Isác Cárdenas Martínez" },
+    { code: "PCC-0251", name: "Héctor Abel Prokopchuk" },
+    { code: "PCC-0252", name: "Pablo Ariel Bautista" },
   ];
 
   return (
@@ -72,10 +72,10 @@ export default function TestCertPage() {
 
       {/* Embed del primer certificado para vista rápida */}
       <h2 style={{ fontSize: 22, fontWeight: "bold", marginTop: 40, marginBottom: 16 }}>
-        Vista previa inline (PCC-0001)
+        Vista previa inline (PCC-0250)
       </h2>
       <iframe
-        src="/api/certificate?pcc=PCC-0001"
+        src="/api/certificate?pcc=PCC-0250"
         width="100%"
         height="700"
         style={{ border: "1px solid #333", borderRadius: 12 }}
