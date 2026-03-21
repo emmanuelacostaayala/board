@@ -12,7 +12,7 @@ import {
   getUserSessions,
   getBookmarkedCompanions,
 } from "@/lib/actions/companion.actions";
-import { getMyPcc } from "@/lib/actions/pcc.actions"; // <- añadido
+import { getMyPcc, hasSubmittedCases } from "@/lib/actions/pcc.actions"; // <- añadido
 import Image from "next/image";
 import CompanionsList from "@/components/CompanionsList";
 import PaymentAlertButton from "@/components/PaymentAlertButton";
@@ -33,7 +33,6 @@ const MyJourney = async () => {
 
     // FETCH PCC assignment (single source of truth for PCC status)
     const myPcc = await getMyPcc(user.id);
-    const { hasSubmittedCases } = await import("@/lib/actions/pcc.actions");
     const hasSubmitted = await hasSubmittedCases(user.id);
 
     // Display PCC status:

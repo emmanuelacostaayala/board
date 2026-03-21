@@ -74,6 +74,41 @@ export async function assignPccToUser(args: AssignArgs): Promise<AssignResult> {
     return { ok: false, message: "No se pudo asignar el PCC." };
   }
 
+  // --- AUTO-EXEMPTION LOGIC START ---
+  // List of legacy users who are exempt from 2025 requirements but haven't signed up yet.
+  const LEGACY_EXEMPT_PCCS = new Set([
+    "PCC-0009", // Acosta Sandra Lilian
+    "PCC-0027", // Anaya Gómez Yojanna
+    "PCC-0051", // Ma. Loreto (Solís)
+    "PCC-0061", // Angarita Martha Isabel
+    "PCC-0069", // Adalberto Barsallo
+    "PCC-0076", // Trejo Ana Lilianvanea
+    "PCC-0164", // Sorto Amador Kelly Josellyne
+    "PCC-0173", // Salcedo de Marmolejo Aura Patricia
+    "PCC-0190", // Burgues Jorge Pablo
+    "PCC-0243", // Chaparro Vázquez Dilma Rossana
+    "PCC-0249", // Facundo Cabrera
+  ]);
+
+  if (LEGACY_EXEMPT_PCCS.has(pccCode)) {
+    // Check if they already have a submission (unlikely if just assigned, but safe check)
+    const submitted = await hasSubmittedCases(userId);
+    if (!submitted) {
+      console.log(`Auto-exempting legacy user ${pccCode} (${userFullName})`);
+      await supabaseAdmin.from("clinical_case").insert({
+        user_id: userId,
+        pcc_code: pccCode,
+        case_date: '2025-01-31',
+        surgeon_name: 'SISTEMA - MIGRACION AUTOMATICA',
+        institution: 'CONVALIDACION 2025',
+        surgery_type: 'Otro',
+        case_role: 'Principal',
+        submission_period: '2025',
+      });
+    }
+  }
+  // --- AUTO-EXEMPTION LOGIC END ---
+
   return { ok: true, pccCode };
 }
 
