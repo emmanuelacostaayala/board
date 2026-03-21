@@ -75,8 +75,8 @@ Director, desde el ${issueDateStr} hasta el 31 de diciembre de 2026.`;
       color: rgb(0.1, 0.1, 0.1),
     });
 
-    // Escribir el texto de las fechas de recertificación
-    const dateText = `El día ${issueDateStr} certificado que deberá renovarse cada 3 años con la Recertificación.`;
+    // Escribir el texto de las fechas de recertificación (Requerimiento de Bibi)
+    const dateText = `Certificado emitido el ${issueDateStr}. Válido hasta el 31 de diciembre de 2026.`;
     const dateWidth = textFont.widthOfTextAtSize(dateText, 14);
     firstPage.drawText(dateText, {
       x: (firstPage.getWidth() - dateWidth) / 2, // Centrado
