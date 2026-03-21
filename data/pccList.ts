@@ -257,9 +257,9 @@ export const PCC_LIST: PccRecord[] = [
   { code: "PCC-0247", lastName: "Hasbón Osorio", firstName: "María Alexandra", status: "Revision" },
   { code: "PCC-0248", lastName: "Quevedo Diaz", firstName: "Leydy Yhoana", status: "Revision" },
   { code: "PCC-0249", lastName: "Cabrera", firstName: "Facundo", status: "Revision" },
-  { code: "PCC-0250", lastName: "Cárdenas Martínez", firstName: "Isác", status: "Revision" },
-  { code: "PCC-0251", lastName: "Prokopchuk", firstName: "Héctor Abel", status: "Revision" },
-  { code: "PCC-0252", lastName: "Bautista", firstName: "Pablo Ariel", status: "Revision" },
+  { code: "PCC-0250", lastName: "Cárdenas Martínez", firstName: "Isác", status: "Revision", issueDate: "04 de octubre de 2025" },
+  { code: "PCC-0251", lastName: "Prokopchuk", firstName: "Héctor Abel", status: "Revision", issueDate: "15 de enero de 2024" },
+  { code: "PCC-0252", lastName: "Bautista", firstName: "Pablo Ariel", status: "Revision", issueDate: "22 de junio de 2023" },
   { code: "PCC-0253", lastName: "Vásquez Coello", firstName: "Lilimarlen Oralia", status: "Revision" }
 
 
