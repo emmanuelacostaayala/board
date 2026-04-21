@@ -150,7 +150,6 @@ export async function listMyClinicalCases(userId: string) {
     .from("clinical_case")
     .select("*")
     .eq("user_id", userId)
-    .is("submission_period", null) // SHOW ONLY ACTIVES
     .order("created_at", { ascending: false });
   if (error) {
     console.error(error);

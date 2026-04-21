@@ -58,7 +58,7 @@ Director, desde el ${issueDateStr} hasta el 31 de diciembre de 2026.`;
     const nameWidth = font.widthOfTextAtSize(fullName, 32);
     firstPage.drawText(fullName, {
       x: (firstPage.getWidth() - nameWidth) / 2, // Centrado
-      y: 430, // <-- AJUSTAR COORDENADA Y PARA EL NOMBRE
+      y: 390, // <-- AJUSTAR COORDENADA Y PARA EL NOMBRE
       size: 32,
       font: font,
       color: rgb(0.1, 0.1, 0.1),
@@ -69,22 +69,14 @@ Director, desde el ${issueDateStr} hasta el 31 de diciembre de 2026.`;
     const pccWidth = font.widthOfTextAtSize(pccText, 16);
     firstPage.drawText(pccText, {
       x: (firstPage.getWidth() - pccWidth) / 2, // Centrado
-      y: 370, // <-- AJUSTAR COORDENADA Y PARA EL CERTIFICADO
+      y: 360, // <-- AJUSTAR COORDENADA Y PARA EL CERTIFICADO
       size: 16,
       font: font,
       color: rgb(0.1, 0.1, 0.1),
     });
 
     // Escribir el texto de las fechas de recertificación (Requerimiento de Bibi)
-    const dateText = `Certificado emitido el ${issueDateStr}. Válido hasta el 31 de diciembre de 2026.`;
-    const dateWidth = textFont.widthOfTextAtSize(dateText, 14);
-    firstPage.drawText(dateText, {
-      x: (firstPage.getWidth() - dateWidth) / 2, // Centrado
-      y: 220, // <-- AJUSTAR COORDENADA Y PARA LA FECHA
-      size: 14,
-      font: textFont,
-      color: rgb(0.1, 0.1, 0.1),
-    });
+    // REMOVIDO A PETICIÓN DEL USUARIO
 
     const pdfBytes = await pdfDoc.save();
 

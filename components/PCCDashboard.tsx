@@ -360,6 +360,9 @@ export default function PCCDashboard(props: Props) {
     toast.success(editingUce ? 'UCE actualizada correctamente.' : 'UCE registrada.');
   }
 
+  const activeCases = cases.filter(c => !(c.submission_period || c.submissionPeriod));
+  const historicalCases = cases.filter(c => (c.submission_period || c.submissionPeriod));
+
   return (
     <div className="mt-8 space-y-8">
       {/* Barra superior */}
@@ -419,7 +422,7 @@ export default function PCCDashboard(props: Props) {
 
           <Button
             className="bg-green-600 hover:bg-green-700 text-white"
-            disabled={cases.length < 40}
+            disabled={activeCases.length < 40}
             onClick={() => {
               // Check Date
               const now = new Date();
@@ -449,7 +452,7 @@ export default function PCCDashboard(props: Props) {
                 setConfirmConfig({
                   open: true,
                   title: "Someter Casos Clínicos",
-                  description: `Estás a punto de someter ${cases.length} casos. Esta acción enviará un reporte a la directiva, ocultará estos casos de tu vista actual y cambiará tu periodo de registro al 2026. ¿Estás seguro?`,
+                  description: `Estás a punto de someter ${activeCases.length} casos. Esta acción enviará un reporte a la directiva, ocultará estos casos de tu vista actual y cambiará tu periodo de registro al 2026. ¿Estás seguro?`,
                   action: () => {
                     startTransition(async () => {
                       const res = await submitClinicalCases(userId);
@@ -467,7 +470,7 @@ export default function PCCDashboard(props: Props) {
               }
             }}
           >
-            Someter Casos ({cases.length}/40)
+            Someter Casos ({activeCases.length}/40)
           </Button>
           <Button variant="destructive" onClick={() => {
             setEditingUce(null); // Ensure "Create" mode
@@ -516,7 +519,7 @@ export default function PCCDashboard(props: Props) {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {cases.map((c, index) => (
+              {activeCases.map((c, index) => (
                 <TableRow key={c.id}>
                   <TableCell className="font-medium">{index + 1}</TableCell>
                   <TableCell>{formatDateUTC(c.case_date ?? c.caseDate)}</TableCell>
@@ -569,10 +572,10 @@ export default function PCCDashboard(props: Props) {
                   </TableCell>
                 </TableRow>
               ))}
-              {cases.length === 0 && (
+              {activeCases.length === 0 && (
                 <TableRow>
                   <TableCell colSpan={6} className="text-center text-muted-foreground">
-                    Aún no has registrado casos.
+                    Aún no has registrado casos pendientes de sumisión.
                   </TableCell>
                 </TableRow>
               )}
@@ -580,6 +583,40 @@ export default function PCCDashboard(props: Props) {
           </Table>
         </div>
       </section>
+
+      {historicalCases.length > 0 && (
+        <section className="mt-12">
+          <h2 className="text-4xl font-extrabold mb-4 text-emerald-700 dark:text-emerald-500">HISTORIAL DE CASOS SOMETIDOS</h2>
+          <div className="rounded-md border overflow-auto max-h-[420px]">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-[50px]">#</TableHead>
+                  <TableHead>Periodo Sometido</TableHead>
+                  <TableHead className="min-w-[140px]">Fecha del Caso</TableHead>
+                  <TableHead>Nombre del Cirujano</TableHead>
+                  <TableHead>Rol</TableHead>
+                  <TableHead>Institución</TableHead>
+                  <TableHead>Tipo de Cirugía</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {historicalCases.map((c, index) => (
+                  <TableRow key={c.id} className="bg-muted/30">
+                    <TableCell className="font-medium text-muted-foreground">{index + 1}</TableCell>
+                    <TableCell className="font-semibold text-emerald-600 dark:text-emerald-400">{c.submission_period ?? c.submissionPeriod}</TableCell>
+                    <TableCell className="text-muted-foreground">{formatDateUTC(c.case_date ?? c.caseDate)}</TableCell>
+                    <TableCell className="text-muted-foreground">{c.surgeon_name ?? c.surgeonName}</TableCell>
+                    <TableCell className="text-muted-foreground">{c.case_role ?? c.caseRole}</TableCell>
+                    <TableCell className="text-muted-foreground">{c.institution}</TableCell>
+                    <TableCell className="text-muted-foreground">{c.surgery_type ?? c.surgeryType}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </section>
+      )}
 
       {/* Tabla UCE */}
       <section>

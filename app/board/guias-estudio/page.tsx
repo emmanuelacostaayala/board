@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useState, createContext, useContext } from 'react';
-import { ShoppingCart, Download, BookOpen, Star, Plus, Minus, X, CreditCard } from 'lucide-react';
+import { ShoppingCart, Download, BookOpen, Star, Plus, Minus, X, CreditCard, CheckCircle } from 'lucide-react';
 import { isMobileApp } from '@/lib/utils';
+import { useUser } from '@clerk/nextjs';
 
 // Context para el carrito
 const CartContext = createContext();
@@ -113,7 +114,8 @@ const premiumGuides = [
     price: 5.00,
     description: 'Estrategias avanzadas para optimizar la perfusión basada en objetivos clínicos específicos',
     rating: 4.8,
-    reviews: 24
+    reviews: 24,
+    downloadUrl: '/api/download/perfusion-objetivos.pdf'
   },
   {
     id: 'premium_2',
@@ -121,7 +123,8 @@ const premiumGuides = [
     price: 5.00,
     description: 'Técnicas especializadas para el manejo del recebado anterógrado en cirugía cardíaca',
     rating: 4.9,
-    reviews: 18
+    reviews: 18,
+    downloadUrl: '/api/download/recebado-anterogrado.pdf'
   },
   {
     id: 'premium_3',
@@ -129,7 +132,8 @@ const premiumGuides = [
     price: 5.00,
     description: 'Desarrollo de protocolos y prácticas para mejorar la seguridad del paciente',
     rating: 4.7,
-    reviews: 31
+    reviews: 31,
+    downloadUrl: '/api/download/cultura-seguridad.pdf'
   },
   {
     id: 'premium_4',
@@ -137,7 +141,8 @@ const premiumGuides = [
     price: 7.00,
     description: 'Guía completa sobre el manejo de ECMO y resolución de complicaciones',
     rating: 4.9,
-    reviews: 42
+    reviews: 42,
+    downloadUrl: '/api/download/ecmo-avanzado.pdf'
   }
 ];
 
@@ -292,9 +297,20 @@ const FreeGuideCard = ({ guide }) => {
 // Componente para guías premium
 const PremiumGuideCard = ({ guide }) => {
   const { addToCart } = useCart();
+  const { user } = useUser();
+  
+  const purchasedGuides = (user?.publicMetadata?.premiumGuides as string[]) || [];
+  const isPurchased = purchasedGuides.includes(guide.title);
 
   const handleAddToCart = () => {
     addToCart(guide);
+  };
+
+  const handleDownload = () => {
+    const link = document.createElement('a');
+    link.href = guide.downloadUrl || '#';
+    link.download = `${guide.title}.pdf`;
+    link.click();
   };
 
   return (
@@ -314,15 +330,32 @@ const PremiumGuideCard = ({ guide }) => {
           </div>
         </div>
 
-        <div className="flex items-center justify-between">
-          <div className="text-2xl font-bold text-blue-600">${guide.price.toFixed(2)}</div>
-          <button
-            onClick={handleAddToCart}
-            className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-6 rounded-lg font-semibold transition-colors flex items-center space-x-2"
-          >
-            <Plus className="h-4 w-4" />
-            <span>Agregar</span>
-          </button>
+        <div className="flex items-center justify-between mt-auto">
+          {isPurchased ? (
+             <div className="w-full">
+               <div className="text-sm text-green-600 font-bold mb-2 flex items-center">
+                 <CheckCircle className="w-4 h-4 mr-1" /> Ya adquirido
+               </div>
+               <button
+                 onClick={handleDownload}
+                 className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg font-semibold transition-colors flex items-center justify-center space-x-2"
+               >
+                 <Download className="h-4 w-4" />
+                 <span>Descargar</span>
+               </button>
+             </div>
+          ) : (
+            <>
+              <div className="text-2xl font-bold text-blue-600">${guide.price.toFixed(2)}</div>
+              <button
+                onClick={handleAddToCart}
+                className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-6 rounded-lg font-semibold transition-colors flex items-center space-x-2"
+              >
+                <Plus className="h-4 w-4" />
+                <span>Agregar</span>
+              </button>
+            </>
+          )}
         </div>
       </div>
     </div>

@@ -90,3 +90,87 @@ export async function createDonationSession(userId: string, userEmail?: string) 
         return { ok: false, message: err.message };
     }
 }
+
+export async function createAISubscriptionSession(userId: string, userEmail?: string) {
+    const origin = (await headers()).get("origin") || "http://localhost:3000";
+
+    try {
+        const session = await stripe.checkout.sessions.create({
+            customer_email: userEmail,
+            payment_method_types: ["card"],
+            line_items: [
+                {
+                    price_data: {
+                        currency: "usd",
+                        product_data: {
+                            name: "Suscripción Acompañante IA",
+                            description: "Acceso mensual ilimitado a la IA Clínica.",
+                        },
+                        unit_amount: 1000, // $10.00 USD
+                        recurring: {
+                            interval: "month"
+                        }
+                    },
+                    quantity: 1,
+                },
+            ],
+            mode: "subscription",
+            success_url: `${origin}/companions?payment_success=true&session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `${origin}/companions?payment_canceled=true`,
+            metadata: {
+                userId,
+                action: "ai_subscription",
+            },
+            subscription_data: {
+                metadata: {
+                    userId,
+                    action: "ai_subscription",
+                }
+            }
+        });
+
+        if (!session.url) throw new Error("No session URL");
+        return { ok: true, url: session.url };
+    } catch (err: any) {
+        console.error("Stripe Subscription Error:", err);
+        return { ok: false, message: err.message };
+    }
+}
+
+export async function createPremiumGuideSession(userId: string, guideName: string, price: number, userEmail?: string) {
+    const origin = (await headers()).get("origin") || "http://localhost:3000";
+
+    try {
+        const session = await stripe.checkout.sessions.create({
+            customer_email: userEmail,
+            payment_method_types: ["card"],
+            line_items: [
+                {
+                    price_data: {
+                        currency: "usd",
+                        product_data: {
+                            name: `Guía Premium: ${guideName}`,
+                            description: "Acceso permanente a esta guía avanzada.",
+                        },
+                        unit_amount: price * 100, // Convert to cents
+                    },
+                    quantity: 1,
+                },
+            ],
+            mode: "payment",
+            success_url: `${origin}/board/guias-estudio?payment_success=true&session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `${origin}/board/guias-estudio?payment_canceled=true`,
+            metadata: {
+                userId,
+                guideName,
+                action: "premium_guide",
+            },
+        });
+
+        if (!session.url) throw new Error("No session URL");
+        return { ok: true, url: session.url };
+    } catch (err: any) {
+        console.error("Stripe Guide Checkout Error:", err);
+        return { ok: false, message: err.message };
+    }
+}

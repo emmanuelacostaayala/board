@@ -172,7 +172,10 @@ export default function CertificationPage() {
                     <span className="text-sm font-medium">Presencial</span>
                   </div>
                 </div>
-                <div className="text-3xl font-bold text-center bg-white/10 rounded-xl py-4 mb-4">23 MAY 2026</div>
+                <div className="text-center bg-white/10 rounded-xl py-3 mb-4">
+                  <div className="text-2xl font-bold">19 y 20 JUN 2026</div>
+                  <div className="text-sm mt-1 text-green-100 font-medium">Examen: Sábado 20 JUN</div>
+                </div>
                 <div className="grid grid-cols-2 gap-3 mb-6">
                   <div className="text-center p-3 bg-white/10 rounded-lg">
                     <div className="text-xl font-bold">130-200</div>
