@@ -1,6 +1,56 @@
 'use client';
 
 import React, { useState } from 'react';
+// Helper: compress image files before upload
+async function compressImage(file: File, maxSizeMB = 1): Promise<File> {
+  // Only compress image files
+  if (!file.type.startsWith('image/')) return file;
+  // If already small enough, skip
+  if (file.size <= maxSizeMB * 1024 * 1024) return file;
+
+  return new Promise((resolve) => {
+    const img = new window.Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      const canvas = document.createElement('canvas');
+      // Scale down proportionally
+      let { width, height } = img;
+      const maxDim = 1600; // max 1600px on longest side
+      if (width > maxDim || height > maxDim) {
+        if (width > height) {
+          height = Math.round((height * maxDim) / width);
+          width = maxDim;
+        } else {
+          width = Math.round((width * maxDim) / height);
+          height = maxDim;
+        }
+      }
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d')!;
+      ctx.drawImage(img, 0, 0, width, height);
+      canvas.toBlob(
+        (blob) => {
+          if (blob) {
+            const compressed = new File([blob], file.name.replace(/\.[^.]+$/, '.jpg'), {
+              type: 'image/jpeg',
+              lastModified: Date.now(),
+            });
+            resolve(compressed);
+          } else {
+            resolve(file);
+          }
+        },
+        'image/jpeg',
+        0.7 // quality 70%
+      );
+    };
+    img.onerror = () => resolve(file);
+    img.src = url;
+  });
+}
+
 import {
   CheckCircle,
   Users,
@@ -37,11 +87,21 @@ const AplicarPage = () => {
     }));
   };
 
-  const handleFileChange = (e, fileType) => {
-    const file = e.target.files[0];
-    if (file && file.size > 15 * 1024 * 1024) { // 15MB
-      alert('El archivo no puede ser mayor a 15MB');
-      return;
+  const handleFileChange = async (e, fileType) => {
+    let file = e.target.files[0];
+    if (!file) return;
+    if (file.size > 4 * 1024 * 1024) { // 4MB
+      // Try to compress if it's an image
+      if (file.type.startsWith('image/')) {
+        file = await compressImage(file, 1);
+        if (file.size > 4 * 1024 * 1024) {
+          alert('La imagen sigue siendo muy grande después de comprimir. Por favor usa una imagen más pequeña o un PDF.');
+          return;
+        }
+      } else {
+        alert('El archivo no puede ser mayor a 4MB. Si es una imagen, intenta tomar la foto con menor resolución.');
+        return;
+      }
     }
     setFiles(prev => ({
       ...prev,
@@ -83,7 +143,14 @@ const AplicarPage = () => {
         }
       });
 
-      // Aquí harías la llamada a tu API endpoint
+      // Compress any remaining images before sending
+      for (const key of Object.keys(files)) {
+        if (files[key] && files[key].type.startsWith('image/')) {
+          const compressed = await compressImage(files[key], 1);
+          formDataToSend.set(key, compressed);
+        }
+      }
+
       const response = await fetch('/api/send-application', {
         method: 'POST',
         body: formDataToSend,
@@ -110,11 +177,21 @@ const AplicarPage = () => {
           input.value = '';
         });
       } else {
-        throw new Error('Error al enviar la aplicación');
+        const errData = await response.json().catch(() => null);
+        const detail = errData?.error || errData?.details || '';
+        if (response.status === 413 || detail.includes('too large') || detail.includes('FUNCTION_PAYLOAD_TOO_LARGE')) {
+          throw new Error('Los archivos son demasiado grandes. Por favor, reduce el tamaño de las imágenes o usa documentos PDF.');
+        }
+        throw new Error(detail || 'Error al enviar la aplicación');
       }
     } catch (error) {
       console.error('Error:', error);
-      setSubmitMessage('Hubo un error al enviar la aplicación. Por favor, intenta nuevamente.');
+      const msg = error instanceof Error ? error.message : '';
+      if (msg && msg !== 'Error al enviar la aplicación') {
+        setSubmitMessage(msg);
+      } else {
+        setSubmitMessage('Hubo un error al enviar la aplicación. Esto puede deberse a que los archivos son muy grandes. Intenta usar archivos PDF o imágenes de menor tamaño (menos de 4MB cada uno).');
+      }
     }
 
     setIsSubmitting(false);
@@ -315,7 +392,7 @@ const AplicarPage = () => {
                 accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
               />
-              <p className="text-sm text-gray-500 mt-2">Subir documento (Max 15MB)</p>
+              <p className="text-sm text-gray-500 mt-2">Subir documento (Max 4MB - las imágenes se comprimen automáticamente)</p>
               {files.titulo && (
                 <p className="text-sm text-green-600 mt-1">
                   ✓ Archivo seleccionado: {files.titulo.name}
@@ -334,7 +411,7 @@ const AplicarPage = () => {
                 accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
               />
-              <p className="text-sm text-gray-500 mt-2">Subir documento (Max 15MB)</p>
+              <p className="text-sm text-gray-500 mt-2">Subir documento (Max 4MB - las imágenes se comprimen automáticamente)</p>
               {files.perfusiones && (
                 <p className="text-sm text-green-600 mt-1">
                   ✓ Archivo seleccionado: {files.perfusiones.name}
@@ -353,7 +430,7 @@ const AplicarPage = () => {
                 accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
               />
-              <p className="text-sm text-gray-500 mt-2">Subir documento (Max 15MB)</p>
+              <p className="text-sm text-gray-500 mt-2">Subir documento (Max 4MB - las imágenes se comprimen automáticamente)</p>
               {files.notas && (
                 <p className="text-sm text-green-600 mt-1">
                   ✓ Archivo seleccionado: {files.notas.name}
@@ -372,7 +449,7 @@ const AplicarPage = () => {
                 accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
               />
-              <p className="text-sm text-gray-500 mt-2">Subir documento (Max 15MB)</p>
+              <p className="text-sm text-gray-500 mt-2">Subir documento (Max 4MB - las imágenes se comprimen automáticamente)</p>
               {files.trabajo && (
                 <p className="text-sm text-green-600 mt-1">
                   ✓ Archivo seleccionado: {files.trabajo.name}
