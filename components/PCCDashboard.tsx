@@ -574,8 +574,18 @@ export default function PCCDashboard(props: Props) {
               ))}
               {activeCases.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center text-muted-foreground">
-                    Aún no has registrado casos pendientes de sumisión.
+                  <TableCell colSpan={8} className="text-center text-muted-foreground py-8">
+                    {hasSubmitted ? (
+                      <div className="space-y-2">
+                        <p className="text-emerald-600 dark:text-emerald-400 font-semibold text-base">
+                          ✅ ¡Tus {historicalCases.filter(c => (c.submission_period ?? c.submissionPeriod) === '2026').length} casos del periodo 2026 ya fueron sometidos exitosamente!
+                        </p>
+                        <p className="text-sm">Puedes ver el historial completo en la sección <strong>&quot;HISTORIAL DE CASOS SOMETIDOS&quot;</strong> más abajo.</p>
+                        <p className="text-sm">Cuando tengas nuevos casos clínicos, regístralos aquí para el próximo periodo.</p>
+                      </div>
+                    ) : (
+                      'Aún no has registrado casos. Registra tu primer caso clínico con el botón de arriba.'
+                    )}
                   </TableCell>
                 </TableRow>
               )}
