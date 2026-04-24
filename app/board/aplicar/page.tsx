@@ -219,7 +219,7 @@ const AplicarPage = () => {
                   <span className="text-xs font-medium">Presencial</span>
                 </div>
               </div>
-              <div className="text-xl font-bold text-center bg-white/10 rounded-lg py-2 mb-2">20 JUN 2026</div>
+              <div className="text-xl font-bold text-center bg-white/10 rounded-lg py-2 mb-2">20 JUNE 2026</div>
             </div>
             <div className="p-4 grid grid-cols-2 gap-2 text-center text-sm">
               <div className="bg-blue-50 p-2 rounded">
