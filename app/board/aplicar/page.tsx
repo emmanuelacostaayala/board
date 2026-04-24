@@ -219,10 +219,7 @@ const AplicarPage = () => {
                   <span className="text-xs font-medium">Presencial</span>
                 </div>
               </div>
-              <div className="text-center bg-white/10 rounded-lg py-1.5 mb-2">
-                <div className="text-xl font-bold">19 y 20 de junio</div>
-                <div className="text-xs mt-0.5 text-green-100 font-medium">Examen: sábado 20</div>
-              </div>
+              <div className="text-xl font-bold text-center bg-white/10 rounded-lg py-2 mb-2">20 JUN 2026</div>
             </div>
             <div className="p-4 grid grid-cols-2 gap-2 text-center text-sm">
               <div className="bg-blue-50 p-2 rounded">
@@ -285,7 +282,7 @@ const AplicarPage = () => {
                 />
                 <div className="ml-3">
                   <span className="block text-sm font-bold text-gray-900">Presencial - El Salvador</span>
-                  <span className="block text-xs text-gray-500">Simposio: 19 y 20 de junio. Examen: sábado 20</span>
+                  <span className="block text-xs text-gray-500">20 de Junio, 2026</span>
                 </div>
               </label>
 
