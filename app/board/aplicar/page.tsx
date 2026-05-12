@@ -114,21 +114,30 @@ const AplicarPage = () => {
     setIsSubmitting(true);
     setSubmitMessage('');
 
-    // Validación básica
+    // Validación básica (Campos obligatorios de texto)
     if (!formData.nombre || !formData.apellido || !formData.correo || !formData.telefono || !formData.modoExamen) {
-      setSubmitMessage('Por favor, completa todos los campos obligatorios, incluyendo la modalidad del examen.');
+      setSubmitMessage('Por favor, completa todos los campos obligatorios.');
       setIsSubmitting(false);
       return;
     }
 
-    if (!files.titulo || !files.perfusiones || !files.notas || !files.trabajo) {
-      setSubmitMessage('Por favor, sube todos los documentos requeridos.');
-      setIsSubmitting(false);
-      return;
+    // Verificar si faltan documentos para mostrar advertencia
+    const missingDocs = [];
+    if (!files.titulo) missingDocs.push('Título de perfusionista');
+    if (!files.perfusiones) missingDocs.push('Constancia de perfusiones');
+    if (!files.notas) missingDocs.push('Record de notas');
+    if (!files.trabajo) missingDocs.push('Constancia de trabajo');
+
+    if (missingDocs.length > 0) {
+      const confirmMsg = `Atención: No has adjuntado los siguientes documentos: \n\n- ${missingDocs.join('\n- ')}\n\nTu aplicación será revisada, pero ten en cuenta que está incompleta. ¿Deseas enviarla de todos modos?`;
+      if (!window.confirm(confirmMsg)) {
+        setIsSubmitting(false);
+        return;
+      }
     }
 
     try {
-      // Crear FormData para enviar archivos
+      // Crear FormData para enviar
       const formDataToSend = new FormData();
 
       // Agregar datos del formulario
@@ -136,18 +145,14 @@ const AplicarPage = () => {
         formDataToSend.append(key, formData[key]);
       });
 
-      // Agregar archivos
-      Object.keys(files).forEach(key => {
-        if (files[key]) {
-          formDataToSend.append(key, files[key]);
-        }
-      });
-
-      // Compress any remaining images before sending
+      // Agregar y comprimir archivos (si existen)
       for (const key of Object.keys(files)) {
-        if (files[key] && files[key].type.startsWith('image/')) {
-          const compressed = await compressImage(files[key], 1);
-          formDataToSend.set(key, compressed);
+        if (files[key]) {
+          let file = files[key];
+          if (file.type.startsWith('image/')) {
+            file = await compressImage(file, 1);
+          }
+          formDataToSend.append(key, file);
         }
       }
 
@@ -157,7 +162,7 @@ const AplicarPage = () => {
       });
 
       if (response.ok) {
-        setSubmitMessage('¡Aplicación enviada exitosamente! Te llegará un correo con el link de pago en los próximos días.');
+        setSubmitMessage('¡Aplicación enviada! Recibirás un correo con los siguientes pasos. Tu documentación será revisada por el equipo técnico.');
         // Limpiar formulario
         setFormData({
           nombre: '',
@@ -174,24 +179,17 @@ const AplicarPage = () => {
         });
         // Limpiar inputs de archivo
         document.querySelectorAll('input[type="file"]').forEach(input => {
-          input.value = '';
+          (input as HTMLInputElement).value = '';
         });
       } else {
         const errData = await response.json().catch(() => null);
-        const detail = errData?.error || errData?.details || '';
-        if (response.status === 413 || detail.includes('too large') || detail.includes('FUNCTION_PAYLOAD_TOO_LARGE')) {
-          throw new Error('Los archivos son demasiado grandes. Por favor, reduce el tamaño de las imágenes o usa documentos PDF.');
-        }
+        const detail = errData?.message || errData?.error || '';
         throw new Error(detail || 'Error al enviar la aplicación');
       }
     } catch (error) {
       console.error('Error:', error);
-      const msg = error instanceof Error ? error.message : '';
-      if (msg && msg !== 'Error al enviar la aplicación') {
-        setSubmitMessage(msg);
-      } else {
-        setSubmitMessage('Hubo un error al enviar la aplicación. Esto puede deberse a que los archivos son muy grandes. Intenta usar archivos PDF o imágenes de menor tamaño (menos de 4MB cada uno).');
-      }
+      const msg = error instanceof Error ? error.message : 'Hubo un error al enviar la aplicación.';
+      setSubmitMessage(msg);
     }
 
     setIsSubmitting(false);
@@ -381,7 +379,7 @@ const AplicarPage = () => {
             {/* Título de perfusionista */}
             <div className="bg-gray-50 p-6 rounded-lg">
               <label className="block text-sm font-semibold text-gray-700 mb-3">
-                Título de perfusionista *
+                Título de perfusionista (Opcional)
               </label>
               <input
                 type="file"
@@ -400,7 +398,7 @@ const AplicarPage = () => {
             {/* Constancia de perfusiones */}
             <div className="bg-gray-50 p-6 rounded-lg">
               <label className="block text-sm font-semibold text-gray-700 mb-3">
-                Constancia de # perfusiones *
+                Constancia de # perfusiones (Opcional)
               </label>
               <input
                 type="file"
@@ -419,7 +417,7 @@ const AplicarPage = () => {
             {/* Record de notas */}
             <div className="bg-gray-50 p-6 rounded-lg">
               <label className="block text-sm font-semibold text-gray-700 mb-3">
-                Record de notas *
+                Record de notas (Opcional)
               </label>
               <input
                 type="file"
@@ -438,7 +436,7 @@ const AplicarPage = () => {
             {/* Constancia de trabajo */}
             <div className="bg-gray-50 p-6 rounded-lg">
               <label className="block text-sm font-semibold text-gray-700 mb-3">
-                Constancia de trabajo *
+                Constancia de trabajo (Opcional)
               </label>
               <input
                 type="file"

@@ -1,5 +1,7 @@
 import nodemailer from 'nodemailer';
 import { NextResponse } from 'next/server';
+import { google } from 'googleapis';
+import { Readable } from 'stream';
 
 export async function POST(request) {
   try {
@@ -18,77 +20,153 @@ export async function POST(request) {
     const notas = formData.get('notas');
     const trabajo = formData.get('trabajo');
 
-    // Validar que todos los campos están presentes
+    // Validar que los campos de texto están presentes (estos siguen siendo obligatorios)
     if (!nombre || !apellido || !correo || !telefono || !modoExamen) {
       return NextResponse.json(
-        { error: 'Faltan campos obligatorios' },
+        { error: 'Faltan campos obligatorios (Nombre, Correo, Teléfono o Modalidad)' },
         { status: 400 }
       );
     }
 
-    if (!titulo || !perfusiones || !notas || !trabajo) {
-      return NextResponse.json(
-        { error: 'Faltan documentos requeridos' },
-        { status: 400 }
-      );
+    // Nota: Los archivos ahora son opcionales según el nuevo requerimiento
+    const hasAnyFile = titulo || perfusiones || notas || trabajo;
+
+    // Función auxiliar para obtener extensión de forma segura
+    const getExtension = (file) => {
+      if (file && file.name) {
+        const parts = file.name.split('.');
+        return parts.length > 1 ? `.${parts.pop()}` : '';
+      }
+      return '';
+    };
+
+    // Configurar Google Drive Auth
+    let folderLink = null;
+    try {
+      const clientEmail = process.env.GOOGLE_DRIVE_CLIENT_EMAIL;
+      let privateKey = process.env.GOOGLE_DRIVE_PRIVATE_KEY;
+      
+      if (privateKey) {
+        privateKey = privateKey.trim().replace(/^"|"$/g, '').replace(/\\n/g, '\n');
+      }
+
+      if (clientEmail && privateKey && hasAnyFile) {
+        const auth = new google.auth.GoogleAuth({
+          credentials: { client_email: clientEmail, private_key: privateKey },
+          scopes: ['https://www.googleapis.com/auth/drive.file'],
+        });
+
+        const drive = google.drive({ version: 'v3', auth });
+        const PARENT_FOLDER_ID = '1IVrkKyTrIzT052BflLQ6q76k9ft9zO6a';
+
+        // Crear carpeta del usuario
+        const folderName = `${nombre.toString().toUpperCase()}_${apellido.toString().toUpperCase()}_${new Date().getFullYear()}`;
+        const folderMetadata = {
+          name: folderName,
+          mimeType: 'application/vnd.google-apps.folder',
+          parents: [PARENT_FOLDER_ID]
+        };
+
+        const folder = await drive.files.create({
+          resource: folderMetadata,
+          fields: 'id, webViewLink'
+        });
+        
+        const userFolderId = folder.data.id;
+        folderLink = folder.data.webViewLink;
+
+        // Función para subir un archivo a Drive
+        const uploadToDrive = async (file, fileName) => {
+          if (!file || typeof file === 'string' || !file.size) return;
+          try {
+            const buffer = Buffer.from(await file.arrayBuffer());
+            const stream = new Readable();
+            stream.push(buffer);
+            stream.push(null);
+
+            const fileMetadata = { name: fileName, parents: [userFolderId] };
+            const media = { mimeType: file.type || 'application/octet-stream', body: stream };
+            await drive.files.create({ resource: fileMetadata, media: media, fields: 'id' });
+          } catch (e) {
+            console.error(`Error subiendo ${fileName} a Drive:`, e);
+          }
+        };
+
+        // Subir los documentos que estén presentes
+        const driveUploads = [];
+        if (titulo && typeof titulo !== 'string') driveUploads.push(uploadToDrive(titulo, `Titulo_${nombre}_${apellido}${getExtension(titulo)}`));
+        if (perfusiones && typeof perfusiones !== 'string') driveUploads.push(uploadToDrive(perfusiones, `Perfusiones_${nombre}_${apellido}${getExtension(perfusiones)}`));
+        if (notas && typeof notas !== 'string') driveUploads.push(uploadToDrive(notas, `Record_Notas_${nombre}_${apellido}${getExtension(notas)}`));
+        if (trabajo && typeof trabajo !== 'string') driveUploads.push(uploadToDrive(trabajo, `Constancia_Trabajo_${nombre}_${apellido}${getExtension(trabajo)}`));
+
+        await Promise.all(driveUploads);
+        console.log(`Archivos subidos a Drive: ${folderLink}`);
+      }
+    } catch (driveError) {
+      console.error("Error al procesar Google Drive:", driveError);
     }
 
-    // Configurar el transportador de correo
+    // Configurar el transportador de correo con Zoho
+    const ZOHO_USER = 'operaciones@alapescuela.com';
+    const ZOHO_PASS = 'eyzV6ykSnAGZ';
+
     const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
+      host: '204.141.32.56',
+      port: 465,
+      secure: true,
+      servername: 'smtp.zoho.com',
+      auth: { user: ZOHO_USER, pass: ZOHO_PASS },
+      connectionTimeout: 15000,
+      greetingTimeout: 10000,
+      socketTimeout: 15000,
     });
 
-    // Preparar los adjuntos
-    const attachments = [];
-
-    // Función para convertir archivo a buffer
-    const fileToBuffer = async (file, filename) => {
-      if (file) {
-        const bytes = await file.arrayBuffer();
-        return {
-          filename: filename,
-          content: Buffer.from(bytes),
-        };
+    // Preparar los adjuntos de forma eficiente
+    const fileToAttachment = async (file, prefix) => {
+      if (file && typeof file !== 'string' && file.size > 0) {
+        try {
+          const bytes = await file.arrayBuffer();
+          return {
+            filename: `${prefix}_${nombre}_${apellido}${getExtension(file)}`,
+            content: Buffer.from(bytes),
+          };
+        } catch (e) {
+          console.error(`Error convirtiendo ${prefix} a attachment:`, e);
+        }
       }
       return null;
     };
 
-    // Agregar archivos como adjuntos
-    const tituloAttachment = await fileToBuffer(titulo, `Titulo_${nombre}_${apellido}.${titulo.name.split('.').pop()}`);
-    const perfusionesAttachment = await fileToBuffer(perfusiones, `Perfusiones_${nombre}_${apellido}.${perfusiones.name.split('.').pop()}`);
-    const notasAttachment = await fileToBuffer(notas, `Record_Notas_${nombre}_${apellido}.${notas.name.split('.').pop()}`);
-    const trabajoAttachment = await fileToBuffer(trabajo, `Constancia_Trabajo_${nombre}_${apellido}.${trabajo.name.split('.').pop()}`);
+    const attachmentsResults = await Promise.all([
+      fileToAttachment(titulo, 'Titulo'),
+      fileToAttachment(perfusiones, 'Perfusiones'),
+      fileToAttachment(notas, 'Record_Notas'),
+      fileToAttachment(trabajo, 'Constancia_Trabajo')
+    ]);
 
-    if (tituloAttachment) attachments.push(tituloAttachment);
-    if (perfusionesAttachment) attachments.push(perfusionesAttachment);
-    if (notasAttachment) attachments.push(notasAttachment);
-    if (trabajoAttachment) attachments.push(trabajoAttachment);
+    const attachments = attachmentsResults.filter(Boolean);
 
     // Configurar el correo
     const mailOptions = {
-      from: process.env.EMAIL_USER,
+      from: `"Aplicaciones Board" <${ZOHO_USER}>`,
       to: 'info@boardlatinoamericanodeperfusion.com',
       cc: 'director@boardlatinoamericanodeperfusion.com',
-      subject: `Nueva Aplicación Board Latinoamericano de Perfusión - ${nombre} ${apellido}`,
+      subject: `Nueva Aplicación Board - ${nombre} ${apellido}${attachments.length < 4 ? ' (INCOMPLETA)' : ''}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h2 style="color: #2563eb; border-bottom: 2px solid #2563eb; padding-bottom: 10px;">
-            Nueva Aplicación Recibida
+            Nueva Aplicación Recibida ${attachments.length < 4 ? '<span style="color: #dc2626;">(Incompleta)</span>' : ''}
           </h2>
           
           <div style="background-color: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
             <h3 style="color: #374151; margin-top: 0;">Información del Aplicante:</h3>
             <table style="width: 100%; border-collapse: collapse;">
               <tr>
-                <td style="padding: 8px 0; font-weight: bold; color: #4b5563;">Nombre Completo:</td>
+                <td style="padding: 8px 0; font-weight: bold; color: #4b5563;">Nombre:</td>
                 <td style="padding: 8px 0; color: #374151;">${nombre} ${apellido}</td>
               </tr>
               <tr>
-                <td style="padding: 8px 0; font-weight: bold; color: #4b5563;">Correo Electrónico:</td>
+                <td style="padding: 8px 0; font-weight: bold; color: #4b5563;">Correo:</td>
                 <td style="padding: 8px 0; color: #374151;">${correo}</td>
               </tr>
               <tr>
@@ -96,59 +174,49 @@ export async function POST(request) {
                 <td style="padding: 8px 0; color: #374151;">${telefono}</td>
               </tr>
                <tr>
-                <td style="padding: 8px 0; font-weight: bold; color: #4b5563;">Modalidad Examen:</td>
-                <td style="padding: 8px 0; color: #2563eb; font-weight: bold; text-transform: uppercase;">
+                <td style="padding: 8px 0; font-weight: bold; color: #4b5563;">Modalidad:</td>
+                <td style="padding: 8px 0; color: #2563eb; font-weight: bold;">
                   ${modoExamen === 'presencial' ? '🏢 Presencial (El Salvador)' : '🌐 Online (Virtual)'}
                 </td>
               </tr>
             </table>
           </div>
 
-          <div style="background-color: #ecfdf5; padding: 20px; border-radius: 8px; margin: 20px 0;">
-            <h3 style="color: #374151; margin-top: 0;">Documentos Adjuntos:</h3>
-            <ul style="color: #374151;">
-              <li>✅ Título de Perfusionista: ${titulo.name}</li>
-              <li>✅ Constancia de Perfusiones: ${perfusiones.name}</li>
-              <li>✅ Record de Notas: ${notas.name}</li>
-              <li>✅ Constancia de Trabajo: ${trabajo.name}</li>
+          <div style="background-color: #f1f5f9; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <h3 style="color: #374151; margin-top: 0;">Estado de Documentación:</h3>
+            <ul style="list-style: none; padding-left: 0;">
+              <li style="margin-bottom: 5px;">${titulo && typeof titulo !== 'string' ? '✅' : '❌'} <strong>Título:</strong> ${titulo && typeof titulo !== 'string' ? 'Recibido' : 'FALTANTE'}</li>
+              <li style="margin-bottom: 5px;">${perfusiones && typeof perfusiones !== 'string' ? '✅' : '❌'} <strong>Perfusiones:</strong> ${perfusiones && typeof perfusiones !== 'string' ? 'Recibido' : 'FALTANTE'}</li>
+              <li style="margin-bottom: 5px;">${notas && typeof notas !== 'string' ? '✅' : '❌'} <strong>Record Notas:</strong> ${notas && typeof notas !== 'string' ? 'Recibido' : 'FALTANTE'}</li>
+              <li style="margin-bottom: 5px;">${trabajo && typeof trabajo !== 'string' ? '✅' : '❌'} <strong>Trabajo:</strong> ${trabajo && typeof trabajo !== 'string' ? 'Recibido' : 'FALTANTE'}</li>
             </ul>
+            ${attachments.length < 4 ? '<p style="color: #dc2626; font-weight: bold; margin-top: 10px;">⚠️ Esta aplicación fue enviada sin todos los documentos requeridos.</p>' : ''}
           </div>
 
-          <div style="background-color: #fef3c7; padding: 15px; border-radius: 8px; margin: 20px 0;">
-            <p style="margin: 0; color: #92400e;">
-              <strong>Nota:</strong> Recuerda enviar el link de pago al aplicante en los próximos días.
-            </p>
+          ${folderLink ? `
+          <div style="background-color: #e0f2fe; padding: 20px; border-radius: 8px; margin: 20px 0; border: 1px solid #bae6fd;">
+            <h3 style="color: #0369a1; margin-top: 0;">📁 Carpeta en Google Drive:</h3>
+            <a href="${folderLink}" style="background-color: #0284c7; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">
+              Abrir Carpeta
+            </a>
           </div>
+          ` : ''}
 
-          <p style="color: #6b7280; font-size: 14px; margin-top: 30px;">
-            Este correo fue enviado automáticamente desde el sistema de aplicaciones del Board Latinoamericano de Perfusión.
+          <p style="color: #6b7280; font-size: 12px; margin-top: 30px;">
+            Sistema de aplicaciones del Board Latinoamericano de Perfusión.
           </p>
         </div>
       `,
       attachments: attachments
     };
 
-    // Enviar el correo
     const info = await transporter.sendMail(mailOptions);
-    console.log('Correo enviado:', info.messageId);
-
-    return NextResponse.json(
-      {
-        success: true,
-        message: 'Aplicación enviada exitosamente',
-        messageId: info.messageId
-      },
-      { status: 200 }
-    );
+    return NextResponse.json({ success: true, messageId: info.messageId }, { status: 200 });
 
   } catch (error) {
-    console.error('Error sending email:', error);
-
+    console.error('CRITICAL ERROR:', error);
     return NextResponse.json(
-      {
-        error: 'Error interno del servidor al enviar la aplicación',
-        details: process.env.NODE_ENV === 'development' ? error.message : undefined
-      },
+      { error: 'Error interno del servidor', message: error.message },
       { status: 500 }
     );
   }
