@@ -121,19 +121,11 @@ const AplicarPage = () => {
       return;
     }
 
-    // Verificar si faltan documentos para mostrar advertencia
-    const missingDocs = [];
-    if (!files.titulo) missingDocs.push('Título de perfusionista');
-    if (!files.perfusiones) missingDocs.push('Constancia de perfusiones');
-    if (!files.notas) missingDocs.push('Record de notas');
-    if (!files.trabajo) missingDocs.push('Constancia de trabajo');
-
-    if (missingDocs.length > 0) {
-      const confirmMsg = `Atención: No has adjuntado los siguientes documentos: \n\n- ${missingDocs.join('\n- ')}\n\nTu aplicación será revisada, pero ten en cuenta que está incompleta. ¿Deseas enviarla de todos modos?`;
-      if (!window.confirm(confirmMsg)) {
-        setIsSubmitting(false);
-        return;
-      }
+    // Validar documento obligatorio
+    if (!files.titulo) {
+      setSubmitMessage('Por favor, adjunta el Título de perfusionista (Obligatorio).');
+      setIsSubmitting(false);
+      return;
     }
 
     try {
@@ -379,7 +371,7 @@ const AplicarPage = () => {
             {/* Título de perfusionista */}
             <div className="bg-gray-50 p-6 rounded-lg">
               <label className="block text-sm font-semibold text-gray-700 mb-3">
-                Título de perfusionista (Opcional)
+                Título de perfusionista *
               </label>
               <input
                 type="file"
@@ -398,7 +390,7 @@ const AplicarPage = () => {
             {/* Constancia de perfusiones */}
             <div className="bg-gray-50 p-6 rounded-lg">
               <label className="block text-sm font-semibold text-gray-700 mb-3">
-                Constancia de # perfusiones (Opcional)
+                Constancia de # perfusiones
               </label>
               <input
                 type="file"
@@ -417,7 +409,7 @@ const AplicarPage = () => {
             {/* Record de notas */}
             <div className="bg-gray-50 p-6 rounded-lg">
               <label className="block text-sm font-semibold text-gray-700 mb-3">
-                Record de notas (Opcional)
+                Record de notas
               </label>
               <input
                 type="file"
@@ -436,7 +428,7 @@ const AplicarPage = () => {
             {/* Constancia de trabajo */}
             <div className="bg-gray-50 p-6 rounded-lg">
               <label className="block text-sm font-semibold text-gray-700 mb-3">
-                Constancia de trabajo (Opcional)
+                Constancia de trabajo
               </label>
               <input
                 type="file"
