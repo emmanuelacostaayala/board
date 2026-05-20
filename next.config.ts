@@ -5,9 +5,6 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true
   },
-  eslint: {
-    ignoreDuringBuilds: true
-  },
   // Fix: Sentry + Next.js 16 + Turbopack — excluir los paquetes de OpenTelemetry
   // que causan conflictos de versiones con import-in-the-middle y node:inspector
   serverExternalPackages: [
@@ -18,6 +15,7 @@ const nextConfig: NextConfig = {
     '@opentelemetry/resources',
     '@opentelemetry/semantic-conventions',
     'import-in-the-middle',
+    'googleapis',
   ],
   turbopack: {
     // En Next.js 16 + Sentry, necesitamos configurar esto explícitamente para silenciar el error,
