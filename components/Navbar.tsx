@@ -88,7 +88,7 @@ const Navbar = () => {
                             </div>
                             <div className="flex flex-col">
                                 <span className="text-xs sm:text-sm lg:text-lg font-semibold leading-tight text-gray-800">
-                                    Board Latinoamericano de
+                                    <span translate="no" className="notranslate">Board</span> Latinoamericano de
                                 </span>
                                 <span className="text-xs sm:text-sm lg:text-lg font-semibold leading-tight text-gray-800">
                                     Perfusión Cardiovascular
@@ -156,7 +156,7 @@ const Navbar = () => {
                             className="object-contain"
                         />
                         <div className="flex flex-col">
-                            <span className="text-sm font-semibold leading-tight text-gray-800">Board Latinoamericano</span>
+                            <span className="text-sm font-semibold leading-tight text-gray-800"><span translate="no" className="notranslate">Board</span> Latinoamericano</span>
                             <span className="text-sm font-semibold leading-tight text-gray-800">de Perfusión Cardiovascular</span>
                         </div>
                     </div>

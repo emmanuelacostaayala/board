@@ -99,7 +99,7 @@ export default function CertificationPage() {
             <span className="text-sm font-medium">Certificación Profesional</span>
           </div>
           <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-white to-blue-100 bg-clip-text text-transparent">
-            Board Latinoamericano de Perfusión
+            <span translate="no" className="notranslate">Board</span> Latinoamericano de Perfusión
           </h1>
           <p className="text-xl text-blue-100 max-w-3xl mx-auto leading-relaxed">
             Únete a los 274 profesionales certificados en perfusión cardiovascular en toda Latinoamérica
