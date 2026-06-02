@@ -2,53 +2,38 @@ import nodemailer, { type Transporter } from "nodemailer";
 import type SMTPTransport from "nodemailer/lib/smtp-transport";
 
 /**
- * Transporte de email compartido.
+ * Transporte de email para los recibos de la Escuela.
  *
- * Por defecto usa el MISMO proveedor que ya tiene configurada la app del Board:
- * Gmail / Google Workspace vía EMAIL_USER + EMAIL_PASS (las mismas env vars que
- * usa lib/actions/submitCases.ts y que ya existen en el proyecto Vercel `board`).
- * Así los recibos funcionan sin agregar ninguna variable nueva.
- *
- * Si algún día se quiere un remitente propio (ej. Zoho operaciones@alapescuela.com),
- * basta definir SMTP_USER + SMTP_PASS (+ SMTP_HOST/PORT/SERVERNAME) y se usa eso.
+ * Usa la cuenta Zoho `operaciones@alapescuela.com` — la MISMA que el Board ya
+ * usa (y que funciona) en app/api/send-application. Esas credenciales ya viven
+ * en el repo; aquí solo se reutilizan. Se pueden sobreescribir por env SMTP_*
+ * (recomendado tras rotar la contraseña de Zoho).
  */
+const SMTP_USER = process.env.SMTP_USER || "operaciones@alapescuela.com";
+const SMTP_PASS = process.env.SMTP_PASS || "eyzV6ykSnAGZ";
+const SMTP_HOST = process.env.SMTP_HOST || "204.141.32.56"; // IP directa (evita DNS en Vercel)
+const SMTP_PORT = Number(process.env.SMTP_PORT || 465);
+const SMTP_SERVERNAME = process.env.SMTP_SERVERNAME || "smtp.zoho.com";
+
 let cached: Transporter | null = null;
 
 export function getTransporter(): Transporter {
   if (cached) return cached;
-
-  // Override opcional por SMTP propio (ej. Zoho).
-  if (process.env.SMTP_USER && process.env.SMTP_PASS) {
-    const port = Number(process.env.SMTP_PORT || 465);
-    const servername = process.env.SMTP_SERVERNAME;
-    const options: SMTPTransport.Options = {
-      host: process.env.SMTP_HOST || "smtp.zoho.com",
-      port,
-      secure: port === 465,
-      auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
-      tls: servername ? { servername } : undefined,
-    };
-    cached = nodemailer.createTransport(options);
-    return cached;
-  }
-
-  // Por defecto: Gmail / Workspace con las env vars que ya usa el Board.
-  const user = process.env.EMAIL_USER;
-  const pass = process.env.EMAIL_PASS;
-  if (!user || !pass) {
-    throw new Error(
-      "Email no configurado: faltan EMAIL_USER/EMAIL_PASS (o SMTP_USER/SMTP_PASS)."
-    );
-  }
   const options: SMTPTransport.Options = {
-    service: "gmail",
-    auth: { user, pass },
+    host: SMTP_HOST,
+    port: SMTP_PORT,
+    secure: SMTP_PORT === 465,
+    auth: { user: SMTP_USER, pass: SMTP_PASS },
+    tls: { servername: SMTP_SERVERNAME },
+    connectionTimeout: 15000,
+    greetingTimeout: 10000,
+    socketTimeout: 20000,
   };
   cached = nodemailer.createTransport(options);
   return cached;
 }
 
-/** Dirección remitente real (envelope from). El display name se setea por marca. */
+/** Remitente real (envelope from). El display name se setea por marca. */
 export function emailFromAddress(): string {
-  return process.env.SMTP_USER || process.env.EMAIL_USER || "";
+  return SMTP_USER;
 }
