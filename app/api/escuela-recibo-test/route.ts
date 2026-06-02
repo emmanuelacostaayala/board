@@ -6,12 +6,10 @@ import { BRANDS } from "@/lib/receipts/brands";
 import type { ReceiptData } from "@/lib/receipts/types";
 
 // TEMPORAL — solo para una prueba de recibo. Destinatario FIJO (el dueño),
-// protegido por RECEIPT_TEST_KEY. Se elimina tras la prueba.
+// protegido por una clave en código. Se elimina tras la prueba.
 const TEST_TO = "enmanuelh03@gmail.com";
 
 export async function GET(req: Request) {
-  // Clave temporal en código: este endpoint se ELIMINA tras la prueba y solo
-  // puede enviar un recibo de muestra al correo fijo del dueño (TEST_TO).
   const TEST_KEY = "tmp-escuela-7f3a9c2e1d4b-borrar";
   const key = new URL(req.url).searchParams.get("key");
   if (key !== TEST_KEY) {
