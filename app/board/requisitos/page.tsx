@@ -33,16 +33,11 @@ const RequisitosPage = () => {
 
             {/* Requisitos numerados */}
             <div className="space-y-8">
-              {/* Requisito 1 - OBLIGATORIO */}
-              <div className="bg-white p-6 rounded-lg border-l-4 border-green-500 shadow-sm">
-                <div className="flex items-center gap-3 mb-3">
-                  <h3 className="text-xl font-bold text-green-800">
-                    1) Título de Perfusionista
-                  </h3>
-                  <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-green-100 text-green-800 border border-green-300">
-                    Obligatorio
-                  </span>
-                </div>
+              {/* Requisito 1 */}
+              <div className="bg-white p-6 rounded-lg border-l-4 border-gray-300">
+                <h3 className="text-xl font-bold text-gray-700 mb-3">
+                  1) Título de Perfusionista
+                </h3>
                 <p className="text-gray-700 leading-relaxed">
                   Por una escuela con aval universitario o aval ALAP; Si no aplica ninguna de los anteriores, 
                   la solicitud se procesará como <span className="font-semibold text-orange-600">&quot;casos especiales&quot;</span>
