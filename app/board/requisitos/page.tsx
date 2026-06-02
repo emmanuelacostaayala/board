@@ -86,11 +86,22 @@ const RequisitosPage = () => {
         <section className="mb-8">
           <div className="bg-orange-50 border-l-4 border-orange-500 p-6 rounded-r-lg">
             <h2 className="text-2xl font-bold text-orange-800 mb-4">Casos Especiales</h2>
-            <p className="text-gray-700 leading-relaxed">
+            <p className="text-gray-700 leading-relaxed mb-4">
               Son aquellos en los cuales los solicitantes calificaban para el período (1) Inclusión pero no 
               presentaron en la fecha. Para estos casos especiales pasaran a la modalidad de evaluación del 
               período II- Regular.
             </p>
+            <div className="mt-4 bg-white/50 p-4 rounded-lg">
+              <h3 className="text-lg font-bold text-orange-800 mb-3">Para aplicar como caso especial, los requisitos son los siguientes:</h3>
+              <ul className="list-decimal pl-5 space-y-3 text-gray-700">
+                <li>
+                  <span className="font-semibold">Carta laboral</span> emitida por la institución en donde labora (con firma y sello por dirección médica o recursos humanos).
+                </li>
+                <li>
+                  <span className="font-semibold">Carta de no objeción</span> para presentar el Board Latinoamericano de Perfusión de la sociedad de perfusionistas del país donde labora dirigida al Board Latinoamericano de Perfusión. Si no hay sociedad de perfusionistas enviar una carta o constancia de la Asociación Latinoamericana de Perfusión como miembro activo.
+                </li>
+              </ul>
+            </div>
           </div>
         </section>
 
