@@ -94,41 +94,6 @@ const RequisitosPage = () => {
           </div>
         </section>
 
-        {/* Perfusionistas Graduados 2021-2022 */}
-        <section className="mb-8">
-          <div className="bg-purple-50 border-l-4 border-purple-500 p-6 rounded-r-lg">
-            <h2 className="text-2xl font-bold text-purple-800 mb-4">
-              Perfusionistas Graduados 2021-2022
-            </h2>
-            <p className="text-gray-700 leading-relaxed mb-4">
-              Los aplicantes que deseen presentar el Board Latinoamericano de Perfusión en el periodo de 
-              Inclusión I y que hayan culminado sus estudios de perfusión durante el 2021-2022 podrán rendir 
-              el examen pero deben anexar a su solicitud los requisitos del Periodo Regular II.
-            </p>
-          </div>
-        </section>
-
-        {/* Requisitos Periodo II */}
-        <section className="mb-8">
-          <div className="bg-indigo-50 border-l-4 border-indigo-500 p-6 rounded-r-lg">
-            <h2 className="text-2xl font-bold text-indigo-800 mb-6">Requisitos Periodo II</h2>
-            <div className="space-y-4">
-              <div className="bg-white p-4 rounded-lg border-l-4 border-indigo-300">
-                <h3 className="text-lg font-semibold text-indigo-800 mb-2">1. Record de Notas</h3>
-                <p className="text-gray-700">
-                  Copia del Record de Notas o calificaciones de la Escuela de Perfusión
-                </p>
-              </div>
-              <div className="bg-white p-4 rounded-lg border-l-4 border-indigo-300">
-                <h3 className="text-lg font-semibold text-indigo-800 mb-2">2. Certificación de Perfusiones</h3>
-                <p className="text-gray-700">
-                  Certificación del Número de perfusiones realizadas durante sus estudios.
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-
         {/* Botón de contacto */}
         <div className="text-center mt-12">
           <button
