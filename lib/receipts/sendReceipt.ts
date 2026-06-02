@@ -149,7 +149,7 @@ function nowSeconds(): number {
   return Math.floor(Date.now() / 1000);
 }
 
-function receiptEmailHtml(brand: Brand, data: ReceiptData): string {
+export function receiptEmailHtml(brand: Brand, data: ReceiptData): string {
   const c = `rgb(${Math.round(brand.color.r * 255)},${Math.round(
     brand.color.g * 255
   )},${Math.round(brand.color.b * 255)})`;
