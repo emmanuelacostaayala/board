@@ -68,6 +68,9 @@ export async function sendReceiptForCheckoutSession(
     pi && typeof pi === "object" ? (pi.latest_charge as Stripe.Charge | null) : null;
   const createdUnix = charge?.created ?? session.created ?? nowSeconds();
 
+  // Nombre del estudiante (campo personalizado del link); si no existe, el del pagador/tarjeta.
+  const studentName = customFieldValue(session, ["nombreestudiante"]);
+
   const data: ReceiptData = {
     brandKey: brand.key,
     receiptNumber: buildReceiptNumber(
@@ -76,7 +79,7 @@ export async function sendReceiptForCheckoutSession(
       createdUnix
     ),
     dateISO: formatDateEs(createdUnix),
-    payerName: session.customer_details?.name || "",
+    payerName: studentName || session.customer_details?.name || "",
     payerEmail: email,
     items,
     currency: (session.currency || "usd").toUpperCase(),
@@ -147,6 +150,23 @@ function productDescOf(price?: Stripe.Price | null): string | undefined {
   const prod = price?.product;
   if (prod && typeof prod === "object" && "description" in prod) {
     return (prod as Stripe.Product).description ?? undefined;
+  }
+  return undefined;
+}
+
+/** Lee un campo personalizado del checkout (ej. "nombre del estudiante"). */
+function customFieldValue(
+  session: Stripe.Checkout.Session,
+  keys: string[]
+): string | undefined {
+  const fields = (session.custom_fields || []) as any[];
+  for (const f of fields) {
+    const k = String(f?.key || "").toLowerCase();
+    const label = String(f?.label?.custom || "").toLowerCase();
+    if (keys.includes(k) || /estudiante|alumno/.test(label)) {
+      const v = f?.text?.value || f?.dropdown?.value || f?.numeric?.value;
+      if (v) return String(v);
+    }
   }
   return undefined;
 }
