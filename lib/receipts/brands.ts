@@ -82,14 +82,51 @@ export const ESCUELA_PRICE_IDS = new Set<string>([
   "price_1TKlL4E9XdtawVdwdJNKEEHR", // Pago V – Julio 2027
 ]);
 
-export function resolveBrand(opts: {
-  productIds?: (string | null | undefined)[];
-  priceIds?: (string | null | undefined)[];
-}): Brand {
-  const prods = (opts.productIds || []).filter(Boolean) as string[];
-  const prices = (opts.priceIds || []).filter(Boolean) as string[];
-  const isEscuela =
-    prods.some((p) => ESCUELA_PRODUCT_IDS.has(p)) ||
-    prices.some((p) => ESCUELA_PRICE_IDS.has(p));
-  return isEscuela ? BRANDS.ESCUELA : BRANDS.BOARD;
+export interface EscuelaSignal {
+  productId?: string | null;
+  priceId?: string | null;
+  name?: string | null;
+  description?: string | null;
+}
+
+function norm(s?: string | null): string {
+  return (s || "")
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .toLowerCase()
+    .trim();
+}
+
+/**
+ * ¿Este ítem es una cuota de la Escuela (Maestría en Perfusión)?
+ * 1) IDs explícitos conocidos (rápido y garantizado), o
+ * 2) Heurística robusta para productos/links NUEVOS sin tener que tocar código:
+ *    - la descripción menciona "Maestría en Perfusión", o
+ *    - el nombre es "Pago <romano> ..." y hay señal de perfusión/maestría/parcial.
+ * Los productos del Board ($10 penalización, donación, suscripción IA, guías)
+ * NO cumplen ninguna de estas → se excluyen.
+ */
+function isEscuelaItem(it: EscuelaSignal): boolean {
+  if (it.productId && ESCUELA_PRODUCT_IDS.has(it.productId)) return true;
+  if (it.priceId && ESCUELA_PRICE_IDS.has(it.priceId)) return true;
+
+  const name = norm(it.name);
+  const desc = norm(it.description);
+
+  if (desc.includes("maestria en perfusion")) return true;
+
+  const looksLikeCuota = /^pago\s+[ivx]+\b/.test(name);
+  const perfusionSignal =
+    name.includes("perfusion") ||
+    name.includes("maestria") ||
+    name.includes("parcial") ||
+    desc.includes("perfusion") ||
+    desc.includes("maestria") ||
+    desc.includes("parcial");
+  return looksLikeCuota && perfusionSignal;
+}
+
+export function resolveBrand(opts: { items?: EscuelaSignal[] }): Brand {
+  const items = opts.items || [];
+  return items.some(isEscuelaItem) ? BRANDS.ESCUELA : BRANDS.BOARD;
 }

@@ -44,8 +44,12 @@ export async function sendReceiptForCheckoutSession(
 
   const lineItems = (session.line_items?.data || []) as Stripe.LineItem[];
   const brand = resolveBrand({
-    productIds: lineItems.map((li) => productIdOf(li.price)),
-    priceIds: lineItems.map((li) => li.price?.id),
+    items: lineItems.map((li) => ({
+      productId: productIdOf(li.price),
+      priceId: li.price?.id,
+      name: productNameOf(li.price),
+      description: productDescOf(li.price),
+    })),
   });
 
   // Solo emitimos recibos de la Escuela; los pagos del Board no se tocan.
@@ -135,6 +139,14 @@ function productNameOf(price?: Stripe.Price | null): string | undefined {
   const prod = price?.product;
   if (prod && typeof prod === "object" && "name" in prod) {
     return (prod as Stripe.Product).name;
+  }
+  return undefined;
+}
+
+function productDescOf(price?: Stripe.Price | null): string | undefined {
+  const prod = price?.product;
+  if (prod && typeof prod === "object" && "description" in prod) {
+    return (prod as Stripe.Product).description ?? undefined;
   }
   return undefined;
 }
