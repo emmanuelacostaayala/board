@@ -40,11 +40,47 @@ export async function POST(request) {
       return '';
     };
 
-    // Configurar Google Drive Auth - Eliminado por políticas de cuota de Google
-    // Ahora todo se maneja directamente por correo electrónico
+    // Configurar Google Drive Auth para solo crear la carpeta vacía
     let folderLink = null;
     let bufferTexto = null;
     let nombreArchivoTexto = '';
+
+    try {
+      const clientEmail = process.env.GOOGLE_DRIVE_CLIENT_EMAIL;
+      let privateKey = process.env.GOOGLE_DRIVE_PRIVATE_KEY;
+      
+      if (privateKey) {
+        privateKey = privateKey.trim().replace(/^"|"$/g, '').replace(/\\n/g, '\n');
+      }
+
+      if (clientEmail && privateKey) {
+        const auth = new google.auth.GoogleAuth({
+          credentials: { client_email: clientEmail, private_key: privateKey },
+          scopes: ['https://www.googleapis.com/auth/drive.file'],
+        });
+
+        const drive = google.drive({ version: 'v3', auth });
+        const PARENT_FOLDER_ID = '1IVrkKyTrIzT052BflLQ6q76k9ft9zO6a';
+
+        // Crear carpeta del usuario vacía
+        const folderName = `${nombre.toString().toUpperCase()}_${apellido.toString().toUpperCase()}_${new Date().getFullYear()}`;
+        const folderMetadata = {
+          name: folderName,
+          mimeType: 'application/vnd.google-apps.folder',
+          parents: [PARENT_FOLDER_ID]
+        };
+
+        const folder = await drive.files.create({
+          resource: folderMetadata,
+          fields: 'id, webViewLink'
+        });
+        
+        folderLink = folder.data.webViewLink;
+        console.log(`Carpeta vacía creada en Drive: ${folderLink}`);
+      }
+    } catch (driveError) {
+      console.error("Error creando la carpeta en Google Drive:", driveError);
+    }
     
     try {
       // Generar archivo de texto con los datos del aplicante para enviarlo adjunto
@@ -148,13 +184,14 @@ export async function POST(request) {
               <li style="margin-bottom: 5px;">${notas && typeof notas !== 'string' ? '✅' : '❌'} <strong>Record Notas:</strong> ${notas && typeof notas !== 'string' ? 'Recibido' : 'FALTANTE'}</li>
               <li style="margin-bottom: 5px;">${trabajo && typeof trabajo !== 'string' ? '✅' : '❌'} <strong>Trabajo:</strong> ${trabajo && typeof trabajo !== 'string' ? 'Recibido' : 'FALTANTE'}</li>
             </ul>
-            ${attachments.length < 4 ? '<p style="color: #dc2626; font-weight: bold; margin-top: 10px;">⚠️ Esta aplicación fue enviada sin todos los documentos requeridos.</p>' : ''}
+            ${attachmentsResults.filter(Boolean).length < 4 ? '<p style="color: #dc2626; font-weight: bold; margin-top: 10px;">⚠️ Esta aplicación fue enviada sin todos los documentos requeridos.</p>' : ''}
           </div>
 
           ${folderLink ? `
           <div style="background-color: #e0f2fe; padding: 20px; border-radius: 8px; margin: 20px 0; border: 1px solid #bae6fd;">
-            <h3 style="color: #0369a1; margin-top: 0;">📁 Carpeta en Google Drive:</h3>
-            <a href="${folderLink}" style="background-color: #0284c7; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">
+            <h3 style="color: #0369a1; margin-top: 0;">📁 Carpeta vacía creada en Google Drive:</h3>
+            <p style="font-size: 14px; color: #334155;">(Pasa los adjuntos de este correo a esta carpeta manualmente)</p>
+            <a href="${folderLink}" style="background-color: #0284c7; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block; margin-top: 5px;">
               Abrir Carpeta
             </a>
           </div>
