@@ -40,82 +40,20 @@ export async function POST(request) {
       return '';
     };
 
-    // Configurar Google Drive Auth
+    // Configurar Google Drive Auth - Eliminado por políticas de cuota de Google
+    // Ahora todo se maneja directamente por correo electrónico
     let folderLink = null;
+    let bufferTexto = null;
+    let nombreArchivoTexto = '';
+    
     try {
-      const clientEmail = process.env.GOOGLE_DRIVE_CLIENT_EMAIL;
-      let privateKey = process.env.GOOGLE_DRIVE_PRIVATE_KEY;
-      
-      if (privateKey) {
-        privateKey = privateKey.trim().replace(/^"|"$/g, '').replace(/\\n/g, '\n');
-      }
-
-      if (clientEmail && privateKey && hasAnyFile) {
-        const auth = new google.auth.GoogleAuth({
-          credentials: { client_email: clientEmail, private_key: privateKey },
-          scopes: ['https://www.googleapis.com/auth/drive.file'],
-        });
-
-        const drive = google.drive({ version: 'v3', auth });
-        const PARENT_FOLDER_ID = '1IVrkKyTrIzT052BflLQ6q76k9ft9zO6a';
-
-        // Crear carpeta del usuario
-        const folderName = `${nombre.toString().toUpperCase()}_${apellido.toString().toUpperCase()}_${new Date().getFullYear()}`;
-        const folderMetadata = {
-          name: folderName,
-          mimeType: 'application/vnd.google-apps.folder',
-          parents: [PARENT_FOLDER_ID]
-        };
-
-        const folder = await drive.files.create({
-          resource: folderMetadata,
-          fields: 'id, webViewLink'
-        });
-        
-        const userFolderId = folder.data.id;
-        folderLink = folder.data.webViewLink;
-
-        // Función para subir un buffer/stream a Drive
-        const uploadBufferToDrive = async (buffer, fileName, mimeType) => {
-          try {
-            const stream = Readable.from(buffer);
-            const fileMetadata = { name: fileName, parents: [userFolderId] };
-            const media = { mimeType: mimeType || 'application/octet-stream', body: stream };
-            await drive.files.create({ resource: fileMetadata, media: media, fields: 'id' });
-          } catch (e) {
-            console.error(`Error subiendo ${fileName} a Drive:`, e);
-          }
-        };
-
-        const uploadToDrive = async (file, fileName) => {
-          if (!file || typeof file === 'string' || !file.size) return;
-          try {
-            const buffer = Buffer.from(await file.arrayBuffer());
-            await uploadBufferToDrive(buffer, fileName, file.type);
-          } catch (e) {
-            console.error(`Error procesando archivo ${fileName}:`, e);
-          }
-        };
-
-        // Subir los documentos que estén presentes
-        const driveUploads = [];
-
-        // Generar archivo de texto con los datos del aplicante
-        const modoExamenTexto = modoExamen === 'presencial' ? 'Presencial (El Salvador)' : 'Online (Virtual)';
-        const datosTexto = `DATOS DEL APLICANTE\n====================\nNombre: ${nombre}\nApellido: ${apellido}\nCorreo Electrónico: ${correo}\nTeléfono/Celular: ${telefono}\nModalidad del Examen: ${modoExamenTexto}\nFecha de Aplicación: ${new Date().toLocaleString('es-DO', { timeZone: 'America/Santo_Domingo' })}\n`;
-        const bufferTexto = Buffer.from(datosTexto, 'utf-8');
-        driveUploads.push(uploadBufferToDrive(bufferTexto, `Datos_Aplicante_${nombre}_${apellido}.txt`, 'text/plain'));
-
-        if (titulo && typeof titulo !== 'string') driveUploads.push(uploadToDrive(titulo, `Titulo_${nombre}_${apellido}${getExtension(titulo)}`));
-        if (perfusiones && typeof perfusiones !== 'string') driveUploads.push(uploadToDrive(perfusiones, `Perfusiones_${nombre}_${apellido}${getExtension(perfusiones)}`));
-        if (notas && typeof notas !== 'string') driveUploads.push(uploadToDrive(notas, `Record_Notas_${nombre}_${apellido}${getExtension(notas)}`));
-        if (trabajo && typeof trabajo !== 'string') driveUploads.push(uploadToDrive(trabajo, `Constancia_Trabajo_${nombre}_${apellido}${getExtension(trabajo)}`));
-
-        await Promise.all(driveUploads);
-        console.log(`Archivos subidos a Drive: ${folderLink}`);
-      }
-    } catch (driveError) {
-      console.error("Error al procesar Google Drive:", driveError);
+      // Generar archivo de texto con los datos del aplicante para enviarlo adjunto
+      const modoExamenTexto = modoExamen === 'presencial' ? 'Presencial (El Salvador)' : 'Online (Virtual)';
+      const datosTexto = `DATOS DEL APLICANTE\n====================\nNombre: ${nombre}\nApellido: ${apellido}\nCorreo Electrónico: ${correo}\nTeléfono/Celular: ${telefono}\nModalidad del Examen: ${modoExamenTexto}\nFecha de Aplicación: ${new Date().toLocaleString('es-DO', { timeZone: 'America/Santo_Domingo' })}\n`;
+      bufferTexto = Buffer.from(datosTexto, 'utf-8');
+      nombreArchivoTexto = `Datos_Aplicante_${nombre}_${apellido}.txt`;
+    } catch (textError) {
+      console.error("Error al generar el archivo de texto:", textError);
     }
 
     // Configurar el transportador de correo con Zoho
@@ -158,12 +96,20 @@ export async function POST(request) {
 
     const attachments = attachmentsResults.filter(Boolean);
 
+    // Agregar el bloc de notas a los adjuntos si se generó correctamente
+    if (bufferTexto && nombreArchivoTexto) {
+      attachments.push({
+        filename: nombreArchivoTexto,
+        content: bufferTexto,
+      });
+    }
+
     // Configurar el correo
     const mailOptions = {
       from: `"Aplicaciones Board" <${ZOHO_USER}>`,
       to: 'info@boardlatinoamericanodeperfusion.com',
-      cc: 'director@boardlatinoamericanodeperfusion.com',
-      subject: `Nueva Aplicación Board - ${nombre} ${apellido}${attachments.length < 4 ? ' (INCOMPLETA)' : ''}`,
+      cc: 'director@boardlatinoamericanodeperfusion.com, boardlatinoamericano@gmail.com',
+      subject: `Nueva Aplicación Board - ${nombre} ${apellido}${attachmentsResults.filter(Boolean).length < 4 ? ' (INCOMPLETA)' : ''}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h2 style="color: #2563eb; border-bottom: 2px solid #2563eb; padding-bottom: 10px;">
