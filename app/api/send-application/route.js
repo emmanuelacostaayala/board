@@ -75,25 +75,37 @@ export async function POST(request) {
         const userFolderId = folder.data.id;
         folderLink = folder.data.webViewLink;
 
-        // Función para subir un archivo a Drive
-        const uploadToDrive = async (file, fileName) => {
-          if (!file || typeof file === 'string' || !file.size) return;
+        // Función para subir un buffer/stream a Drive
+        const uploadBufferToDrive = async (buffer, fileName, mimeType) => {
           try {
-            const buffer = Buffer.from(await file.arrayBuffer());
-            const stream = new Readable();
-            stream.push(buffer);
-            stream.push(null);
-
+            const stream = Readable.from(buffer);
             const fileMetadata = { name: fileName, parents: [userFolderId] };
-            const media = { mimeType: file.type || 'application/octet-stream', body: stream };
+            const media = { mimeType: mimeType || 'application/octet-stream', body: stream };
             await drive.files.create({ resource: fileMetadata, media: media, fields: 'id' });
           } catch (e) {
             console.error(`Error subiendo ${fileName} a Drive:`, e);
           }
         };
 
+        const uploadToDrive = async (file, fileName) => {
+          if (!file || typeof file === 'string' || !file.size) return;
+          try {
+            const buffer = Buffer.from(await file.arrayBuffer());
+            await uploadBufferToDrive(buffer, fileName, file.type);
+          } catch (e) {
+            console.error(`Error procesando archivo ${fileName}:`, e);
+          }
+        };
+
         // Subir los documentos que estén presentes
         const driveUploads = [];
+
+        // Generar archivo de texto con los datos del aplicante
+        const modoExamenTexto = modoExamen === 'presencial' ? 'Presencial (El Salvador)' : 'Online (Virtual)';
+        const datosTexto = `DATOS DEL APLICANTE\n====================\nNombre: ${nombre}\nApellido: ${apellido}\nCorreo Electrónico: ${correo}\nTeléfono/Celular: ${telefono}\nModalidad del Examen: ${modoExamenTexto}\nFecha de Aplicación: ${new Date().toLocaleString('es-DO', { timeZone: 'America/Santo_Domingo' })}\n`;
+        const bufferTexto = Buffer.from(datosTexto, 'utf-8');
+        driveUploads.push(uploadBufferToDrive(bufferTexto, `Datos_Aplicante_${nombre}_${apellido}.txt`, 'text/plain'));
+
         if (titulo && typeof titulo !== 'string') driveUploads.push(uploadToDrive(titulo, `Titulo_${nombre}_${apellido}${getExtension(titulo)}`));
         if (perfusiones && typeof perfusiones !== 'string') driveUploads.push(uploadToDrive(perfusiones, `Perfusiones_${nombre}_${apellido}${getExtension(perfusiones)}`));
         if (notas && typeof notas !== 'string') driveUploads.push(uploadToDrive(notas, `Record_Notas_${nombre}_${apellido}${getExtension(notas)}`));
