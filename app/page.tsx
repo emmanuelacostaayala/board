@@ -161,46 +161,8 @@ export default function CertificationPage() {
       <section className="max-w-7xl mx-auto px-6 -mt-2 relative z-10">
         <div className="flex flex-col gap-8">
           {/* Opciones de Examen */}
-          <div className="grid md:grid-cols-2 gap-8">
-            {/* Presencial */}
-            <div className="bg-white rounded-2xl shadow-xl border border-green-200 overflow-hidden">
-              <div className="bg-gradient-to-r from-green-500 to-emerald-500 p-6 text-white h-full relative">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-xl font-bold">Simposio ALAP - El Salvador</h3>
-                  <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-3 py-1">
-                    <CheckCircle className="w-4 h-4" />
-                    <span className="text-sm font-medium">Presencial</span>
-                  </div>
-                </div>
-                <div className="text-3xl font-bold text-center bg-white/10 rounded-xl py-4 mb-4">20 JUNE 2026</div>
-                <div className="grid grid-cols-2 gap-3 mb-6">
-                  <div className="text-center p-3 bg-white/10 rounded-lg">
-                    <div className="text-xl font-bold">130-200</div>
-                    <div className="text-xs opacity-90">Preguntas</div>
-                  </div>
-                  <div className="text-center p-3 bg-white/10 rounded-lg">
-                    <div className="text-xl font-bold">$120</div>
-                    <div className="text-xs opacity-90">USD</div>
-                  </div>
-                  <div className="text-center p-3 bg-white/10 rounded-lg">
-                    <div className="text-xl font-bold">70%</div>
-                    <div className="text-xs opacity-90">Aprobación</div>
-                  </div>
-                  <div className="text-center p-3 bg-white/10 rounded-lg">
-                    <div className="text-xl font-bold">3h</div>
-                    <div className="text-xs opacity-90">Duración</div>
-                  </div>
-                </div>
-                <div className="text-center">
-                  <a
-                    href="/board/aplicar"
-                    className="inline-block w-full bg-white text-green-600 font-bold py-3 px-6 rounded-xl hover:bg-green-50 transition-all duration-300 transform hover:scale-105 shadow-lg"
-                  >
-                    Inscríbete Presencial
-                  </a>
-                </div>
-              </div>
-            </div>
+          <div className="flex justify-center w-full">
+            <div className="w-full max-w-md">
 
             {/* Online */}
             <div className="bg-white rounded-2xl shadow-xl border border-blue-200 overflow-hidden">
@@ -243,6 +205,7 @@ export default function CertificationPage() {
                 </div>
               </div>
             </div>
+          </div>
           </div>
 
           {/* Imagen del quirófano - Ahora abajo de las tarjetas */}
