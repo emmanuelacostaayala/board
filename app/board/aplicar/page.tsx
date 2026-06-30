@@ -256,26 +256,7 @@ const AplicarPage = () => {
             <label className="block text-lg font-bold text-gray-800 mb-4">
               Selecciona la modalidad del examen *
             </label>
-            <div className="grid md:grid-cols-2 gap-4">
-              <label className={`relative flex items-center p-4 border rounded-xl cursor-pointer transition-all ${formData.modoExamen === 'presencial'
-                  ? 'border-green-500 bg-green-50 ring-2 ring-green-500 ring-opacity-50'
-                  : 'border-gray-200 bg-white hover:border-green-300'
-                }`}>
-                <input
-                  type="radio"
-                  name="modoExamen"
-                  value="presencial"
-                  checked={formData.modoExamen === 'presencial'}
-                  onChange={handleInputChange}
-                  className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300"
-                  required
-                />
-                <div className="ml-3">
-                  <span className="block text-sm font-bold text-gray-900">Presencial - El Salvador</span>
-                  <span className="block text-xs text-gray-500">20 de Junio, 2026</span>
-                </div>
-              </label>
-
+            <div className="grid md:grid-cols-1 gap-4 max-w-md">
               <label className={`relative flex items-center p-4 border rounded-xl cursor-pointer transition-all ${formData.modoExamen === 'online'
                   ? 'border-blue-500 bg-blue-50 ring-2 ring-blue-500 ring-opacity-50'
                   : 'border-gray-200 bg-white hover:border-blue-300'
