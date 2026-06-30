@@ -192,12 +192,11 @@ export default function CertificationPage() {
                   </div>
                 </div>
                 <div className="text-center">
-                  <a
-                    href="/board/aplicar"
-                    className="inline-block w-full bg-white text-green-600 font-bold py-3 px-6 rounded-xl hover:bg-green-50 transition-all duration-300 transform hover:scale-105 shadow-lg"
+                  <div
+                    className="inline-block w-full bg-gray-200 text-gray-500 font-bold py-3 px-6 rounded-xl shadow-inner cursor-not-allowed"
                   >
-                    Inscríbete Presencial
-                  </a>
+                    CERRADO
+                  </div>
                 </div>
               </div>
             </div>
