@@ -52,7 +52,6 @@ async function compressImage(file: File, maxSizeMB = 1): Promise<File> {
 }
 
 import {
-  CheckCircle,
   Users,
   DollarSign,
   Award,
@@ -200,16 +199,15 @@ const AplicarPage = () => {
         {/* Info del Examen: Dos columnas */}
         <div className="grid md:grid-cols-2 gap-6 mb-10">
           {/* Presencial */}
-          <div className="bg-white rounded-2xl shadow-md border border-green-200 overflow-hidden">
-            <div className="bg-gradient-to-r from-green-500 to-emerald-500 p-4 text-white hover:bg-green-600 transition cursor-default">
+          <div className="bg-white rounded-2xl shadow-md border border-gray-200 overflow-hidden opacity-60 grayscale">
+            <div className="bg-gradient-to-r from-gray-500 to-gray-600 p-4 text-white cursor-not-allowed">
               <div className="flex items-center justify-between mb-2">
-                <h3 className="text-lg font-bold">El Salvador</h3>
-                <div className="flex items-center gap-1 bg-white/20 backdrop-blur-sm rounded-full px-2 py-0.5">
-                  <CheckCircle className="w-3 h-3" />
-                  <span className="text-xs font-medium">Presencial</span>
+                <h3 className="text-lg font-bold line-through">El Salvador</h3>
+                <div className="flex items-center gap-1 bg-red-500 backdrop-blur-sm rounded-full px-2 py-0.5">
+                  <span className="text-xs font-bold text-white">CERRADO</span>
                 </div>
               </div>
-              <div className="text-xl font-bold text-center bg-white/10 rounded-lg py-2 mb-2">20 JUNE 2026</div>
+              <div className="text-xl font-bold text-center bg-white/10 rounded-lg py-2 mb-2 line-through">20 JUNE 2026</div>
             </div>
             <div className="p-4 grid grid-cols-2 gap-2 text-center text-sm">
               <div className="bg-blue-50 p-2 rounded">
