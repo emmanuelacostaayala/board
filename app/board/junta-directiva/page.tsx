@@ -107,6 +107,12 @@ const JuntaDirectivaPage = () => {
             
             {/* Nivel superior - Director, Presidenta ALAP */}
             <div className="flex flex-col lg:flex-row justify-center items-center gap-4 lg:gap-8 mb-8">
+              {/* Espaciador invisible: mantiene a Brigida centrada en la pagina
+                  con Alileny a su derecha. Se oculta en movil. */}
+              <div className="hidden lg:block invisible" aria-hidden="true">
+                <OrganogramBox nombre="Alileny Perez A." cargo="Presidenta ALAP" color="bg-blue-600" textColor="text-white" />
+              </div>
+              <div className="hidden lg:block invisible" aria-hidden="true"><Arrow direction="left" /></div>
               <OrganogramBox nombre="Brigida Aguerrevere" cargo="Director" color="bg-blue-600" textColor="text-white" />
               <div className="hidden lg:block"><Arrow direction="left" /></div>
               <OrganogramBox nombre="Alileny Perez A." cargo="Presidenta ALAP" color="bg-blue-600" textColor="text-white" />
