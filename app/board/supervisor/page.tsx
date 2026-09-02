@@ -1,4 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
+import { clerkClient } from '@clerk/nextjs/server';
+import { PCC_LIST } from '@/data/pccList';
+import SupervisorTable, { SupervisorRow } from './SupervisorTable';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || '',
@@ -7,125 +10,112 @@ const supabaseAdmin = createClient(
 
 export const revalidate = 0; // Disable caching to always show latest
 
-// Mismos estados y estilos que ve el perfusionista en /my-journey
-const STATUS_STYLES: Record<string, string> = {
-  Activo: 'bg-green-100 text-green-800',
-  Verificada: 'bg-green-100 text-green-800',
-  Revision: 'bg-yellow-100 text-yellow-800',
-  'Inactivo 1': 'bg-red-100 text-red-800',
-  'Inactivo 2': 'bg-orange-100 text-orange-800',
-  Emeritus: 'bg-purple-100 text-purple-800',
-};
+// Supabase corta en 1000 filas por consulta y clinical_case ya pasa de 6000,
+// asi que hay que pedir la tabla por paginas o los conteos salen truncados.
+const PAGE = 1000;
+async function fetchAll(table: string, columns: string): Promise<any[]> {
+  const out: any[] = [];
+  for (let from = 0; ; from += PAGE) {
+    const { data, error } = await supabaseAdmin
+      .from(table)
+      .select(columns)
+      .range(from, from + PAGE - 1);
+    if (error) {
+      console.error(`Error leyendo ${table}:`, error.message);
+      break;
+    }
+    const rows = data || [];
+    out.push(...rows);
+    if (rows.length < PAGE) break;
+  }
+  return out;
+}
 
-const STATUS_LABELS: Record<string, string> = {
-  Revision: 'En Revisión',
-};
+// Correos por user_id de Clerk. Si Clerk falla, la tabla se muestra igual sin correos.
+async function fetchEmails(): Promise<Map<string, string>> {
+  const emails = new Map<string, string>();
+  try {
+    const client = await clerkClient();
+    let offset = 0;
+    for (;;) {
+      const res: any = await client.users.getUserList({ limit: 500, offset });
+      const list: any[] = res?.data ?? res ?? [];
+      for (const u of list) {
+        const addr = u.emailAddresses?.[0]?.emailAddress;
+        if (addr) emails.set(u.id, addr);
+      }
+      if (list.length < 500) break;
+      offset += 500;
+    }
+  } catch (err) {
+    console.error('No se pudieron cargar los correos de Clerk:', err);
+  }
+  return emails;
+}
 
 export default async function SupervisorDashboardPage() {
-  const [{ data: profiles }, { data: assignments }, { data: cases }, { data: uces }] =
-    await Promise.all([
-      supabaseAdmin.from('profiles').select('*').order('full_name', { ascending: true }),
-      supabaseAdmin.from('pcc_assignment').select('*'),
-      supabaseAdmin.from('clinical_case').select('user_id, submission_period'),
-      supabaseAdmin.from('uce_event').select('user_id'),
-    ]);
+  const [assignments, cases, uces, emails] = await Promise.all([
+    fetchAll('pcc_assignment', 'user_id, pcc_code, first_name, last_name'),
+    fetchAll('clinical_case', 'pcc_code, submission_period'),
+    fetchAll('uce_event', 'pcc_code'),
+    fetchEmails(),
+  ]);
 
-  const assignmentsMap = new Map((assignments || []).map((a) => [a.user_id, a]));
+  const assignmentByCode = new Map((assignments || []).map((a) => [a.pcc_code, a]));
 
-  // Casos totales y casos efectivamente sometidos (submission_period no nulo),
+  // Casos totales y quiénes llegaron a someter (submission_period no nulo),
   // que es el criterio con el que /my-journey considera Activo a un perfusionista.
   const caseCount = new Map<string, number>();
-  const submittedUsers = new Set<string>();
+  const submitted = new Set<string>();
   for (const c of cases || []) {
-    caseCount.set(c.user_id, (caseCount.get(c.user_id) || 0) + 1);
-    if (c.submission_period != null) submittedUsers.add(c.user_id);
+    if (!c.pcc_code) continue;
+    caseCount.set(c.pcc_code, (caseCount.get(c.pcc_code) || 0) + 1);
+    if (c.submission_period != null) submitted.add(c.pcc_code);
   }
 
   const uceCount = new Map<string, number>();
   for (const u of uces || []) {
-    uceCount.set(u.user_id, (uceCount.get(u.user_id) || 0) + 1);
+    if (!u.pcc_code) continue;
+    uceCount.set(u.pcc_code, (uceCount.get(u.pcc_code) || 0) + 1);
   }
 
-  const merged = (profiles || []).map((p) => {
-    const a = assignmentsMap.get(p.id);
+  // Padrón oficial (data/pccList.ts) más cualquier código asignado que no esté en él.
+  const officialByCode = new Map(PCC_LIST.map((p) => [p.code, p]));
+  const allCodes = Array.from(
+    new Set([...PCC_LIST.map((p) => p.code), ...(assignments || []).map((a) => a.pcc_code)])
+  ).sort();
 
-    // Misma derivación que /my-journey: sometió casos -> Activo,
-    // si no, el status guardado en pcc_assignment, y por defecto Revision.
-    const status = submittedUsers.has(p.id) ? 'Activo' : (a?.status as string) || 'Revision';
+  const rows: SupervisorRow[] = allCodes.map((code) => {
+    const official = officialByCode.get(code);
+    const asg = assignmentByCode.get(code);
+
+    const name =
+      [asg?.first_name, asg?.last_name].filter(Boolean).join(' ').trim() ||
+      [official?.firstName, official?.lastName].filter(Boolean).join(' ').trim() ||
+      'Sin nombre';
+
+    // Someter casos manda sobre el estado estático del padrón.
+    const status = submitted.has(code) ? 'Activo' : official?.status || 'Revision';
 
     return {
-      ...p,
-      pcc_code: a?.pcc_code || 'N/A',
+      pccCode: code,
+      name,
+      email: (asg && emails.get(asg.user_id)) || null,
       status,
-      cases: caseCount.get(p.id) || 0,
-      uces: uceCount.get(p.id) || 0,
+      registered: Boolean(asg),
+      cases: caseCount.get(code) || 0,
+      uces: uceCount.get(code) || 0,
     };
   });
 
-  const activos = merged.filter((u) => u.status === 'Activo' || u.status === 'Verificada').length;
-
   return (
     <main className="max-w-7xl mx-auto p-4 md:p-8 pt-12">
-      <div className="flex justify-between items-center mb-8">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Panel de Supervisión</h1>
-          <p className="text-muted-foreground">Listado de todos los Perfusionistas y sus estados.</p>
-        </div>
-        <div className="text-right text-sm text-gray-500">
-          <p>
-            <span className="font-bold text-gray-900 text-lg">{merged.length}</span> perfusionistas
-          </p>
-          <p>
-            <span className="font-bold text-green-700">{activos}</span> activos
-          </p>
-        </div>
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold tracking-tight">Panel de Supervisión</h1>
+        <p className="text-muted-foreground">Listado de todos los Perfusionistas y sus estados.</p>
       </div>
 
-      <div className="rounded-md border bg-white shadow">
-        <table className="w-full text-sm text-left">
-          <thead className="bg-gray-50 border-b">
-            <tr>
-              <th className="px-6 py-3 font-medium text-gray-500 uppercase tracking-wider">Nombre Completo</th>
-              <th className="px-6 py-3 font-medium text-gray-500 uppercase tracking-wider">Correo</th>
-              <th className="px-6 py-3 font-medium text-gray-500 uppercase tracking-wider">Código PCC</th>
-              <th className="px-6 py-3 font-medium text-gray-500 uppercase tracking-wider">Estado</th>
-              <th className="px-6 py-3 font-medium text-gray-500 uppercase tracking-wider text-center">Casos</th>
-              <th className="px-6 py-3 font-medium text-gray-500 uppercase tracking-wider text-center">UCEs</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-200">
-            {merged.map((user) => (
-              <tr key={user.id} className="hover:bg-gray-50 transition-colors">
-                <td className="px-6 py-4 font-medium text-gray-900">{user.full_name || 'Sin nombre'}</td>
-                <td className="px-6 py-4 text-gray-500">{user.email || 'Sin correo'}</td>
-                <td className="px-6 py-4">
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                    {user.pcc_code}
-                  </span>
-                </td>
-                <td className="px-6 py-4">
-                  <span
-                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                      STATUS_STYLES[user.status] || 'bg-gray-100 text-gray-800'
-                    }`}
-                  >
-                    {STATUS_LABELS[user.status] || user.status}
-                  </span>
-                </td>
-                <td className="px-6 py-4 text-center tabular-nums text-gray-900">{user.cases}</td>
-                <td className="px-6 py-4 text-center tabular-nums text-gray-900">{user.uces}</td>
-              </tr>
-            ))}
-            {merged.length === 0 && (
-              <tr>
-                <td colSpan={6} className="px-6 py-4 text-center text-gray-500">
-                  No hay usuarios registrados.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+      <SupervisorTable rows={rows} />
     </main>
   );
 }
