@@ -105,13 +105,11 @@ const JuntaDirectivaPage = () => {
           <section className="mb-12 lg:mb-16">
             <h2 className="text-2xl lg:text-3xl font-bold text-center mb-8 lg:mb-12 italic">Junta Directiva Actual</h2>
             
-            {/* Nivel superior - Presidente, Director, Enlaces Externos */}
+            {/* Nivel superior - Director, Presidenta ALAP */}
             <div className="flex flex-col lg:flex-row justify-center items-center gap-4 lg:gap-8 mb-8">
-              <OrganogramBox nombre="Alileny Perez A." cargo="Presidente" color="bg-blue-600" textColor="text-white" />
-              <div className="hidden lg:block"><Arrow direction="right" /></div>
               <OrganogramBox nombre="Brigida Aguerrevere" cargo="Director" color="bg-blue-600" textColor="text-white" />
               <div className="hidden lg:block"><Arrow direction="left" /></div>
-              <OrganogramBox nombre="Edward Delaney CCP" cargo="Enlaces Externos" color="bg-blue-600" textColor="text-white" />
+              <OrganogramBox nombre="Alileny Perez A." cargo="Presidenta ALAP" color="bg-blue-600" textColor="text-white" />
             </div>
 
             {/* Flecha hacia abajo desde Director */}
@@ -282,9 +280,8 @@ const JuntaDirectivaPage = () => {
               <div>
                 <h3 className="text-lg font-semibold text-gray-800 mb-3">Directivos Principales</h3>
                 <div className="grid grid-cols-1 gap-3">
-                  <PersonCard nombre="Alileny Perez A." cargo="Presidente" />
                   <PersonCard nombre="Brigida Aguerrevere" cargo="Director" />
-                  <PersonCard nombre="Edward Delaney CCP" cargo="Enlaces Externos" />
+                  <PersonCard nombre="Alileny Perez A." cargo="Presidenta ALAP" />
                 </div>
               </div>
 
