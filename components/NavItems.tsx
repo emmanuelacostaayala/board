@@ -4,27 +4,38 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useState, useEffect, useRef } from "react";
+import { useUser } from "@clerk/nextjs";
 
-const navItems = [
-  { label: "Inicio", href: "/" },
-  {
-    label: "Board",
-    href: "#",
-    dropdown: [
-      { label: "Requisitos", href: "/board/requisitos" },
-      { label: "Aplicar", href: "/board/aplicar" },
-      { label: "Junta Directiva", href: "/board/junta-directiva" },
-      { label: "Recertificacion", href: "/board/recertificacion" },
-      { label: "Guias de estudio", href: "/board/guias-estudio" },
-      { label: "Cita Online", href: "/board/cita-online" },
-    ],
-  },
-  { label: "Acompañante IA", href: "/companions" },
-  { label: "Mi Perfil PCC", href: "/my-journey" },
+const BOARD_LINKS = [
+  { label: "Requisitos", href: "/board/requisitos" },
+  { label: "Aplicar", href: "/board/aplicar" },
+  { label: "Junta Directiva", href: "/board/junta-directiva" },
+  { label: "Recertificacion", href: "/board/recertificacion" },
+  { label: "Guias de estudio", href: "/board/guias-estudio" },
+  { label: "Cita Online", href: "/board/cita-online" },
 ];
 
 const NavItems = ({ onNavigate }: { onNavigate?: () => void }) => {
   const pathname = usePathname();
+  const { user } = useUser();
+
+  // El panel de supervisión solo se muestra a admin y supervisor.
+  // Esto es solo visibilidad: el acceso real lo bloquea app/board/supervisor/layout.tsx.
+  const role = user?.publicMetadata?.role as string | undefined;
+  const canSupervise = role === "admin" || role === "supervisor";
+
+  const navItems = [
+    { label: "Inicio", href: "/" },
+    {
+      label: "Board",
+      href: "#",
+      dropdown: canSupervise
+        ? [...BOARD_LINKS, { label: "Panel de Supervisión", href: "/board/supervisor" }]
+        : BOARD_LINKS,
+    },
+    { label: "Acompañante IA", href: "/companions" },
+    { label: "Mi Perfil PCC", href: "/my-journey" },
+  ];
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
