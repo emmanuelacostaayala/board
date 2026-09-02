@@ -1,8 +1,8 @@
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+  process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+  process.env.SUPABASE_SERVICE_ROLE_KEY || ''
 );
 
 export const revalidate = 0; // Disable caching to always show latest
@@ -28,7 +28,7 @@ export default async function SupervisorDashboardPage() {
     <main className="max-w-7xl mx-auto p-4 md:p-8 pt-12">
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Panel de Supervisión</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Panel de SupervisiÃ³n</h1>
           <p className="text-muted-foreground">Listado de todos los Perfusionistas y sus estados.</p>
         </div>
       </div>
@@ -39,7 +39,7 @@ export default async function SupervisorDashboardPage() {
             <tr>
               <th className="px-6 py-3 font-medium text-gray-500 uppercase tracking-wider">Nombre Completo</th>
               <th className="px-6 py-3 font-medium text-gray-500 uppercase tracking-wider">Correo</th>
-              <th className="px-6 py-3 font-medium text-gray-500 uppercase tracking-wider">Código PCC</th>
+              <th className="px-6 py-3 font-medium text-gray-500 uppercase tracking-wider">CÃ³digo PCC</th>
               <th className="px-6 py-3 font-medium text-gray-500 uppercase tracking-wider">Estado</th>
             </tr>
           </thead>
