@@ -120,12 +120,7 @@ const AplicarPage = () => {
       return;
     }
 
-    // Validar documento obligatorio
-    if (!files.titulo) {
-      setSubmitMessage('Por favor, adjunta el Título de perfusionista (Obligatorio).');
-      setIsSubmitting(false);
-      return;
-    }
+    // Validar documento obligatorio (eliminado para que no sea obligatorio el título)
 
     try {
       // Crear FormData para enviar
@@ -196,33 +191,10 @@ const AplicarPage = () => {
           Una vez envíes el formulario, te llegará un correo con el link de pago en los próximos días.
         </p>
 
-        {/* Info del Examen: Dos columnas */}
-        <div className="grid md:grid-cols-2 gap-6 mb-10">
-          {/* Presencial */}
-          <div className="bg-white rounded-2xl shadow-md border border-gray-200 overflow-hidden opacity-60 grayscale">
-            <div className="bg-gradient-to-r from-gray-500 to-gray-600 p-4 text-white cursor-not-allowed">
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="text-lg font-bold line-through">El Salvador</h3>
-                <div className="flex items-center gap-1 bg-red-500 backdrop-blur-sm rounded-full px-2 py-0.5">
-                  <span className="text-xs font-bold text-white">CERRADO</span>
-                </div>
-              </div>
-              <div className="text-xl font-bold text-center bg-white/10 rounded-lg py-2 mb-2 line-through">20 JUNE 2026</div>
-            </div>
-            <div className="p-4 grid grid-cols-2 gap-2 text-center text-sm">
-              <div className="bg-blue-50 p-2 rounded">
-                <div className="font-bold text-blue-600">130-200</div>
-                <div className="text-xs text-gray-500">Preguntas</div>
-              </div>
-              <div className="bg-green-50 p-2 rounded">
-                <div className="font-bold text-green-600">$120</div>
-                <div className="text-xs text-gray-500">USD</div>
-              </div>
-            </div>
-          </div>
-
+        {/* Info del Examen: Una sola columna centrada */}
+        <div className="flex justify-center mb-10">
           {/* Online */}
-          <div className="bg-white rounded-2xl shadow-md border border-blue-200 overflow-hidden">
+          <div className="bg-white rounded-2xl shadow-md border border-blue-200 overflow-hidden w-full max-w-md">
             <div className="bg-gradient-to-r from-blue-500 to-indigo-500 p-4 text-white hover:bg-blue-600 transition cursor-default">
               <div className="flex items-center justify-between mb-2">
                 <h3 className="text-lg font-bold">Online</h3>
@@ -350,7 +322,7 @@ const AplicarPage = () => {
             {/* Título de perfusionista */}
             <div className="bg-gray-50 p-6 rounded-lg">
               <label className="block text-sm font-semibold text-gray-700 mb-3">
-                Título de perfusionista *
+                Título de perfusionista
               </label>
               <input
                 type="file"
