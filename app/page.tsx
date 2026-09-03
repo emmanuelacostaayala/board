@@ -257,10 +257,10 @@ export default function CertificationPage() {
             <div className="bg-white rounded-2xl shadow-xl border p-8">
               <div className="flex items-center gap-3 mb-4">
                 <Bell className="w-6 h-6 text-amber-500" />
-                <h3 className="text-2xl font-bold text-gray-800">Anuncio importante</h3>
+                <h3 className="text-2xl font-bold text-gray-800">Anuncio importante Recertificación 2026</h3>
               </div>
               <p className="text-blue-700 font-semibold mb-3">
-                Estimado PCC: Carga tus casos clínicos <span className="text-red-600">SIN COSTO ALGUNO</span>, ANTES del <span className="font-bold">31-01-2026</span>.
+                Estimado PCC: Carga tus casos clínicos <span className="text-red-600">SIN COSTO ALGUNO</span>, ANTES del <span className="font-bold">31-01-2027</span>.
               </p>
               <div className="space-y-2 text-gray-700">
                 <p className="font-semibold">40 CASOS:</p>
