@@ -35,16 +35,12 @@ const MyJourney = async () => {
     const myPcc = await getMyPcc(user.id);
     const hasSubmitted = await hasSubmittedCases(user.id);
 
-    // Display PCC status:
-    // 1) Si ha sometido sus casos (y por lo tanto pagó), es Activo.
-    // 2) si la fila pcc_assignment tiene 'status' -> usarlo
-    // 3) else -> "Revision"
-    let displayPccStatus = "Revision";
-    if (hasSubmitted) {
-      displayPccStatus = "Activo";
-    } else {
-      displayPccStatus = (myPcc?.status as string) ?? (myPcc?.pcc_code ? "Revision" : "Revision");
-    }
+    // Display PCC status, con la misma precedencia que el panel de supervision:
+    // 1) el estado que un supervisor fijo a mano en pcc_assignment manda sobre todo;
+    // 2) si no hay ninguno, haber sometido casos significa Activo;
+    // 3) en cualquier otro caso, Revision.
+    const displayPccStatus =
+      (myPcc?.status as string) || (hasSubmitted ? "Activo" : "Revision");
 
 
     const statusIcons: Record<string, { icon: string; label: string }> = {

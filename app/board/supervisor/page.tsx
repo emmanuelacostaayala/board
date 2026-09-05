@@ -31,6 +31,19 @@ async function fetchAll(table: string, columns: string): Promise<any[]> {
   return out;
 }
 
+// La columna 'status' se agrega con:
+//   alter table pcc_assignment add column status text;
+// Mientras no exista, la consulta con esa columna falla y se lee sin ella,
+// para que el panel siga funcionando antes de la migracion.
+async function fetchAssignments(): Promise<any[]> {
+  const conStatus = await fetchAll(
+    'pcc_assignment',
+    'user_id, pcc_code, first_name, last_name, status'
+  );
+  if (conStatus.length > 0) return conStatus;
+  return fetchAll('pcc_assignment', 'user_id, pcc_code, first_name, last_name');
+}
+
 // Correos por user_id de Clerk. Si Clerk falla, la tabla se muestra igual sin correos.
 async function fetchEmails(): Promise<Map<string, string>> {
   const emails = new Map<string, string>();
@@ -55,7 +68,7 @@ async function fetchEmails(): Promise<Map<string, string>> {
 
 export default async function SupervisorDashboardPage() {
   const [assignments, cases, uces, emails] = await Promise.all([
-    fetchAll('pcc_assignment', 'user_id, pcc_code, first_name, last_name'),
+    fetchAssignments(),
     fetchAll('clinical_case', 'pcc_code, submission_period'),
     fetchAll('uce_event', 'pcc_code'),
     fetchEmails(),
@@ -94,8 +107,10 @@ export default async function SupervisorDashboardPage() {
       [official?.firstName, official?.lastName].filter(Boolean).join(' ').trim() ||
       'Sin nombre';
 
-    // Someter casos manda sobre el estado estático del padrón.
-    const status = submitted.has(code) ? 'Activo' : official?.status || 'Revision';
+    // Precedencia: lo que un supervisor fijo a mano manda sobre todo lo demas;
+    // si no hay nada fijado, haber sometido casos gana al estado del padron.
+    const status =
+      asg?.status || (submitted.has(code) ? 'Activo' : official?.status || 'Revision');
 
     return {
       pccCode: code,
