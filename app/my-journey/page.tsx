@@ -13,6 +13,7 @@ import {
   getBookmarkedCompanions,
 } from "@/lib/actions/companion.actions";
 import { getMyPcc, hasSubmittedCases } from "@/lib/actions/pcc.actions"; // <- añadido
+import { getStatusOverride } from "@/lib/actions/supervisor.actions";
 import Image from "next/image";
 import CompanionsList from "@/components/CompanionsList";
 import PaymentAlertButton from "@/components/PaymentAlertButton";
@@ -36,11 +37,12 @@ const MyJourney = async () => {
     const hasSubmitted = await hasSubmittedCases(user.id);
 
     // Display PCC status, con la misma precedencia que el panel de supervision:
-    // 1) el estado que un supervisor fijo a mano en pcc_assignment manda sobre todo;
+    // 1) el estado que un supervisor fijo a mano manda sobre todo;
     // 2) si no hay ninguno, haber sometido casos significa Activo;
     // 3) en cualquier otro caso, Revision.
+    const statusFijado = await getStatusOverride(myPcc?.pcc_code as string);
     const displayPccStatus =
-      (myPcc?.status as string) || (hasSubmitted ? "Activo" : "Revision");
+      statusFijado || (hasSubmitted ? "Activo" : "Revision");
 
 
     const statusIcons: Record<string, { icon: string; label: string }> = {
