@@ -6,6 +6,7 @@ import { currentUser } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { PCC_STATUSES, type PccStatus } from "@/lib/pccStatus";
+import { PCC_LIST } from "@/data/pccList";
 
 /**
  * DONDE SE GUARDA EL ESTADO
@@ -94,22 +95,24 @@ export async function updatePccStatus(
     return { ok: false, message: `Estado no válido: ${status}` };
   }
 
-  // Solo perfusionistas con cuenta registrada.
-  const { data: asg, error: ae } = await supabaseAdmin
-    .from("pcc_assignment")
-    .select("pcc_code")
-    .eq("pcc_code", pccCode)
-    .limit(1);
-
-  if (ae) {
-    console.error("Error verificando asignación:", ae);
-    return { ok: false, message: "No se pudo verificar el perfusionista." };
+  // Se admite cualquier codigo del padron, tenga cuenta registrada o no: el
+  // estado vive en pcc_records indexado por codigo, no depende de pcc_assignment.
+  // Sigue validandose que el codigo exista, para no escribir filas arbitrarias.
+  let conocido = PCC_LIST.some((p) => p.code === pccCode);
+  if (!conocido) {
+    const { data: asg, error: ae } = await supabaseAdmin
+      .from("pcc_assignment")
+      .select("pcc_code")
+      .eq("pcc_code", pccCode)
+      .limit(1);
+    if (ae) {
+      console.error("Error verificando el código PCC:", ae);
+      return { ok: false, message: "No se pudo verificar el perfusionista." };
+    }
+    conocido = Boolean(asg && asg.length);
   }
-  if (!asg || asg.length === 0) {
-    return {
-      ok: false,
-      message: `${pccCode} no tiene cuenta registrada, no se le puede asignar estado.`,
-    };
+  if (!conocido) {
+    return { ok: false, message: `Código PCC desconocido: ${pccCode}` };
   }
 
   const { data: existing, error: se } = await supabaseAdmin

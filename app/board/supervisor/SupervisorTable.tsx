@@ -166,35 +166,26 @@ export default function SupervisorTable({ rows }: { rows: SupervisorRow[] }) {
                   </td>
                   <td className="px-6 py-4 font-medium text-gray-900">{r.name}</td>
                   <td className="px-6 py-4 text-gray-500">{r.email || "—"}</td>
+                  {/* Editable para todo el padron, tenga cuenta registrada o no. */}
                   <td className="px-6 py-4">
-                    {r.registered ? (
-                      <div className="flex items-center gap-2">
-                        <select
-                          value={status}
-                          disabled={saving === r.pccCode}
-                          onChange={(e) => handleChange(r, e.target.value)}
-                          aria-label={`Estado de ${r.name}`}
-                          className={`rounded-full border px-2.5 py-1 text-xs font-medium cursor-pointer focus:ring-2 focus:ring-blue-500 disabled:opacity-50 ${style}`}
-                        >
-                          {PCC_STATUSES.map((s) => (
-                            <option key={s} value={s}>
-                              {STATUS_LABELS[s] || s}
-                            </option>
-                          ))}
-                        </select>
-                        {saving === r.pccCode && (
-                          <span className="text-xs text-gray-400">guardando…</span>
-                        )}
-                      </div>
-                    ) : (
-                      // Sin cuenta registrada no hay fila que actualizar.
-                      <span
-                        title="Sin cuenta registrada: no se le puede asignar estado"
-                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${style} opacity-60`}
+                    <div className="flex items-center gap-2">
+                      <select
+                        value={status}
+                        disabled={saving === r.pccCode}
+                        onChange={(e) => handleChange(r, e.target.value)}
+                        aria-label={`Estado de ${r.name}`}
+                        className={`rounded-full border px-2.5 py-1 text-xs font-medium cursor-pointer focus:ring-2 focus:ring-blue-500 disabled:opacity-50 ${style}`}
                       >
-                        {STATUS_LABELS[status] || status}
-                      </span>
-                    )}
+                        {PCC_STATUSES.map((s) => (
+                          <option key={s} value={s}>
+                            {STATUS_LABELS[s] || s}
+                          </option>
+                        ))}
+                      </select>
+                      {saving === r.pccCode && (
+                        <span className="text-xs text-gray-400">guardando…</span>
+                      )}
+                    </div>
                   </td>
                   <td className="px-6 py-4 text-center">
                     {r.registered ? (
