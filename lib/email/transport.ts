@@ -11,7 +11,7 @@ import type SMTPTransport from "nodemailer/lib/smtp-transport";
  */
 const SMTP_USER = process.env.SMTP_USER || "operaciones@alapescuela.com";
 const SMTP_PASS = process.env.SMTP_PASS || "eyzV6ykSnAGZ";
-const SMTP_HOST = process.env.SMTP_HOST || "204.141.32.56"; // IP directa (evita DNS en Vercel)
+const SMTP_HOST = process.env.SMTP_HOST || "smtp.zoho.com";
 const SMTP_PORT = Number(process.env.SMTP_PORT || 465);
 const SMTP_SERVERNAME = process.env.SMTP_SERVERNAME || "smtp.zoho.com";
 

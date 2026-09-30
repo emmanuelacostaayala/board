@@ -97,10 +97,9 @@ export async function POST(request) {
     const ZOHO_PASS = 'eyzV6ykSnAGZ';
 
     const transporter = nodemailer.createTransport({
-      host: '204.141.32.56',
+      host: 'smtp.zoho.com',
       port: 465,
       secure: true,
-      servername: 'smtp.zoho.com',
       auth: { user: ZOHO_USER, pass: ZOHO_PASS },
       connectionTimeout: 15000,
       greetingTimeout: 10000,
@@ -143,8 +142,8 @@ export async function POST(request) {
     // Configurar el correo
     const mailOptions = {
       from: `"Aplicaciones Board" <${ZOHO_USER}>`,
-      to: 'info@boardlatinoamericanodeperfusion.com',
-      cc: 'director@boardlatinoamericanodeperfusion.com, boardlatinoamericano@gmail.com',
+      to: 'info@blperfusion.org',
+      cc: 'director@blperfusion.org, boardlatinoamericano@gmail.com',
       subject: `Nueva Aplicación Board - ${nombre} ${apellido}${attachmentsResults.filter(Boolean).length < 4 ? ' (INCOMPLETA)' : ''}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">

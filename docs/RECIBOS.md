@@ -21,7 +21,7 @@ El ruteo de marca está en `lib/receipts/brands.ts` (`ESCUELA_PRODUCT_IDS` / `ES
 
 ```
 # SMTP (Zoho)
-SMTP_HOST=smtp.zoho.com          # o la IP 204.141.32.56 si hay problemas de DNS
+SMTP_HOST=smtp.zoho.com          # hostname, no IP: las IPs de Zoho rotan
 SMTP_PORT=465
 SMTP_USER=operaciones@alapescuela.com
 SMTP_PASS=********                # ROTAR la contraseña que estaba hardcodeada
@@ -29,7 +29,7 @@ SMTP_SERVERNAME=smtp.zoho.com
 
 # Opcionales (reply-to por marca)
 ESCUELA_REPLY_TO=operaciones@alapescuela.com
-BOARD_REPLY_TO=info@boardlatinoamericanodeperfusion.com
+BOARD_REPLY_TO=info@blperfusion.org
 
 # Ya existentes
 STRIPE_SECRET_KEY=sk_live_...
